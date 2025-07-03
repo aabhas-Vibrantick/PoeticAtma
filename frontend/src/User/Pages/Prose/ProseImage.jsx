@@ -34,6 +34,20 @@ export default function ProseImage(){
           toast.error("Something went wrong");
         });
     }, [loading]);
+
+    const [showModal, setShowModal] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    const handleImageClick = (data) => {
+      setSelectedImage(data);
+      setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+      setShowModal(false);
+      setSelectedImage(null);
+    };
+
     return(
         <>
         {/* <!-- ======= Hero Section ======= --> */}
@@ -54,39 +68,27 @@ export default function ProseImage(){
   {/* <!-- End Hero Section --> */}
   <main id="main" data-aos="fade" data-aos-delay="1500">
     {/* <!-- ======= Gallery Section ======= --> */}
-    <section id="gallery" className="gallery">
-      <div className="container-fluid">
+     <section id="gallery" className="gallery">
+              <div className="container-fluid">
+                <div className="row gy-4 justify-content-center">
+                  {/* <!-- End Gallery Item --> */}
+                  {allProseImg.map((data, index) => (
+                    <div className="col-xl-3 col-lg-4 col-md-6">
+                      {/* <h4>{data?.userId?.name}</h4> */}
+                      <div
+                        className="gallery-item h-100"
+                        onClick={() => handleImageClick(data)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <img
+                          src={BASE_URL_IMG + data?.Image}
+                          className="img-fluid"
+                          alt=""
+                        />
+                      </div>
+                    </div>
+                  ))}
 
-        <div className="row gy-4 justify-content-center">
-            {/* <!-- End Gallery Item --> */}
-            {allProseImg.map((data, index) => (
-           <div className="col-xl-3 col-lg-4 col-md-6">
-            <Link to="/profile"> <div className="  timeline">
-         <div className="timeline-body">
-           <Link to="/profile">  <div className="timeline-header text-start">
-               <span className="userimage">
-                 <img
-                   src="https://bootdey.com/img/Content/avatar/avatar3.png"
-                   alt="" className="user-img"
-                 />
-               </span>
-               <span className=" px-3 fw-bold">{data?.userId?.name}</span>
-               <span className=" text-muted">1,282 Views</span>
-             </div>
-             </Link>
-             {/* <hr /> */}
-             
-           </div>
-         </div></Link>
-             <div className="gallery-item h-100">
-               <img src={BASE_URL_IMG + data?.Image}  className="img-fluid" alt=""/>
-               <div className="gallery-links d-flex align-items-center justify-content-center">
-                 <a href="" title="Gallery 1" className="glightbox preview-link"><i className="bi bi-arrows-angle-expand"></i></a>
-                 <a href="" className="details-link"><i className="bi bi-link-45deg"></i></a>
-               </div>
-             </div>
-           </div>
-        ))}
           
           {/* <!-- End Gallery Item --> */}
         
@@ -96,6 +98,32 @@ export default function ProseImage(){
 
       </div>
     </section>
+    {showModal && selectedImage && (
+              <div className="modal-backdrop" onClick={handleCloseModal}>
+                <div
+                  className="modal-content"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <img
+                    src={BASE_URL_IMG + selectedImage.Image}
+                    alt="Popup"
+                    style={{
+                      width: "100%",
+                      maxHeight: "500px",
+                      objectFit: "contain",
+                      borderRadius: "8px",
+                    }}
+                  />
+                  <button
+                    className="btn btn-dark mt-3"
+                    onClick={handleCloseModal}
+                    style={{ width: "100%", borderRadius: "6px" }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
     </main>
     {/* <!-- End Gallery Section --> */}
     </div>

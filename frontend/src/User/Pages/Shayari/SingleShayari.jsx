@@ -423,10 +423,10 @@ export default function SingleShayari() {
                                   <i className="fa-solid fa-eye mx-2"></i>
                                   {viewCount} Views
                                 </a>
-                                <a className="m-r-15 text-inverse-lighter px-4">
+                                {/* <a className="m-r-15 text-inverse-lighter px-4">
                                   <i className="fa-solid fa-share-nodes mx-2"></i>
                                   <span className=" text-muted"> Share</span>
-                                </a>
+                                </a> */}
                               </div>
 
                             </ul>
@@ -763,11 +763,32 @@ export default function SingleShayari() {
                   </div>
                   <div className="blogbox categories">
                     <ul className="list-unstyled">
-                      <li><a href="#"><i className="fa-solid fa-heart"></i>Love</a></li>
-                      <li><a href="#"><i className="fa-solid fa-heart-crack"></i>Sad</a></li>
-                      <li><a href="#"><i className="fa-regular fa-face-kiss-wink-heart"></i>Romantic</a></li>
-                      <li><a href="#"><i className="fa-brands fa-canadian-maple-leaf"></i>Nature</a></li>
-                      <li><a href="#"><i className="fa-solid fa-star"></i>Occasion</a></li>
+                      <li>
+                        <Link to="/hindi-shayari" >
+                        <i className="fa-solid fa-heart"></i>Hindi
+                        </Link>
+                        {/* <a href="#">
+                          <i className="fa-solid fa-heart"></i>Love
+                        </a> */}
+                      </li>
+                      <li>
+                        <Link to="/hindi-shayari" >
+                        <i className="fa-solid fa-heart"></i>English
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/top20-shayari">
+                        <i className="fa-solid fa-heart"></i>Top-20 Shayari
+                        </Link>
+                        {/* <a href="#">
+                          <i className="fa-solid fa-heart-crack"></i>Sad
+                        </a> */}
+                      </li>
+                      <li>
+                        <Link to="/shayari-Image" >
+                        <i className="fa-solid fa-heart"></i>Shayari Images
+                        </Link>
+                      </li>
                     </ul>
                   </div>
                 </div>

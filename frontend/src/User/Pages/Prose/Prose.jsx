@@ -145,6 +145,17 @@ export default function Prose() {
     },
   };
 
+  const [selectedProse, setSelectedProse] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+  
+    const handleOpenModal = (data) => {
+      setSelectedProse(data);
+      setShowModal(true);
+    };
+  
+    const handleCloseModal = () => {
+      setShowModal(false);
+    };
 
   return (
     <>
@@ -156,20 +167,18 @@ export default function Prose() {
             <p>
               This page brings together countless splendid prose by noted poets
               handpicked from the long poetic tradition of Urdu. Readers can
-              sort these Urdu prose by poets, topics, emotions etc. and see their
-              poetic tastes cultivate like never before.
+              sort these Urdu prose by poets, topics, emotions etc. and see
+              their poetic tastes cultivate like never before.
             </p>
             <hr />
           </div>
 
-
-
           <div className="sher-1">
             <div className="row sherwraper">
-              <div className='col-lg-10'>
+              <div className="col-lg-10">
                 <h4>HINDI PROSE COLLECTION</h4>
               </div>
-              <div className='col-lg-2 responsiveMode'>
+              <div className="col-lg-2 responsiveMode">
                 <Link to="/hindi-prose"> View More</Link>
               </div>
             </div>
@@ -181,7 +190,6 @@ export default function Prose() {
                 centeredSlides={false}
                 // spaceBetween={75}
                 grabCursor={true}
-
                 breakpoints={{
                   640: {
                     slidesPerView: 2,
@@ -196,33 +204,33 @@ export default function Prose() {
                     spaceBetween: 50,
                   },
                 }}
-
                 navigation={true}
                 modules={[Navigation]}
                 className="mySwiper"
               >
-
                 {allHindi.map((data, index) => (
-                  <SwiperSlide className='swiperSlide'>
+                  <SwiperSlide className="swiperSlide">
                     <Link to={"/single-prose/" + `${data?._id}`}>
-                      <div className='Sher-box'>
-                        <img className='img-2' src={BASE_URL_IMG + data?.Image} />
+                      <div className="Sher-box">
+                        <img
+                          className="img-2"
+                          src={BASE_URL_IMG + data?.Image}
+                        />
                         <p>{data?.title}</p>
                       </div>
                     </Link>
                   </SwiperSlide>
                 ))}
-
               </Swiper>
             </div>
           </div>
 
           <div className="sher-1">
             <div className="row sherwraper">
-              <div className='col-lg-10'>
+              <div className="col-lg-10">
                 <h4>ENGLISH PROSE COLLECTION</h4>
               </div>
-              <div className='col-lg-2 responsiveMode'>
+              <div className="col-lg-2 responsiveMode">
                 <Link to="/english-prose"> View More</Link>
               </div>
             </div>
@@ -234,7 +242,6 @@ export default function Prose() {
                 centeredSlides={false}
                 // spaceBetween={75}
                 grabCursor={true}
-
                 breakpoints={{
                   640: {
                     slidesPerView: 2,
@@ -249,34 +256,33 @@ export default function Prose() {
                     spaceBetween: 50,
                   },
                 }}
-
                 navigation={true}
                 modules={[Navigation]}
                 className="mySwiper"
               >
-
                 {allEnglish.map((data, index) => (
-                  <SwiperSlide className='swiperSlide'>
+                  <SwiperSlide className="swiperSlide">
                     <Link to={"/single-prose/" + `${data?._id}`}>
-                      <div className='Sher-box'>
-                        <img className='img-2' src={BASE_URL_IMG + data?.Image} />
+                      <div className="Sher-box">
+                        <img
+                          className="img-2"
+                          src={BASE_URL_IMG + data?.Image}
+                        />
                         <p>{data?.title}</p>
                       </div>
                     </Link>
                   </SwiperSlide>
                 ))}
-
               </Swiper>
             </div>
           </div>
 
-
           <div className="sher-1">
             <div className="row sherwraper">
-              <div className='col-lg-10'>
+              <div className="col-lg-10">
                 <h4>TOP-10 PROSE COLLECTION</h4>
               </div>
-              <div className='col-lg-2 responsiveMode'>
+              <div className="col-lg-2 responsiveMode">
                 <Link to="/top20-prose"> View More</Link>
               </div>
             </div>
@@ -288,7 +294,6 @@ export default function Prose() {
                 centeredSlides={false}
                 // spaceBetween={75}
                 grabCursor={true}
-
                 breakpoints={{
                   640: {
                     slidesPerView: 2,
@@ -303,16 +308,18 @@ export default function Prose() {
                     spaceBetween: 50,
                   },
                 }}
-
                 navigation={true}
                 modules={[Navigation]}
                 className="mySwiper"
               >
                 {allPopular.map((data, index) => (
-                  <SwiperSlide className='swiperSlide'>
+                  <SwiperSlide className="swiperSlide">
                     <Link to={"/single-prose/" + `${data?._id}`}>
-                      <div className='Sher-box'>
-                        <img className='img-2' src={BASE_URL_IMG + data?.Image} />
+                      <div className="Sher-box">
+                        <img
+                          className="img-2"
+                          src={BASE_URL_IMG + data?.Image}
+                        />
                         <p>{data?.title}</p>
                       </div>
                     </Link>
@@ -324,10 +331,10 @@ export default function Prose() {
 
           <div className="sher-1">
             <div className="row sherwraper">
-              <div className='col-lg-10'>
+              <div className="col-lg-10">
                 <h4>PROSE FOR FICTION</h4>
               </div>
-              <div className='col-lg-2 responsiveMode'>
+              <div className="col-lg-2 responsiveMode">
                 <Link to="/occasion-prose"> View More</Link>
               </div>
             </div>
@@ -339,7 +346,6 @@ export default function Prose() {
                 centeredSlides={false}
                 // spaceBetween={75}
                 grabCursor={true}
-
                 breakpoints={{
                   640: {
                     slidesPerView: 2,
@@ -354,33 +360,33 @@ export default function Prose() {
                     spaceBetween: 50,
                   },
                 }}
-
                 navigation={true}
                 modules={[Navigation]}
                 className="mySwiper"
               >
                 {byCategory.map((data, index) => (
-                  <SwiperSlide className='swiperSlide'>
+                  <SwiperSlide className="swiperSlide">
                     <Link to={"/single-prose/" + `${data?._id}`}>
-                      <div className='Sher-box'>
-                        <img className='img-2' src={BASE_URL_IMG + data?.Image} />
+                      <div className="Sher-box">
+                        <img
+                          className="img-2"
+                          src={BASE_URL_IMG + data?.Image}
+                        />
                         <p>{data?.title}</p>
                       </div>
                     </Link>
                   </SwiperSlide>
                 ))}
-
-
               </Swiper>
             </div>
           </div>
 
           <div className="sher-1">
             <div className="row sherwraper">
-              <div className='col-lg-10'>
+              <div className="col-lg-10">
                 <h4>PROSE IMAGE</h4>
               </div>
-              <div className='col-lg-2 responsiveMode'>
+              <div className="col-lg-2 responsiveMode">
                 <Link to="/prose-Image"> View More</Link>
               </div>
             </div>
@@ -392,7 +398,6 @@ export default function Prose() {
                 centeredSlides={false}
                 // spaceBetween={75}
                 grabCursor={true}
-
                 breakpoints={{
                   640: {
                     slidesPerView: 2,
@@ -407,37 +412,32 @@ export default function Prose() {
                     spaceBetween: 50,
                   },
                 }}
-                pagination={
-
-                  pagination
-                }
                 navigation={true}
                 modules={[Navigation]}
                 className="mySwiper"
               >
                 {allProseImg.map((data, index) => (
-                  <SwiperSlide className='swiperSlide'>
-                    <Link to={"/single-prose/" + `${data?._id}`}>
-                      <div className='Sher-box'>
-                        <img className='img-2' src={BASE_URL_IMG + data?.Image} />
-                        <p>{data?.title}</p>
-                      </div>
-                    </Link>
+                  <SwiperSlide className="swiperSlide">
+                    <div
+                      className="Sher-box"
+                      onClick={() => handleOpenModal(data)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <img className="img-2" src={BASE_URL_IMG + data?.Image} />
+                      <p>{data?.title}</p>
+                    </div>
                   </SwiperSlide>
                 ))}
-
-
-
               </Swiper>
             </div>
           </div>
 
           <div className="sher-1">
             <div className="row sherwraper">
-              <div className='col-lg-10'>
+              <div className="col-lg-10">
                 <h4>BEST Prose COLLECTION</h4>
               </div>
-              <div className='col-lg-2 responsiveMode'>
+              <div className="col-lg-2 responsiveMode">
                 <Link to="/best-prose"> View More</Link>
               </div>
             </div>
@@ -449,7 +449,6 @@ export default function Prose() {
                 centeredSlides={false}
                 // spaceBetween={75}
                 grabCursor={true}
-
                 breakpoints={{
                   640: {
                     slidesPerView: 2,
@@ -464,24 +463,35 @@ export default function Prose() {
                     spaceBetween: 50,
                   },
                 }}
-
                 navigation={true}
                 modules={[Navigation]}
                 className="mySwiper"
               >
                 {allBest.map((data, index) => (
-                  <SwiperSlide className='swiperSlide'>
+                  <SwiperSlide className="swiperSlide">
                     <Link to={"/single-prose/" + `${data?._id}`}>
-                      <div className='Sher-box'>
-                        <img className='img-2' src={BASE_URL_IMG + data?.Image} />
+                      <div className="Sher-box">
+                        <img
+                          className="img-2"
+                          src={BASE_URL_IMG + data?.Image}
+                        />
                         <p>{data?.title}</p>
                       </div>
                     </Link>
                   </SwiperSlide>
                 ))}
-
               </Swiper>
             </div>
+            {showModal && selectedProse && (
+              <div className="modal-backdrop" onClick={handleCloseModal}>
+                <img
+                  src={BASE_URL_IMG + selectedProse.Image}
+                  alt="Shayari"
+                  className="modal-image"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

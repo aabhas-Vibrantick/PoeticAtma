@@ -38,9 +38,10 @@ function Header({ OpenSidebar }) {
       
         <div className="header-left">
           {/* <BsSearch  className='icon'/> */}
-         
+         <h2 >PoeticAtma</h2>
         </div>
         <div className="header-right">
+          
         <div className="user-profile" data-bs-toggle="dropdown"
 aria-expanded="false">
     <img className="profile-image" src="/assets/images/avtar.png" alt="User Profile Image" />

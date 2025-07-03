@@ -163,7 +163,23 @@ export default function Englishprose() {
                               </Link>
                             </p>
                           </div>
-                          <div className="vtimeline-content-btn"> <a href="https://wa.me/?text=Get%20Shayari%20on%20your%20Whatsapp" className="sendbutton">Get Prose on your Whatsapp</a> </div>
+                          <div className="vtimeline-content-btn">
+                                <a
+                                  className="sendbutton"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  href={`https://wa.me/?text=${encodeURIComponent(
+                                    `${data?.title}\n\n${data?.sher.replace(
+                                      /<[^>]+>/g,
+                                      ""
+                                    )}\n\nRead more: https://poeticatma.com/single-prose/${
+                                      data?._id
+                                    }`
+                                  )}`}
+                                >
+                                  Get Prose on WhatsApp
+                                </a>
+                              </div>
                         </div>
                       </div>
                         ))
@@ -222,7 +238,23 @@ export default function Englishprose() {
                                   </Link>
                                 </p>
                               </div>
-                              <div className="vtimeline-content-btn"> <a href="https://wa.me/?text=Get%20Shayari%20on%20your%20Whatsapp" className="sendbutton">Get Prose on your Whatsapp</a> </div>
+                              <div className="vtimeline-content-btn">
+                                <a
+                                  className="sendbutton"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  href={`https://wa.me/?text=${encodeURIComponent(
+                                    `${data?.title}\n\n${data?.sher.replace(
+                                      /<[^>]+>/g,
+                                      ""
+                                    )}\n\nRead more: https://poeticatma.com/single-prose/${
+                                      data?._id
+                                    }`
+                                  )}`}
+                                >
+                                  Get Prose on WhatsApp
+                                </a>
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -252,11 +284,21 @@ export default function Englishprose() {
                   </div>
                   <div className="blogbox categories">
                     <ul className="list-unstyled">
-                      <li><a href="#"><i className="fa-solid fa-heart"></i>Love</a></li>
-                      <li><a href="#"><i className="fa-solid fa-heart-crack"></i>Sad</a></li>
-                      <li><a href="#"><i className="fa-regular fa-face-kiss-wink-heart"></i>Romantic</a></li>
-                      <li><a href="#"><i className="fa-brands fa-canadian-maple-leaf"></i>Nature</a></li>
-                      <li><a href="#"><i className="fa-solid fa-star"></i>Occasion</a></li>
+                      <li>
+                        <Link to="/hindi-prose">
+                        <i className="fa-solid fa-heart"></i>Hindi
+                        </Link> 
+                      </li>
+                      <li>
+                        <Link to="/top20-prose" >
+                        <i className="fa-solid fa-heart"></i>Top-10 Prose
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/prose-Image">
+                        <i className="fa-solid fa-heart"></i>Prose Images
+                        </Link>
+                      </li>
                     </ul>
                   </div>
                 </div>

@@ -41,7 +41,7 @@ export default function ShayariImage(){
     const handleImageClick = (data) => {
       setSelectedImage(data);
       setShowModal(true);
-    };
+    }; 
 
     const handleCloseModal = () => {
       setShowModal(false);

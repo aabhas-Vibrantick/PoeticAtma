@@ -9,7 +9,7 @@ const path = require("path");
 var adminrouts = require("./router/adminrouter");
 var uploadExcelFileRouter = require("./router/index");
 
-//app.use(cors()); (just for now)
+// app.use(cors()); (just for now)
 // app.use(
 //   cors({
 //     origin: ["http://localhost:3000","http://89.116.32.160:3000"], //  Your frontend origin

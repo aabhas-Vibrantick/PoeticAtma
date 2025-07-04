@@ -1,18 +1,18 @@
 import axios from "axios";
 
-// const BASE_URL = "https://api.poeticatma.com/admin/";
-// export const BASE_URL_IMG = "https://api.poeticatma.com/";
+const BASE_URL = "https://api.poeticatma.com/admin/";
+export const BASE_URL_IMG = "https://api.poeticatma.com/";
 
 // Change this temporarily while developing
-const isProduction = window.location.hostname !== "localhost";
+// const isProduction = window.location.hostname !== "localhost";
 
-const BASE_URL = isProduction
-  ? "http://89.116.32.160:8000/admin/"
-  : "http://localhost:8000/admin/";
+// const BASE_URL = isProduction
+//   ? "http://89.116.32.160:8000/admin/"
+//   : "http://localhost:8000/admin/";
 
-export const BASE_URL_IMG = isProduction
-  ? "http://89.116.32.160:8000/"
-  : "http://localhost:8000/";
+// export const BASE_URL_IMG = isProduction
+//   ? "http://89.116.32.160:8000/"
+//   : "http://localhost:8000/";
 
 
 class apiServices {

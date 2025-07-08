@@ -161,11 +161,7 @@ function App() {
             <Route path="*" element={<Error />} />
           </Route>
 
-          <Route path="/admin" element={
-              <PrivateRoute>
-                <AdminMaster />
-              </PrivateRoute>
-            }>
+          <Route path="/admin" element={<AdminMaster />}>
             <Route path="/admin" element={<AdminHome />} />
             <Route path="/admin/all-message" element={<Messages />} />
             <Route path="/admin/add-user" element={<AddUser />} />

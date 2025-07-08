@@ -14,7 +14,7 @@ function AddShayariCAtegory() {
    const handleShayariForm = (e) => {
     e.preventDefault();
     let data = {
-      Category_name:sname,
+      Category_name:sname, 
 
     }
     apiServices.add_shayari_category(data).then((x) => {

@@ -115,7 +115,7 @@ adduser = (req, res) => {
         userobj.tokenExpirationTime = expirationTime;
 
         if (req.file) {
-          userobj.Image = "Customer_photo/" + req.file.filename;
+          userobj.Image = "customer_photo/" + req.file.filename;
         }
 
         userobj.save().then((userdata) => {
@@ -131,7 +131,7 @@ adduser = (req, res) => {
           customerobj.userId = userdata._id;
 
           if (req.file) {
-            customerobj.Image = "Customer_photo/" + req.file.filename;
+            customerobj.Image = "customer_photo/" + req.file.filename;
           }
 
           customerobj
@@ -202,7 +202,7 @@ register = (req, res) => {
               userobj.tokenExpirationTime = expirationTime;
 
               if (req.file) {
-                userobj.Image = "Customer_photo/" + req.file.filename;
+                userobj.Image = "customer_photo/" + req.file.filename;
               }
 
               userobj.save().then((userdata) => {
@@ -220,7 +220,7 @@ register = (req, res) => {
                 customerobj.userId = userdata._id;
 
                 if (req.file) {
-                  customerobj.Image = "Customer_photo/" + req.file.filename;
+                  customerobj.Image = "customer_photo/" + req.file.filename;
                 }
 
                 customerobj
@@ -1015,7 +1015,7 @@ const updateCustomerProfile = async (req, res) => {
     };
 
     if (req.file) {
-      updateFields.Image = "Customer_photo/" + req.file.filename;
+      updateFields.Image = "customer_photo/" + req.file.filename;
     }
 
     const updatedCustomer = await Customer.findOneAndUpdate(

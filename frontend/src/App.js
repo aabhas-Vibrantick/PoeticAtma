@@ -6,7 +6,7 @@ import HomeMaster from "./Layouts/HomeMaster";
 import Login from "./Authentication/Login";
 import Contact from "./Components/Contact";
 import Register from "./Authentication/Register";
-import PrivateRoute from "./Components/PrivateRoute";
+//import PrivateRoute from "./Components/PrivateRoute";
 import BlogCategoryList from "./Admin/pages/View/BlogCategory";
 import ProseCategoryList from "./Admin/pages/View/ProseCtegory";
 import ShayariCategoryList from "./Admin/pages/View/ShayariCategory";

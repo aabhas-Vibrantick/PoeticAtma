@@ -26,7 +26,7 @@ function addTestimonial(req, res) {
     Testimonialobj.description = req.body.description;
 
     if (req.file) {
-      Testimonialobj.Image = "Testimonial_Image/" + req.file.filename;
+      Testimonialobj.Image = "testimonial_image/" + req.file.filename;
     }
     Testimonialobj.save();
     res.json({
@@ -124,7 +124,7 @@ updateTestimonial = (req, res) => {
           Testimonialdata.UserName = req.body.UserName;
           Testimonialdata.description = req.body.description;
           if (req.file) {
-            Testimonialdata.Image = "Testimonial_Image/" + req.file.filename;
+            Testimonialdata.Image = "testimonial_image/" + req.file.filename;
           }
           Testimonialdata.save();
 

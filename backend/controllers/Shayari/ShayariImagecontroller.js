@@ -32,7 +32,7 @@ addShayariImage=(req,res)=>{
     imageobj.tags = tagsArray
 
     if (req.file) {
-        imageobj.Image = "Shayari_Image/" + req.file.filename
+        imageobj.Image = "shayari_image/" + req.file.filename
     }
     imageobj.save()
    .then((data)=>{

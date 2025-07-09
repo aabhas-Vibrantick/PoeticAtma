@@ -32,7 +32,7 @@ addSherImage=(req,res)=>{
     imageobj.tags = tagsArray
 
     if (req.file) {
-        imageobj.Image = "Sher_Image/" + req.file.filename
+        imageobj.Image = "sher_image/" + req.file.filename
     }
     imageobj.save()
    .then((data)=>{

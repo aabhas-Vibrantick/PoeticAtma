@@ -331,7 +331,7 @@ updateuser = (req, res) => {
         }
       })
       .catch((err) => {
-        res.json({
+        res.json({ 
           status: 500,
           success: false,
           message: "Error",

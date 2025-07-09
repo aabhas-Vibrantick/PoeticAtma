@@ -31,7 +31,7 @@ addProseImage = (req, res) => {
     imageobj.tags = tagsArray;
 
     if (req.file) {
-      imageobj.Image = "Prose_Image/" + req.file.filename;
+      imageobj.Image = "prose_image/" + req.file.filename;
     }
     imageobj
       .save()

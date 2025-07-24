@@ -38,13 +38,14 @@ const dashboardcontroller = require("../controllers/Dashboard");
 
 const userstorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/Customer_photo");
+    cb(null, "./public/customer_photo");
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(null, file.fieldname + "-" + uniqueSuffix + file.originalname);
   },
 });
+
 const userupload = multer({ storage: userstorage });
 
 const blogstorage = multer.diskStorage({
@@ -68,6 +69,7 @@ const sherstorage = multer.diskStorage({
     cb(null, file.fieldname + "-" + uniqueSuffix + file.originalname);
   },
 });
+
 const sherupload = multer({ storage: sherstorage });
 
 const shayaristorage = multer.diskStorage({
@@ -80,6 +82,7 @@ const shayaristorage = multer.diskStorage({
     cb(null, file.fieldname + "-" + uniqueSuffix + file.originalname);
   },
 });
+
 const shayariupload = multer({ storage: shayaristorage });
 
 const prosestorage = multer.diskStorage({
@@ -96,7 +99,7 @@ const proseupload = multer({ storage: prosestorage });
 
 const proseImagestorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/Prose_Image");
+    cb(null, "./public/prose_image");
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -104,11 +107,12 @@ const proseImagestorage = multer.diskStorage({
     cb(null, file.fieldname + "-" + uniqueSuffix + file.originalname);
   },
 });
+
 const proseImageupload = multer({ storage: proseImagestorage });
 
 const shayariImagestorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/Shayari_Image");
+    cb(null, "./public/shayari_image");
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -120,7 +124,7 @@ const shayariImageupload = multer({ storage: shayariImagestorage });
 
 const sherImagestorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/Sher_Image");
+    cb(null, "./public/sher_image");
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -132,7 +136,7 @@ const sherImageupload = multer({ storage: sherImagestorage });
 
 const bookImagestorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/Book_Image");
+    cb(null, "./public/book_image");
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -144,7 +148,7 @@ const bookImageupload = multer({ storage: bookImagestorage });
 
 const TestImagestorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/Testimonial_Image");
+    cb(null, "./public/testimonial_image");
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);

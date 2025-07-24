@@ -281,7 +281,8 @@ updateuser = (req, res) => {
       success: false,
       message: validator,
     });
-  } else {
+  }
+   else {
     User.findOne({ _id: req.body._id })
       .then((ucustomerobj) => {
         if (ucustomerobj == null) {

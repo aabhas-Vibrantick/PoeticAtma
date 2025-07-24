@@ -276,7 +276,11 @@ export default function SingleShayari() {
                       <div className="vtimeline-block">
                         <div className="vtimeline-content">
                           <div className="vtimeline-imgcontent">
-                            <img src={BASE_URL_IMG + shayari?.Image} alt="" className="img-fluid mb20" />
+                            <img src={BASE_URL_IMG + shayari?.Image} alt="" className="img-fluid mb20"
+                            onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }} />
                           </div>
                           <h6 className="catlitile">
                             <a href="#"><span className="px-2">Category:</span>{shayari?.Category_id?.Category_name} </a>
@@ -848,7 +852,11 @@ export default function SingleShayari() {
                         </div>
                         <div className="lpa-right">
                           {/* <a href="#"> */}
-                          <Link to={"/single-shayari/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="" /></Link>
+                          <Link to={"/single-shayari/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="" 
+                          onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}/></Link>
                           {/* <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt="" /> */}
                           {/* </a> */}
                         </div>

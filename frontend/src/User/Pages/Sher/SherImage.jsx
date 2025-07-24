@@ -90,6 +90,10 @@ export default function SherImage(){
                           src={BASE_URL_IMG + data?.Image}
                           className="img-fluid"
                           alt=""
+                          onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                         />
                       </div>
                     </div>
@@ -114,6 +118,10 @@ export default function SherImage(){
                       objectFit: "contain",
                       borderRadius: "8px",
                     }}
+                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                   />
                   <button
                     className="btn btn-dark mt-3"

@@ -213,6 +213,10 @@ export default function Shayari(){
                           <img
                             className="img-2"
                             src={BASE_URL_IMG + data?.Image}
+                            onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                           />
                           <p>{data?.title}</p>
                         </div>
@@ -265,6 +269,10 @@ export default function Shayari(){
                           <img
                             className="img-2"
                             src={BASE_URL_IMG + data?.Image}
+                            onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                           />
                           <p>{data?.title}</p>
                         </div>
@@ -318,6 +326,10 @@ export default function Shayari(){
                           <img
                             className="img-2"
                             src={BASE_URL_IMG + data?.Image}
+                            onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                           />
                           <p>{data?.title}</p>
                         </div>
@@ -371,6 +383,10 @@ export default function Shayari(){
                           <img
                             className="img-2"
                             src={BASE_URL_IMG + data?.Image}
+                            onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                           />
                           <p>{data?.title}</p>
                         </div>
@@ -425,6 +441,10 @@ export default function Shayari(){
                         <img
                           className="img-2"
                           src={BASE_URL_IMG + data?.Image}
+                          onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                         />
                         <p>{data?.title}</p>
                       </div>
@@ -476,6 +496,10 @@ export default function Shayari(){
                           <img
                             className="img-2"
                             src={BASE_URL_IMG + data?.Image}
+                            onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                           />
 
                           <p>{data?.title}</p>
@@ -492,6 +516,10 @@ export default function Shayari(){
                     alt="Shayari"
                     className="modal-image"
                     onClick={(e) => e.stopPropagation()}
+                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                   />
                 </div>
               )}

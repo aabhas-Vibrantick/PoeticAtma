@@ -76,6 +76,10 @@ export default function UserSherList() {
           className="img-fluid"
           style={{ height: "150px", width: "200px" }}
           alt=""
+          onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
         />
       ),width: '300px'
     },

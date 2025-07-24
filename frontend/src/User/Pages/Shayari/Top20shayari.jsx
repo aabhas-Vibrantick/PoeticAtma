@@ -118,6 +118,10 @@ export default function Top20shayari() {
                                       src={BASE_URL_IMG + data?.Image}
                                       alt=""
                                       className="img-fluid mb20"
+                                      onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                                     />
                                   </Link>
                                 </div>
@@ -219,6 +223,10 @@ export default function Top20shayari() {
                                       src={BASE_URL_IMG + data?.Image}
                                       alt=""
                                       className="img-fluid mb20"
+                                      onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                                     />
                                   </Link>
                                 </div>
@@ -458,6 +466,10 @@ export default function Top20shayari() {
                               src={BASE_URL_IMG + data?.Image}
                               alt=""
                               className=""
+                              onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                             />
                           </Link>
                           {/* <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt="" /> */}

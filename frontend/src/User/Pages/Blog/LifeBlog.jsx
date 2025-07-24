@@ -37,7 +37,10 @@ export default function LifeBlog() {
                 {byCategory.map((data, index) => (
                 <div className="col-lg-6 main-blogcard">
             <div className="homeblog-card">
-            <Link to={"/single-blog/" + `${data?._id}`}> <img src={BASE_URL_IMG + data?.Image} alt="Blog Image 1" /></Link>
+            <Link to={"/single-blog/" + `${data?._id}`}> <img src={BASE_URL_IMG + data?.Image} alt="Blog Image 1" onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}/></Link>
               <div className="homeblog-info">
         <Link to={"/single-blog/" + `${data?._id}`}>  <h2 className="text-start">{data?.title}</h2>
                 <p className="blog-content-box">{data?.description}</p>

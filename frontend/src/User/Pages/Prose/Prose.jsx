@@ -215,6 +215,10 @@ export default function Prose() {
                         <img
                           className="img-2"
                           src={BASE_URL_IMG + data?.Image}
+                          onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                         />
                         <p>{data?.title}</p>
                       </div>
@@ -267,6 +271,10 @@ export default function Prose() {
                         <img
                           className="img-2"
                           src={BASE_URL_IMG + data?.Image}
+                          onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                         />
                         <p>{data?.title}</p>
                       </div>
@@ -319,6 +327,10 @@ export default function Prose() {
                         <img
                           className="img-2"
                           src={BASE_URL_IMG + data?.Image}
+                          onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                         />
                         <p>{data?.title}</p>
                       </div>
@@ -371,6 +383,10 @@ export default function Prose() {
                         <img
                           className="img-2"
                           src={BASE_URL_IMG + data?.Image}
+                          onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                         />
                         <p>{data?.title}</p>
                       </div>
@@ -423,7 +439,10 @@ export default function Prose() {
                       onClick={() => handleOpenModal(data)}
                       style={{ cursor: "pointer" }}
                     >
-                      <img className="img-2" src={BASE_URL_IMG + data?.Image} />
+                      <img className="img-2" src={BASE_URL_IMG + data?.Image} onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }} />
                       <p>{data?.title}</p>
                     </div>
                   </SwiperSlide>
@@ -474,6 +493,10 @@ export default function Prose() {
                         <img
                           className="img-2"
                           src={BASE_URL_IMG + data?.Image}
+                          onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                         />
                         <p>{data?.title}</p>
                       </div>
@@ -489,6 +512,10 @@ export default function Prose() {
                   alt="Shayari"
                   className="modal-image"
                   onClick={(e) => e.stopPropagation()}
+                  onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                 />
               </div>
             )}

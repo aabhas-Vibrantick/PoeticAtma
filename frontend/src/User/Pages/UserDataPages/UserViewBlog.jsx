@@ -82,6 +82,10 @@ export default function UserBlogList() {
           className="img-fluid"
           style={{ height: "150px", width: "150px" }}
           alt=""
+          onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
         />
       )
     },

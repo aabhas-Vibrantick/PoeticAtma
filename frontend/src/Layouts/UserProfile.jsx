@@ -105,7 +105,10 @@ export default function UserDashboard() {
           <div className="container mt-4">
             <div className="row">
               <div className="col-md-4 text-center">
-                <img src={BASE_URL_IMG + customerData.Image} alt="Profile" className="img-fluid rounded-circle mb-3" />
+                <img src={BASE_URL_IMG + customerData.Image} alt="Profile" className="img-fluid rounded-circle mb-3" onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/avtar.png";
+                                      }}/>
                 <h4>{customerData.name}</h4>
                 <p>{customerData.bio}</p>
               </div>

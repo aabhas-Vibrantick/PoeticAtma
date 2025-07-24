@@ -261,6 +261,10 @@ export default function Singleblog() {
                       className="img-fluid"
                       title=""
                       alt=""
+                      onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                     />
                   </div>
                   <div className="article-title">
@@ -865,7 +869,10 @@ export default function Singleblog() {
                         </div>
                         <div className="lpa-right">
                           {/* <a href="#"> */}
-                          <Link to={"/single-blog/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="" /></Link>
+                          <Link to={"/single-blog/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="" onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }} /></Link>
                           {/* <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt="" /> */}
                           {/* </a> */}
                         </div>

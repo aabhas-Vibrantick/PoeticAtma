@@ -166,7 +166,10 @@ export default function Header() {
 
                     <div className="user-profile" data-bs-toggle="dropdown"
                       aria-expanded="false">
-                      <img className="profile-image" src={BASE_URL_IMG + userDetail?.Image} alt="User Profile Image" />
+                      <img className="profile-image" src={BASE_URL_IMG + userDetail?.Image} alt="User Profile Image" onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/avtar.png";
+                                      }}/>
                       <i className="fa-solid fa-caret-down dropdown-icon"></i>
                     </div>
 

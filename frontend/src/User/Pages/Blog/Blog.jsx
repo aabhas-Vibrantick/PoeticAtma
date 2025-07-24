@@ -228,7 +228,10 @@ export default function Blog() {
                       ? searchResults.map((data, index) => (
                         <div className="col-lg-6 main-blogcard">
                           <div className="homeblog-card">
-                            <Link to={"/single-blog/" + `${data?._id}`}> <img src={BASE_URL_IMG + data?.Image} alt="Blog Image 1" /></Link>
+                            <Link to={"/single-blog/" + `${data?._id}`}> <img src={BASE_URL_IMG + data?.Image} alt="Blog Image 1" onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}/></Link>
                             <div className="homeblog-info">
                               <Link to={"/single-blog/" + `${data?._id}`} > <div className="blogtitlecontent-container"> <h2 className="text-start blogtitlecontent">{data?.title}</h2></div>
                                 <div className="blogcontent-container">
@@ -256,7 +259,10 @@ export default function Blog() {
                       : allBlog.map((data, index) => (
                         <div className="col-lg-6 main-blogcard">
                           <div className="homeblog-card">
-                            <Link to={"/single-blog/" + `${data?._id}`}> <img src={BASE_URL_IMG + data?.Image} alt="Blog Image 1" /></Link>
+                            <Link to={"/single-blog/" + `${data?._id}`}> <img src={BASE_URL_IMG + data?.Image} alt="Blog Image 1" onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }} /></Link>
                             <div className="homeblog-info">
                               <Link to={"/single-blog/" + `${data?._id}`} > <div className="blogtitlecontent-container"> <h2 className="text-start blogtitlecontent">{data?.title}</h2></div>
                                 <div className="blogcontent-container">
@@ -342,7 +348,10 @@ export default function Blog() {
                         </div>
                         <div className="lpa-right">
                           {/* <a href="#"> */}
-                          <Link to={"/single-blog/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="" /></Link>
+                          <Link to={"/single-blog/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="" onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }} /></Link>
                           {/* <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt="" /> */}
                           {/* </a> */}
                         </div>

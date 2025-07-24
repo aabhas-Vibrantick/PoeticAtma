@@ -180,6 +180,10 @@ function UpdateShayari() {
                               alt="uprofile"
                               className="img-fluid"
                               style={{height:"150px"}}
+                              onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}
                             />
                   <input
                     className="form-control"

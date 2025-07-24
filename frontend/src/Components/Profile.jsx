@@ -529,7 +529,11 @@ export default function Porfile() {
                               <div className="vtimeline-block">
                                 <div className="vtimeline-content">
                                   <div className="vtimeline-imgcontent">
-                                    <Link to={"/single-shayari/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" /></Link>
+                                    <Link to={"/single-shayari/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" 
+                                    onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "/default_image.jpg";
+          }}/></Link>
                                   </div>
 
                                   <a href="#"><h3>{data?.title}</h3></a>
@@ -610,7 +614,11 @@ export default function Porfile() {
                               <div className="vtimeline-block">
                                 <div className="vtimeline-content">
                                   <div className="vtimeline-imgcontent">
-                                    <Link to={"/single-sher/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" /></Link>
+                                    <Link to={"/single-sher/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" 
+                                    onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "/default_image.jpg";
+          }}/></Link>
                                   </div>
 
                                   <a href="#"><h3>{data?.title}</h3></a>
@@ -682,7 +690,11 @@ export default function Porfile() {
                               <div className="vtimeline-block">
                                 <div className="vtimeline-content">
                                   <div className="vtimeline-imgcontent">
-                                    <Link to={"/single-prose/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" /></Link>
+                                    <Link to={"/single-prose/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }} /></Link>
                                   </div>
 
                                   <a href="#"><h3>{data?.title}</h3></a>
@@ -754,7 +766,11 @@ export default function Porfile() {
                               <div className="vtimeline-block">
                                 <div className="vtimeline-content">
                                   <div className="vtimeline-imgcontent">
-                                    <Link to={"/single-shayari/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" /></Link>
+                                    <Link to={"/single-shayari/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" 
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}/></Link>
                                   </div>
 
                                   <a href="#"><h3>{data?.title}</h3></a>
@@ -822,7 +838,10 @@ export default function Porfile() {
                               <div className="vtimeline-block">
                                 <div className="vtimeline-content">
                                   <div className="vtimeline-imgcontent">
-                                    <Link to={"/single-sher/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" /></Link>
+                                    <Link to={"/single-sher/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }} /></Link>
                                   </div>
 
                                   <a href="#"><h3>{data?.title}</h3></a>
@@ -891,7 +910,10 @@ export default function Porfile() {
                               <div className="vtimeline-block">
                                 <div className="vtimeline-content">
                                   <div className="vtimeline-imgcontent">
-                                    <Link to={"/single-prose/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" /></Link>
+                                    <Link to={"/single-prose/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}/></Link>
                                   </div>
 
                                   <a href="#"><h3>{data?.title}</h3></a>
@@ -964,7 +986,10 @@ export default function Porfile() {
                               <div className="vtimeline-block">
                                 <div className="vtimeline-content">
                                   <div className="vtimeline-imgcontent">
-                                    <Link to={"/single-shayari/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" /></Link>
+                                    <Link to={"/single-shayari/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }} /></Link>
                                   </div>
 
                                   <a href="#"><h3>{data?.title}</h3></a>
@@ -1031,7 +1056,10 @@ export default function Porfile() {
                               <div className="vtimeline-block">
                                 <div className="vtimeline-content">
                                   <div className="vtimeline-imgcontent">
-                                    <Link to={"/single-sher/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" /></Link>
+                                    <Link to={"/single-sher/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }}/></Link>
                                   </div>
 
                                   <a href="#"><h3>{data?.title}</h3></a>
@@ -1098,7 +1126,10 @@ export default function Porfile() {
                               <div className="vtimeline-block">
                                 <div className="vtimeline-content">
                                   <div className="vtimeline-imgcontent">
-                                    <Link to={"/single-prose/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" /></Link>
+                                    <Link to={"/single-prose/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }} /></Link>
                                   </div>
 
                                   <a href="#"><h3>{data?.title}</h3></a>
@@ -1171,7 +1202,10 @@ export default function Porfile() {
                               <div className="vtimeline-block">
                                 <div className="vtimeline-content">
                                   <div className="vtimeline-imgcontent">
-                                    <Link to={"/single-blog/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" /></Link>
+                                    <Link to={"/single-blog/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "/default_image.jpg";
+                                      }} /></Link>
                                   </div>
 
                                   <a href="#"><h3>{data?.title}</h3></a>

@@ -23,8 +23,8 @@ export default function UserHome() {
   const [allbook, setAllBook] = useState([]);
   const [featuredBlogs, setFeaturedBlogs] = useState([]);
   const [topSher, setTopSher] = useState([]);
-  const [topShayari, setTopShayari] = useState([])
-  const [topProse, setTopProse] = useState([])
+  const [topShayari, setTopShayari] = useState([]);
+  const [topProse, setTopProse] = useState([]);
   const authenticate = sessionStorage.getItem("authenticate");
 
   const handleReadMoreClick = () => {
@@ -60,7 +60,7 @@ export default function UserHome() {
         const sherResponse = await apiServices.getFeaturedSher();
         setTopSher(sherResponse.data.topSher);
       } catch (error) {
-        setTopSher("Server Error")
+        setTopSher("Server Error");
       }
     };
 
@@ -69,7 +69,7 @@ export default function UserHome() {
         const shayariResponse = await apiServices.getTopShayari();
         setTopShayari(shayariResponse.data.topShayari);
       } catch (error) {
-        setTopShayari("Server Error")
+        setTopShayari("Server Error");
       }
     };
 
@@ -78,7 +78,7 @@ export default function UserHome() {
         const proseResponse = await apiServices.getTopProse();
         setTopProse(proseResponse.data.topProse);
       } catch (error) {
-        setTopProse("Server Error")
+        setTopProse("Server Error");
       }
     };
 
@@ -125,8 +125,8 @@ export default function UserHome() {
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <>
@@ -189,40 +189,39 @@ export default function UserHome() {
         </section>
 
         <section>
-  <div className="CardRatingwrapNew">
-    <Marquee pauseOnHover>
-      {users
-        .filter((data) => data.userId) // ✅ only include valid, verified users
-        .map((data, index) => (
-          <div className="homeprofile-card" key={index}>
-            <div className="homeprofile-card-details">
-              <Link to={`/poets-profile/${data.userId._id}`}>
-                <img
-                  src={BASE_URL_IMG + (data.Image || "avtar.png")}
-                  className="img-fluid"
-                  alt="img..."
-                  onError={(e) => {
-                    e.target.src = "/assets/images/avtar.png";
-                  }}
-                />
-                <p className="homeprofile-text-body">
-                  {data.userId.name}
-                </p>
-              </Link>
-            </div>
+          <div className="CardRatingwrapNew">
+            <Marquee pauseOnHover>
+              {users
+                .filter((data) => data.userId) // ✅ only include valid, verified users
+                .map((data, index) => (
+                  <div className="homeprofile-card" key={index}>
+                    <div className="homeprofile-card-details">
+                      <Link to={`/poets-profile/${data.userId._id}`}>
+                        <img
+                          src={BASE_URL_IMG + (data.Image || "avtar.png")}
+                          className="img-fluid"
+                          alt="img..."
+                          onError={(e) => {
+                            e.target.src = "/assets/images/avtar.png";
+                          }}
+                        />
+                        <p className="homeprofile-text-body">
+                          {data.userId.name}
+                        </p>
+                      </Link>
+                    </div>
 
-            <Link
-              className="homeprofile-card-button"
-              to={`/poets-profile/${data.userId._id}`}
-            >
-              More info
-            </Link>
+                    <Link
+                      className="homeprofile-card-button"
+                      to={`/poets-profile/${data.userId._id}`}
+                    >
+                      More info
+                    </Link>
+                  </div>
+                ))}
+            </Marquee>
           </div>
-        ))}
-    </Marquee>
-  </div>
-</section>
-
+        </section>
 
         <section className="waviy-body">
           <div className="waviy">
@@ -232,31 +231,51 @@ export default function UserHome() {
             <hr className="headinghr" />
           </div>
         </section>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <div className="CardRatingwrapNew">
             <section>
-              <div className="row" style={{ marginLeft: "auto", marginRight: "auto" }}>
-                {Array.isArray(topSher) && topSher.map((blog) => (
-                  <div className="col" key={blog._id}>
-                    <div className="homeblog-card">
-                      <div style={{ justifyContent: "center", alignContent: "center" }}>
-                        <img src={BASE_URL_IMG + blog?.Image} alt="Blog Image" />
-                      </div>
-                      <div className="homeblog-info">
-                        <div className="blogtitlecontent-container">
-                          <h2 className="text-start blogtitlecontent">
-                            {blog?.title}
-                          </h2>
+              <div
+                className="row"
+                style={{ marginLeft: "auto", marginRight: "auto" }}
+              >
+                {Array.isArray(topSher) &&
+                  topSher.map((blog) => (
+                    <div className="col" key={blog._id}>
+                      <div className="homeblog-card">
+                        <div
+                          style={{
+                            justifyContent: "center",
+                            alignContent: "center",
+                          }}
+                        >
+                          <img
+                            src={BASE_URL_IMG + blog?.Image}
+                            alt="Blog Image"
+                            onError={(e) => {
+                              e.target.onerror = null; // Prevent infinite loop
+                              e.target.src = "/default_image.jpg";
+                            }}
+                          />
                         </div>
-                        <div className="blogcontent-container">
-                          <p className="blogcontent ">
-                            {blog?.sher}
-                          </p>
+                        <div className="homeblog-info">
+                          <div className="blogtitlecontent-container">
+                            <h2 className="text-start blogtitlecontent">
+                              {blog?.title}
+                            </h2>
+                          </div>
+                          <div className="blogcontent-container">
+                            <p className="blogcontent ">{blog?.sher}</p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </section>
           </div>
@@ -270,31 +289,51 @@ export default function UserHome() {
             <hr className="headinghr" />
           </div>
         </section>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <div className="CardRatingwrapNew">
             <section>
-              <div className="row" style={{ marginLeft: "auto", marginRight: "auto" }}>
-                {Array.isArray(topSher) && topShayari.map((blog) => (
-                  <div className="col" key={blog._id}>
-                    <div className="homeblog-card">
-                      <div style={{ justifyContent: "center", alignContent: "center" }}>
-                        <img src={BASE_URL_IMG + blog?.Image} alt="Blog Image" />
-                      </div>
-                      <div className="homeblog-info">
-                        <div className="blogtitlecontent-container">
-                          <h2 className="text-start blogtitlecontent">
-                            {blog?.title}
-                          </h2>
+              <div
+                className="row"
+                style={{ marginLeft: "auto", marginRight: "auto" }}
+              >
+                {Array.isArray(topSher) &&
+                  topShayari.map((blog) => (
+                    <div className="col" key={blog._id}>
+                      <div className="homeblog-card">
+                        <div
+                          style={{
+                            justifyContent: "center",
+                            alignContent: "center",
+                          }}
+                        >
+                          <img
+                            src={BASE_URL_IMG + blog?.Image}
+                            alt="Blog Image"
+                            onError={(e) => {
+                              e.target.onerror = null; // Prevent infinite loop
+                              e.target.src = "/default_image.jpg";
+                            }}
+                          />
                         </div>
-                        <div className="blogcontent-container">
-                          <p className="blogcontent">
-                            {blog?.shayari}
-                          </p>
+                        <div className="homeblog-info">
+                          <div className="blogtitlecontent-container">
+                            <h2 className="text-start blogtitlecontent">
+                              {blog?.title}
+                            </h2>
+                          </div>
+                          <div className="blogcontent-container">
+                            <p className="blogcontent">{blog?.shayari}</p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </section>
           </div>
@@ -308,31 +347,51 @@ export default function UserHome() {
             <hr className="headinghr" />
           </div>
         </section>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <div className="CardRatingwrapNew">
             <section>
-              <div className="row" style={{ marginLeft: "auto", marginRight: "auto" }}>
-                {Array.isArray(topProse) &&topProse.map((blog) => (
-                  <div className="col" key={blog._id}>
-                    <div className="homeblog-card">
-                      <div style={{ justifyContent: "center", alignContent: "center" }}>
-                        <img src={BASE_URL_IMG + blog?.Image} alt="Blog Image" />
-                      </div>
-                      <div className="homeblog-info">
-                        <div className="blogtitlecontent-container">
-                          <h2 className="text-start blogtitlecontent">
-                            {blog?.title}
-                          </h2>
+              <div
+                className="row"
+                style={{ marginLeft: "auto", marginRight: "auto" }}
+              >
+                {Array.isArray(topProse) &&
+                  topProse.map((blog) => (
+                    <div className="col" key={blog._id}>
+                      <div className="homeblog-card">
+                        <div
+                          style={{
+                            justifyContent: "center",
+                            alignContent: "center",
+                          }}
+                        >
+                          <img
+                            src={BASE_URL_IMG + blog?.Image}
+                            alt="Blog Image"
+                            onError={(e) => {
+                              e.target.onerror = null; // Prevent infinite loop
+                              e.target.src = "/default_image.jpg";
+                            }}
+                          />
                         </div>
-                        <div className="blogcontent-container">
-                          <p className="blogcontent ">
-                            {blog?.prose}
-                          </p>
+                        <div className="homeblog-info">
+                          <div className="blogtitlecontent-container">
+                            <h2 className="text-start blogtitlecontent">
+                              {blog?.title}
+                            </h2>
+                          </div>
+                          <div className="blogcontent-container">
+                            <p className="blogcontent ">{blog?.prose}</p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </section>
           </div>
@@ -369,7 +428,6 @@ export default function UserHome() {
           </div>
         </div>
 
-
         <section className="waviy-body">
           <div className="waviy">
             <h1>
@@ -378,15 +436,33 @@ export default function UserHome() {
             <hr className="headinghr" />
           </div>
         </section>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <div className="CardRatingwrapNew">
             <section>
               <div className="row">
                 {featuredBlogs.map((blog) => (
                   <div className="col" key={blog._id}>
                     <div className="homeblog-card">
-                      <div style={{ justifyContent: "center", alignContent: "center" }}>
-                        <img src={BASE_URL_IMG + blog?.Image} alt="Blog Image" />
+                      <div
+                        style={{
+                          justifyContent: "center",
+                          alignContent: "center",
+                        }}
+                      >
+                        <img
+                          src={BASE_URL_IMG + blog?.Image}
+                          alt="Blog Image"
+                          onError={(e) => {
+                            e.target.onerror = null; // Prevent infinite loop
+                            e.target.src = "/default_image.jpg";
+                          }}
+                        />
                       </div>
                       <div className="homeblog-info">
                         <div className="blogtitlecontent-container">
@@ -395,9 +471,7 @@ export default function UserHome() {
                           </h2>
                         </div>
                         <div className="blogcontent-container">
-                          <p className="blogcontent ">
-                            {blog?.description}
-                          </p>
+                          <p className="blogcontent ">{blog?.description}</p>
                         </div>
                       </div>
                     </div>

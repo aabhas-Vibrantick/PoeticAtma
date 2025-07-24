@@ -100,6 +100,7 @@ import About from "./Pages/About";
 import HelpDesk from "./Pages/HelpDesk";
 import PrivacyPolicy from "./Pages/PrivacyPolicy";
 import FAQs from "./Pages/FAQs";
+import TermsAndConditions from './Pages/TermsAndConditions';
 
 function App() {
   return (
@@ -116,6 +117,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/faqs" element={<FAQs />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-conditions" element={<TermsAndConditions />} />
             <Route path="/helpdesk" element={<HelpDesk />} />
 
             <Route path="/register" element={<Register />} />

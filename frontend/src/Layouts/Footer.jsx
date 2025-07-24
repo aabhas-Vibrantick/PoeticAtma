@@ -76,15 +76,20 @@ export default function Footer() {
                 <p>
                   <Link to="/privacy-policy" className="text-reset">Privacy Policy</Link>
                 </p>
+                <p>
+                  <Link to="/terms-conditions" className="text-reset">Terms & Conditions</Link>
+                </p>
               </div>
 
               <div className="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4 text-start footer-top-icons footer-bottom-link">
                 <h6 className="text-uppercase fw-bold mb-4">Contact</h6>
-                <p><i className="fas fa-home me-3 "></i> Jalandhar-144009, punjab</p>
+                <p><i className="fas fa-home me-3 "></i> Vibrantick Infotech<br/>
+                      Office No 36, Second Floor, D-185, Phase 8B, Industrial Area, Sector 74, Sahibzada Ajit Singh Nagar (Mohali), Punjab-160055 
+                </p>
                 <p>
                   <i className="fas fa-envelope me-3 "></i>
-                  <a href="mailto:poeticatma@gmail.com" style={{ color: "inherit", fontSize: "inherit" }}>
-                    poeticatma@gmail.com
+                  <a href="mailto:info@poeticatma.com" style={{ color: "inherit", fontSize: "inherit" }}>
+                     info@poeticatma.com
                   </a>
                 </p>
                 <p>
@@ -100,7 +105,7 @@ export default function Footer() {
         </section>
 
         <div className="text-center footer-text p-4 foote-bg2" >
-          © Copyright {new Date().getFullYear()} &nbsp;
+          © 2020-{new Date().getFullYear()} &nbsp;
           <a className="footer-text fw-bold" href="/">
             Poetic Atma
             <span className="px-2 fw-normal">

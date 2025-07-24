@@ -188,7 +188,7 @@ export default function UserHome() {
           </div>
         </section>
 
-        <section>
+        {/* <section>
           <div className="CardRatingwrapNew">
             <Marquee pauseOnHover>
               {users
@@ -221,8 +221,44 @@ export default function UserHome() {
                 ))}
             </Marquee>
           </div>
-        </section>
+        </section> */}
+        <section>
+          <div className="container">
+            <div className="CardRatingwrapNew">
+              <Marquee pauseOnHover speed={90}>
+                {users
+                  .filter((data) => data.userId) // ✅ only include valid, verified users
+                  .map((data, index) => (
+                    <div className="homeprofile-card" key={index}>
+                      <div className="homeprofile-card-details">
+                        <Link to={`/poets-profile/${data.userId._id}`}>
+                          <img
+                            src={BASE_URL_IMG + (data.Image || "avtar.png")}
+                            className="img-fluid"
+                            alt="img..."
+                            onError={(e) => {
+                              e.target.src = "/assets/images/avtar.png";
+                            }}
+                          />
+                          <p className="homeprofile-text-body">
+                            {data.userId.name}
+                          </p>
+                        </Link>
+                      </div>
 
+                      <Link
+                        className="homeprofile-card-button"
+                        to={`/poets-profile/${data.userId._id}`}
+                      >
+                        More info
+                      </Link>
+                    </div>
+                  ))}
+              </Marquee>
+            </div>
+          </div>
+        </section>
+        
         <section className="waviy-body">
           <div className="waviy">
             <h1>

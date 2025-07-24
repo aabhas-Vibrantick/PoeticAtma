@@ -46,8 +46,8 @@ function sendVerifyMail({ name, email, token, expirationTime }) {
     port: 465,
     secure: true,
     auth: {
-      user: "mailerbot@vibrantick.in",
-      pass: "7F2gaC>7jU",
+      user: "info@poeticatma.com",
+      pass: "Y^o~^3CyI7]j",
     },
   });
 

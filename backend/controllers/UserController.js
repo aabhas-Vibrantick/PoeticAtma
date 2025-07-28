@@ -54,7 +54,7 @@ function sendVerifyMail({ name, email, token, expirationTime }) {
   const verifyLink = `http://localhost:3000/verify/${token}`; //chang localhost to IP addr
 
   const mailOptions = {
-    from: '"Poetic Atma" <mailerbot@vibrantick.in>',
+    from: '"Poetic Atma" <info@poeticatma.com>',
     to: email,
     subject: "Email Verification Link - Poetic Atma",
     html: `
@@ -98,8 +98,6 @@ adduser = (req, res) => {
       message: validator,
     });
   } else {
-
-    
     // Duplicacy
     User.findOne({ email: req.body.email }).then((udata) => {
       if (udata == null) {
@@ -145,6 +143,7 @@ adduser = (req, res) => {
                 expirationTime: user.tokenExpirationTime,
               });
               res.status(200).json({
+                success: true,
                 message: "User registered, verification email sent.",
                 data: customerobj,
               });
@@ -281,8 +280,7 @@ updateuser = (req, res) => {
       success: false,
       message: validator,
     });
-  }
-   else {
+  } else {
     User.findOne({ _id: req.body._id })
       .then((ucustomerobj) => {
         if (ucustomerobj == null) {
@@ -332,7 +330,7 @@ updateuser = (req, res) => {
         }
       })
       .catch((err) => {
-        res.json({ 
+        res.json({
           status: 500,
           success: false,
           message: "Error",
@@ -702,8 +700,6 @@ getTop10Customers = (req, res) => {
     });
 };
 
-
-
 getsinglecustomer = (req, res) => {
   Customer.findOne({ userId: req.body.userId })
     .populate("userId")
@@ -815,13 +811,13 @@ forgotPassword = async (req, res) => {
                 host: "smtp.hostinger.com",
                 port: 465,
                 auth: {
-                  user: "mailerbot@vibrantick.in",
-                  pass: "7F2gaC>7jU",
+                  user: "info@poeticatma.com",
+                  pass: "Y^o~^3CyI7]j",
                 },
               });
 
               const mailOptions = {
-                from: '"Poetic Atma" <mailerbot@vibrantick.in>',
+                from: '"Poetic Atma" <info@poeticatma.com>',
                 to: email,
                 subject: "Forget Password Verification Code",
                 html: `
@@ -878,21 +874,18 @@ resetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword, recaptchaValue } = req.body;
 
-    
     axios({
       url: `https://www.google.com/recaptcha/api/siteverify?secret=${SECRETKEY}&response=${recaptchaValue}`,
       method: "post",
     })
       .then((recaptchaResponse) => {
         if (recaptchaResponse.data.success) {
-          
           User.findOne({ email })
             .then(async (user) => {
               if (!user) {
                 return res.status(404).json({ message: "User not found" });
               }
 
-              
               if (
                 user.otp !== otp ||
                 new Date() > new Date(user.otpExpiration)
@@ -902,15 +895,12 @@ resetPassword = async (req, res) => {
                   .json({ message: "Invalid or expired OTP" });
               }
 
-              
               const hashedPassword = bcrypt.hashSync(newPassword, 10);
               user.password = hashedPassword;
 
-              
               user.otp = null;
               user.otpExpiration = null;
 
-              
               const futureDate = new Date();
               futureDate.setHours(futureDate.getHours() + 72);
               user.passwordResetTime = futureDate;
@@ -943,7 +933,6 @@ resetPassword = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 verifyEmail = async (req, res) => {
   const verificationToken = req.body.token;
@@ -1004,7 +993,9 @@ const updateCustomerProfile = async (req, res) => {
     const { userId, address, facebook, instagram, linkdin, twiter } = req.body;
 
     if (!userId) {
-      return res.status(400).json({ success: false, message: "userId is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "userId is required" });
     }
 
     const updateFields = {
@@ -1025,13 +1016,24 @@ const updateCustomerProfile = async (req, res) => {
       { new: true }
     );
 
-    res.status(200).json({ success: true, message: "Profile updated", data: updatedCustomer });
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Profile updated",
+        data: updatedCustomer,
+      });
   } catch (err) {
     console.error("Update Profile Error:", err);
-    res.status(500).json({ success: false, message: "Failed to update profile", error: err.message });
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Failed to update profile",
+        error: err.message,
+      });
   }
 };
-
 
 module.exports = {
   register,

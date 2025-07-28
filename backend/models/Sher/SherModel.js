@@ -13,6 +13,7 @@ const sherschema = new mongoose.Schema({
   },
   tags: [{ type: String }],
   status: { type: Boolean, default: true},
+  isApproved: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now() },
 });
 

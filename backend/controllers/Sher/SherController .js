@@ -1,60 +1,62 @@
 const Sher = require("../../models/Sher/SherModel");
 
 function addsher(req, res) {
-  var validation = "";
+  let validation = "";
 
-  if (req.body.title == "") {
+  if (!req.body.title) {
     validation += "title name is required ";
   }
-  if (req.body.Category_id == "") {
-    validation += "Category_id  is required ";
+  if (!req.body.Category_id) {
+    validation += "Category_id is required ";
   }
-  if (req.body.sher == "") {
-    validation += "sher  is required ";
+  if (!req.body.sher) {
+    validation += "sher is required ";
   }
-  if (req.body.language == "") {
-    validation += "language  is required ";
+  if (!req.body.language) {
+    validation += "language is required ";
   }
-  if (req.body.tags == "") {
-    validation += "tags  is required ";
+  if (!req.body.tag) {
+    validation += "tags are required ";
   }
-
-  if (req.body.tags == "") {
-    validation += "upload image";
+  if (!req.file) {
+    validation += "upload image is required ";
   }
 
   if (!!validation) {
-    res.json({
+    return res.json({
       status: 409,
       success: false,
       message: validation,
     });
-  } else {
-    let sherobj = new Sher();
-
-    sherobj.title = req.body.title;
-    sherobj.sher = req.body.sher;
-    sherobj.language = req.body.language;
-    sherobj.Category_id = req.body.Category_id;
-
-    const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
-    sherobj.tags = tagsArray;
-    sherobj.userId = req.decoded;
-
-    if (req.file) {
-      sherobj.Image = "sher_photo/" + req.file.filename;
-    }
-
-    sherobj.save();
-
-    res.json({
-      status: 200,
-      success: true,
-      message: "Sher Inserted",
-      data: req.body,
-    });
   }
+
+  const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
+
+  let sherobj = new Sher();
+  sherobj.title = req.body.title;
+  sherobj.sher = req.body.sher;
+  sherobj.language = req.body.language;
+  sherobj.Category_id = req.body.Category_id;
+  sherobj.tags = tagsArray;
+  sherobj.userId = req.decoded;
+  sherobj.Image = "sher_photo/" + req.file.filename;
+
+  // Auto approve if usertype is 1 (admin)
+  const isAdmin = req.decoded && req.decoded.usertype === 1;
+  sherobj.isApproved = isAdmin ? true : false;
+
+  sherobj.save();
+
+  return res.json({
+    status: 200,
+    success: true,
+    message: isAdmin
+      ? "Sher published successfully."
+      : "Sher submitted for admin approval.",
+    data: req.body,
+  });
 }
+
 
 // --------get all sher start-----------
 
@@ -117,6 +119,67 @@ getsinglesher = (req, res) => {
       });
   }
 };
+
+// --------Approve sher-----------
+// ----------------------------------------------------------
+approvesher = (req, res) => {
+  let validation = "";
+  if (!req.body._id) {
+    validation += "ID is required ";
+  }
+
+  if (!!validation) {
+    res.json({
+      status: 409,
+      success: false,
+      message: validation,
+    });
+  } else {
+    Sher.findOne({ _id: req.body._id })
+      .then((sherdata) => {
+        if (!sherdata) {
+          res.json({
+            status: 409,
+            success: false,
+            message: "Sher not found",
+          });
+        } else {
+          // Approve the sher
+          sherdata.isApproved = true;
+          sherdata.approvedBy = req.decoded?._id || "Unknown";
+
+          sherdata
+            .save()
+            .then(() => {
+              res.json({
+                status: 200,
+                success: true,
+                message: "Sher approved successfully",
+              });
+            })
+            .catch((err) => {
+              res.json({
+                status: 500,
+                success: false,
+                message: "Error while saving approval",
+                error: String(err),
+              });
+            });
+        }
+      })
+      .catch((err) => {
+        res.json({
+          status: 500,
+          success: false,
+          message: "Error",
+          error: String(err),
+        });
+      });
+  }
+};
+
+
+// ----------------------------------------------------------
 
 // --------update sher-----------
 // ----------------------------------------------------------
@@ -253,7 +316,7 @@ deletesher = (req, res) => {
 getFeaturedSher = async (req, res) => {
   Sher.find()
     .sort({ likes: -1 }) // Sort by likes in descending order
-    .limit(3) // Get the top 3 popular shayari
+    .limit(10) // Get the top 3 popular shayari
     .populate("Category_id")
     .populate("userId")
     .exec()
@@ -606,6 +669,7 @@ module.exports = {
   addsher,
   getallsher,
   getsinglesher,
+  approvesher,
   updatesher,
   deletesher,
   getPopularSher,

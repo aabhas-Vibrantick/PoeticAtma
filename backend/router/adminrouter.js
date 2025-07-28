@@ -35,6 +35,7 @@ const ordercontroller = require("../controllers/Ordercontroller");
 const bookcontroller = require("../controllers/BookController");
 const testcontroller = require("../controllers/TestimonialController");
 const dashboardcontroller = require("../controllers/Dashboard");
+const QuoteController = require("../controllers/Quotecontroller");
 
 const userstorage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -289,6 +290,7 @@ router.post("/getsingleBook", bookcontroller.getsingleBook);
 router.post("/getBlogsByCategory", blogController.getBlogsByCategory);
 router.post("/getallblogbyUserId", blogController.getallblogbyUserId);
 router.post("/latestBlog", blogController.latestBlog);
+router.get("/get-latest-quote",QuoteController.getLatestQuote);
 
 // ===sher without login========
 router.post("/usersherDash", sherController.usersherDash);
@@ -429,6 +431,13 @@ router.post(
 );
 // ---------shayari Category---------
 
+router.post("/add-quote", QuoteController.addQuote);
+router.get("/view-quote", QuoteController.getAllQuotes);
+router.delete("/delete-quote/:id", QuoteController.deleteQuote);
+router.get("/get-quote/:id", QuoteController.getQuoteById);
+router.post("/update-quote", QuoteController.updateQuote);
+
+
 // ---------prose Category---------
 router.post("/add_prose_category", prosecategorycontroller.add_prose_category);
 router.post(
@@ -473,6 +482,7 @@ router.post("/deletesher", sherController.deletesher);
 router.post("/getAllsherTags", sherController.getAllsherTags);
 router.post("/getTrendingsherTags", sherController.getTrendingsherTags);
 router.post("/updateSherStatus", sherController.updateSherStatus);
+router.post("/approvesher", sherController.approvesher)
 router.post(
   "/updatesher",
   sherupload.single("Image"),
@@ -509,6 +519,8 @@ router.post(
   shayariController.getenglishShayariByUserId
 );
 router.post("/updateShayariStatus", shayariController.updateShayariStatus);
+router.post("/approveShayari", shayariController.approveShayari);
+
 router.post(
   "/updateshayari",
   shayariupload.single("Image"),
@@ -539,6 +551,7 @@ router.post(
   proseController.getenglishProseByUserId
 );
 router.post("/updateProseStatus", proseController.updateProseStatus);
+router.post("/approveProse", proseController.approveProse);
 router.post(
   "/updateprose",
   proseupload.single("Image"),

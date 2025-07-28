@@ -1,58 +1,58 @@
 const Prose = require("../../models/Prose/ProseModel");
 
-function addprose(req, res) {
-  var validation = "";
+async function addprose(req, res) {
+  let validation = "";
 
-  if (req.body.title == "") {
-    validation += "title name is required ";
-  }
-  if (req.body.Category_id == "") {
-    validation += "Category_id  is required ";
-  }
-  if (req.body.prose == "") {
-    validation += "prose  is required ";
-  }
-  if (req.body.language == "") {
-    validation += "language  is required ";
-  }
-  if (req.body.tags == "") {
-    validation += "tags  is required ";
-  }
-  if (req.body.userId == "") {
-    validation += "userId  is required ";
-  }
-
-  if (req.body.Image == "") {
-    validation += "upload image";
-  }
+  if (!req.body.title) validation += "title name is required ";
+  if (!req.body.Category_id) validation += "Category_id is required ";
+  if (!req.body.prose) validation += "prose is required ";
+  if (!req.body.language) validation += "language is required ";
+  if (!req.body.tag) validation += "tags are required ";
+  if (!req.file) validation += "upload image is required ";
 
   if (!!validation) {
-    res.json({
+    return res.json({
       status: 409,
       success: false,
       message: validation,
     });
-  } else {
-    let proseobj = new Prose();
-    proseobj.title = req.body.title;
-    proseobj.prose = req.body.prose;
-    proseobj.language = req.body.language;
-    proseobj.Category_id = req.body.Category_id;
-    proseobj.userId = req.decoded;
+  }
+
+  try {
     const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
-    proseobj.tags = tagsArray;
-    if (req.file) {
-      proseobj.Image = "prose_photo/" + req.file.filename;
-    }
-    proseobj.save();
-    res.json({
+
+    const proseObj = new Prose();
+    proseObj.title = req.body.title;
+    proseObj.prose = req.body.prose;
+    proseObj.language = req.body.language;
+    proseObj.Category_id = req.body.Category_id;
+    proseObj.tags = tagsArray;
+    proseObj.userId = req.decoded;
+    proseObj.Image = "prose_photo/" + req.file.filename;
+
+    const isAdmin = req.decoded && req.decoded.usertype === 1;
+    proseObj.isApproved = isAdmin ? true : false;
+
+    await proseObj.save();
+
+    return res.json({
       status: 200,
       success: true,
-      message: "prose inserted",
+      message: isAdmin
+        ? "Prose published successfully."
+        : "Prose submitted for admin approval.",
       data: req.body,
+    });
+  } catch (error) {
+    return res.json({
+      status: 500,
+      success: false,
+      message: "Server error while saving prose",
+      error: String(error),
     });
   }
 }
+
 
 // --------get all prose start-----------
 
@@ -115,6 +115,45 @@ getsingleprose = (req, res) => {
       });
   }
 };
+
+approveProse = async (req, res) => {
+  try {
+    const { _id } = req.body;
+
+    if (!_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Prose ID is required",
+      });
+    }
+
+    const proseData = await Prose.findById(_id);
+    if (!proseData) {
+      return res.status(404).json({
+        success: false,
+        message: "Prose not found",
+      });
+    }
+
+    proseData.isApproved = true; // or `approved = true` depending on your schema
+    proseData.approvedBy = req.decoded?._id || "Unknown"; // optional
+
+    await proseData.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Prose approved successfully",
+    });
+  } catch (error) {
+    console.error("Error approving prose:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.toString(),
+    });
+  }
+};
+
 
 // --------update prose-----------
 // ----------------------------------------------------------
@@ -237,7 +276,7 @@ deleteprose = (req, res) => {
 getFeaturedProse = (req, res) => {
   Prose.find()
     .sort({ likes: -1 }) // Sort by likes in descending order
-    .limit(3) // Get the top 20 popular shayari
+    .limit(10) // Get the top 20 popular shayari
     .populate("Category_id")
     .populate("userId")
     .exec()
@@ -587,6 +626,7 @@ userproseDash = async (req, res) => {
 };
 module.exports = {
   addprose,
+  approveProse,
   getallprose,
   getsingleprose,
   updateprose,

@@ -8,6 +8,7 @@ const proseschema=new mongoose.Schema({
   Category_id:{type:mongoose.SchemaTypes.ObjectId,ref:'prose_Category',default:null},
   tags: [{ type: String }],
   status:{type:Boolean,default:true},
+  isApproved: { type: Boolean, default: false },
   created_at:{type:Date,default:Date.now()},
 })
 

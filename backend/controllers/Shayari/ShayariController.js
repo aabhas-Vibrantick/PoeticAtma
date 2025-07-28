@@ -2,67 +2,117 @@ const Shayari = require("../../models/Shayari/ShayariModel.js");
 
 // -------Check Validation and add shayari -------
 
-function addshayari(req, res) {
-  var validation = "";
+async function addshayari(req, res) {
+  let validation = "";
 
-  if (req.body.title == "") {
-    validation += "title name is required ";
-  }
-  if (req.body.Category_id == "") {
-    validation += "Category_id is required ";
-  }
-  if (req.body.shayari == "") {
-    validation += "shayari is required ";
-  }
-
-  if (req.body.Image == "") {
-    validation += "upload image";
-  }
-  if (req.body.tag == "") {
-    validation += "tag is required";
-  }
+  if (!req.body.title) validation += "title name is required ";
+  if (!req.body.Category_id) validation += "Category_id is required ";
+  if (!req.body.shayari) validation += "shayari is required ";
+  if (!req.body.language) validation += "language is required ";
+  if (!req.body.tag) validation += "tags are required ";
+  if (!req.file) validation += "upload image is required ";
 
   if (!!validation) {
-    res.json({
+    return res.json({
       status: 409,
       success: false,
       message: validation,
     });
-  } else {
-    let shayariobj = new Shayari();
-    shayariobj.title = req.body.title;
-    shayariobj.shayari = req.body.shayari;
-    shayariobj.Category_id = req.body.Category_id;
-    shayariobj.language = req.body.language;
-    // Handling the tag field
+  }
+
+  try {
     const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
-    shayariobj.tags = tagsArray;
 
-    shayariobj.userId = req.decoded;
+    const shayariObj = new Shayari();
+    shayariObj.title = req.body.title;
+    shayariObj.shayari = req.body.shayari;
+    shayariObj.language = req.body.language;
+    shayariObj.Category_id = req.body.Category_id;
+    shayariObj.tags = tagsArray;
+    shayariObj.userId = req.decoded;
+    shayariObj.Image = "shayari_photo/" + req.file.filename;
 
-    if (req.file) {
-      shayariobj.Image = "shayari_photo/" + req.file.filename;
-    }
-    shayariobj
-      .save()
-      .then(() => {
-        res.json({
-          status: 200,
-          success: true,
-          message: "shayari inserted",
-          data: req.body,
-        });
-      })
-      .catch((err) => {
-        res.json({
-          status: 500,
-          success: false,
-          message: "Error Occurred",
-          error: String(err),
-        });
-      });
+    const isAdmin = req.decoded && req.decoded.usertype === 1;
+    shayariObj.isApproved = isAdmin ? true : false;
+
+    await shayariObj.save();
+
+    return res.json({
+      status: 200,
+      success: true,
+      message: isAdmin
+        ? "Shayari published successfully."
+        : "Shayari submitted for admin approval.",
+      data: req.body,
+    });
+  } catch (error) {
+    return res.json({
+      status: 500,
+      success: false,
+      message: "Server error while saving shayari",
+      error: String(error),
+    });
   }
 }
+
+
+// Controller for approving shayari
+approveShayari = (req, res) => {
+  let validation = "";
+
+  if (!req.body._id) {
+    validation += "ID is required ";
+  }
+
+  if (!!validation) {
+    return res.json({
+      status: 409,
+      success: false,
+      message: validation.trim(),
+    });
+  }
+
+  Shayari.findOne({ _id: req.body._id })
+    .then((shayariData) => {
+      if (!shayariData) {
+        return res.json({
+          status: 409,
+          success: false,
+          message: "Shayari not found",
+        });
+      }
+
+      shayariData.isApproved = true;
+      shayariData.approvedBy = req.decoded?._id || "Unknown";
+
+      shayariData
+        .save()
+        .then(() => {
+          return res.json({
+            status: 200,
+            success: true,
+            message: "Shayari approved successfully",
+          });
+        })
+        .catch((err) => {
+          return res.json({
+            status: 500,
+            success: false,
+            message: "Error while saving approval",
+            error: String(err),
+          });
+        });
+    })
+    .catch((err) => {
+      return res.json({
+        status: 500,
+        success: false,
+        message: "Database error",
+        error: String(err),
+      });
+    });
+};
+
 
 // --------get all shayari start-----------
 
@@ -313,7 +363,7 @@ getRandomShayari = (req, res) => {
 getFeaturedShayari = (req, res) => {
   Shayari.find()
     .sort({ likes: -1 }) // Sort by likes in descending order
-    .limit(3) // Get the top 20 popular shayari
+    .limit(10) // Get the top 20 popular shayari
     .populate("Category_id")
     .populate("userId")
     .exec()
@@ -669,6 +719,7 @@ usershayariDash = async (req, res) => {
 
 module.exports = {
   addshayari,
+  approveShayari,
   getallshayari,
   getsingleshayari,
   updateshayari,

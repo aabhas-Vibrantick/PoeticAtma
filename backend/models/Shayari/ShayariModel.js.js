@@ -13,6 +13,7 @@ const shayarischema = new mongoose.Schema({
   },
   status: { type: Boolean, default: true },
   tags: [{ type: String }],
+  isApproved: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now() },
 });
 

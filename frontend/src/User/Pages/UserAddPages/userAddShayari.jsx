@@ -3,17 +3,19 @@ import apiServices from "../../../ApiServices/ApiServices";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import JoditEditor from 'jodit-react';
+import JoditEditor from "jodit-react";
+
 function UserAddShayari() {
   const nav = useNavigate();
   const editor = useRef(null);
   const [title, setTitle] = useState("");
   const [shayari, setShayari] = useState("");
-  const [image, setImage] = useState(null); // Changed "Image" to "image"
+  const [image, setImage] = useState(null);
   const [allCategory, setAllCategory] = useState([]);
   const [categoryId, setCategoryId] = useState("");
   const [tag, setTag] = useState("");
   const [language, setLanguage] = useState("");
+
   useEffect(() => {
     apiServices.getall_shayari_category().then((data) => {
       if (data.data.success) {
@@ -22,7 +24,7 @@ function UserAddShayari() {
     });
   }, []);
 
-  const handleshayariData = async (e) => {
+  const handleShayariData = async (e) => {
     e.preventDefault();
 
     if (!title || !shayari || !categoryId || !image || !tag || !language) {
@@ -42,124 +44,117 @@ function UserAddShayari() {
       const response = await apiServices.addshayari(formData);
       if (response.data.success) {
         toast.success(response.data.message);
-        setTimeout(() => {
-          nav("/user-profile");
-        }, 3000);
+        setTimeout(() => nav("/user-profile"), 3000);
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      // console.error(error);
       toast.error("Something went wrong");
     }
   };
 
   return (
     <>
-      <main className="">
+      <main className="bg-light py-5">
         <div className="container">
-          <div className="row">
-            <div className="col-2"></div>
-            <div className="col">
-              <h2>Publish Shayari</h2>
-              <form className="mt-5" onSubmit={handleshayariData}>
-                {/* Title input */}
-                <div className="form-outline mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Title </label>
-                  <input
-                    type="text"
-                    id="form6Example3"
-                    className="form-control"
-                    placeholder="Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                </div>
+          <div className="row justify-content-center">
+            <div className="col-lg-10">
+              <div className="card shadow-lg border-0">
+                <div className="card-body p-5">
+                  <h3 className="mb-4 text-center text-primary">Publish Shayari</h3>
+                  <form onSubmit={handleShayariData}>
 
-                {/* Category input */}
-                <div className="form-group fs-5 mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Category </label>
-                  <select
-                    className="form-select mb-2"
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    aria-label=".form-select-lg example"
-                  >
-                    <option value="">Select Category</option>
-                    {allCategory.map((data, index) => (
-                      <option key={index} value={data._id}>
-                        {data.Category_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                    {/* Title */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">Title <span className="text-danger">*</span></label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                      />
+                    </div>
 
-                {/* shayari input */}
-                <div className="form-outline mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Shayari </label>
-                  {/* <textarea
-                    className="form-control"
-                    id="form6Example7"
-                    rows="4"
-                    placeholder="shayari"
-                    value={shayari}
-                    onChange={(e) => setShayari(e.target.value)}
-                  ></textarea> */}
-                  <JoditEditor
-                    ref={editor}
-                    className="text-dark"
-                    value={shayari}
-                    onChange={newContent => setShayari(newContent)}
-                  />
-                </div>
-                {/* Tag input */}
-                <div className="form-outline mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Tag </label>
-                  <input
-                    type="text"
-                    id="form6Example3"
-                    className="form-control"
-                    placeholder="#tag"
-                    value={tag}
-                    onChange={(e) => setTag(e.target.value)}
-                  />
-                </div>
-                {/* shayari language */}
-                <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Language</label>
-                  <select className="form-select" aria-label="Default select example" value={language}
-                    onChange={(e) => setLanguage(e.target.value)}>
-                    <option selected>Select Language</option>
-                    <option value="hindi">Hindi</option>
-                    <option value="English">English</option>
-                  </select>
-                </div>
-                {/* shayari image */}
-                <div className="mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Upload Image </label>
-                  <input
-                    className="form-control"
-                    type="file"
-                    id="formFile"
-                    accept="image/*"
-                    onChange={(e) => setImage(e.target.files[0])}
-                  />
-                </div>
+                    {/* Category */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">Category <span className="text-danger">*</span></label>
+                      <select
+                        className="form-select"
+                        value={categoryId}
+                        onChange={(e) => setCategoryId(e.target.value)}
+                      >
+                        <option value="">-- Select Category --</option>
+                        {allCategory.map((cat, index) => (
+                          <option key={index} value={cat._id}>
+                            {cat.Category_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                {/* Submit button */}
-                <button
-                  type="submit"
-                  className="btn btn-primary-1 btn-block mb-4"
-                >
-                  Post
-                </button>
-              </form>
+                    {/* Shayari */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">Shayari <span className="text-danger">*</span></label>
+                      <JoditEditor
+                        ref={editor}
+                        value={shayari}
+                        onChange={(newContent) => setShayari(newContent)}
+                      />
+                    </div>
+
+                    {/* Tag */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">Tags <span className="text-danger">*</span></label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="#love #life"
+                        value={tag}
+                        onChange={(e) => setTag(e.target.value)}
+                      />
+                    </div>
+
+                    {/* Language */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">Language <span className="text-danger">*</span></label>
+                      <select
+                        className="form-select"
+                        value={language}
+                        onChange={(e) => setLanguage(e.target.value)}
+                      >
+                        <option value="">-- Select Language --</option>
+                        <option value="Hindi">Hindi</option>
+                        <option value="English">English</option>
+                      </select>
+                    </div>
+
+                    {/* Image Upload */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">Cover Image <span className="text-danger">*</span></label>
+                      <input
+                        className="form-control"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setImage(e.target.files[0])}
+                      />
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="text-center">
+                      <button type="submit" className="btn btn-primary px-4">
+                        Publish Shayari
+                      </button>
+                    </div>
+
+                  </form>
+                </div>
+              </div>
             </div>
-            <div className="col-2"></div>
           </div>
         </div>
+        <ToastContainer position="top-center" />
       </main>
-      <ToastContainer />
     </>
   );
 }

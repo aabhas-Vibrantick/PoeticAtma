@@ -1,15 +1,16 @@
-import React from 'react'
+import React from "react";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import apiServices from "../../../ApiServices/ApiServices";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 function AddUser() {
   const nav = useNavigate();
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [contact, setContact] = useState()
+  const [contact, setContact] = useState();
+  const [penname, setPenname] = useState();
 
   const handleForm = (e) => {
     // setLoading(true)
@@ -18,11 +19,13 @@ function AddUser() {
     let data = new FormData();
 
     data.append("name", name);
+    data.append("penname", penname);
     data.append("email", email);
     data.append("password", password);
-    data.append("contact", contact)
+    data.append("contact", contact);
 
-    apiServices.adduser(data)
+    apiServices
+      .adduser(data)
       .then((x) => {
         if (x.data.success) {
           toast.success(x.data.message);
@@ -38,7 +41,6 @@ function AddUser() {
       });
   };
 
-
   const handleKeyPress = (event) => {
     const charCode = event.which || event.keyCode;
     // Allow letters, numbers, and underscore
@@ -53,7 +55,7 @@ function AddUser() {
     }
     event.preventDefault(); // Prevent the key press
   };
-  
+
   return (
     <>
       <main className="main-container adminbody">
@@ -61,51 +63,109 @@ function AddUser() {
           <div className="row justify-content-center">
             <div className="col-lg-8">
               <div className="card bg-light">
-                <div className="card-body mx-5 mp-5 " >
+                <div className="card-body mx-5 mp-5 ">
                   <h4 className="card-title mt-3 text-center">Add User</h4>
                   <form onSubmit={handleForm}>
                     <div className="form-group input-group addusermarg">
                       <div className="input-group-prepend">
-                        <span className="input-group-text"> <i className="fa fa-user"></i> </span>
+                        <span className="input-group-text">
+                          {" "}
+                          <i className="fa fa-user"></i>{" "}
+                        </span>
                       </div>
-                      <input name="" className="form-control" placeholder="Full name" type="text" value={name}
+                      <input
+                        name=""
+                        className="form-control"
+                        placeholder="Full Name"
+                        type="text"
+                        value={name}
                         onChange={(e) => setName(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        required />
+                        required
+                      />
                     </div>
-                    {/* <!-- form-group// --> */}
                     <div className="form-group input-group addusermarg">
                       <div className="input-group-prepend">
-                        <span className="input-group-text"> <i className="fa fa-envelope"></i> </span>
+                        <span className="input-group-text">
+                          {" "}
+                          <i className="fa fa-user-pen"></i>{" "}
+                        </span>
                       </div>
-                      <input name="" className="form-control" placeholder="Email address" type="email" value={email}
+                      <input
+                        className="form-control"
+                        placeholder="Pen Name"
+                        type="text"
+                        value={penname}
+                        onChange={(e) => setPenname(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        required
+                      />
+                    </div>
+
+                    {/* <!-- form-group// --> */}
+                    <div className="form-group input-group addusermarg">
+                      <div className="input-group-prepend">
+                        <span className="input-group-text">
+                          {" "}
+                          <i className="fa fa-envelope"></i>{" "}
+                        </span>
+                      </div>
+                      <input
+                        name=""
+                        className="form-control"
+                        placeholder="Email address"
+                        type="email"
+                        value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        required />
+                        required
+                      />
                     </div>
                     {/* <!-- form-group// --> */}
                     <div className="form-group input-group addusermarg">
                       <div className="input-group-prepend">
-                        <span className="input-group-text"> <i className="fa fa-phone"></i> </span>
+                        <span className="input-group-text">
+                          {" "}
+                          <i className="fa fa-phone"></i>{" "}
+                        </span>
                       </div>
 
-                      <input name="" className="form-control" placeholder="Phone number" type="text" value={contact}
+                      <input
+                        name=""
+                        className="form-control"
+                        placeholder="Phone number"
+                        type="text"
+                        value={contact}
                         onChange={(e) => setContact(e.target.value)}
-                        required />
+                        required
+                      />
                     </div>
                     {/* <!-- form-group end.// --> */}
                     <div className="form-group input-group addusermarg">
                       <div className="input-group-prepend">
-                        <span className="input-group-text"> <i className="fa fa-lock"></i> </span>
+                        <span className="input-group-text">
+                          {" "}
+                          <i className="fa fa-lock"></i>{" "}
+                        </span>
                       </div>
-                      <input className="form-control" placeholder="Create password" type="password" value={password}
+                      <input
+                        className="form-control"
+                        placeholder="Create password"
+                        type="password"
+                        value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        required />
+                        required
+                      />
                     </div>
-
 
                     {/* <!-- form-group// -->                                       */}
                     <div className="form-group">
-                      <button type="submit" className="btn btn-primary-1 btn-block"> Create Account  </button>
+                      <button
+                        type="submit"
+                        className="btn btn-primary-1 btn-block"
+                      >
+                        {" "}
+                        Create Account{" "}
+                      </button>
                     </div>
                     {/* <!-- form-group// -->       */}
                   </form>
@@ -115,12 +175,11 @@ function AddUser() {
           </div>
 
           {/* <!-- card.// --> */}
-
         </div>
       </main>
       <ToastContainer />
     </>
-  )
+  );
 }
 
-export default AddUser
+export default AddUser;

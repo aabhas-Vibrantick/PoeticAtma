@@ -1,20 +1,22 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import apiServices from "../../../ApiServices/ApiServices";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import JoditEditor from 'jodit-react';
+import JoditEditor from "jodit-react";
+
 function UserAddProse() {
   const nav = useNavigate();
   const editor = useRef(null);
+
   const [title, setTitle] = useState("");
   const [prose, setProse] = useState("");
-  const [image, setImage] = useState(null); // Changed "Image" to "image"
+  const [image, setImage] = useState(null);
   const [allCategory, setAllCategory] = useState([]);
   const [categoryId, setCategoryId] = useState("");
   const [tag, setTag] = useState("");
   const [language, setLanguage] = useState("");
+
   useEffect(() => {
     apiServices.getall_prose_category().then((data) => {
       if (data.data.success) {
@@ -25,7 +27,6 @@ function UserAddProse() {
 
   const handleproseData = async (e) => {
     e.preventDefault();
-
     if (!title || !prose || !categoryId || !image || !tag || !language) {
       toast.error("Please fill in all fields.");
       return;
@@ -38,132 +39,120 @@ function UserAddProse() {
     formData.append("Image", image);
     formData.append("tag", tag);
     formData.append("language", language);
+
     try {
       const response = await apiServices.addprose(formData);
       if (response.data.success) {
         toast.success(response.data.message);
-        setTimeout(() => {
-          nav("/user-profile");
-        }, 3000);
+        setTimeout(() => nav("/user-profile"), 3000);
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      // console.error(error);
       toast.error("Something went wrong");
     }
   };
 
   return (
     <>
-      <main className="">
+      <main className="bg-light py-5">
         <div className="container">
-          <div className="row">
-            <div className="col-2"></div>
-            <div className="col">
-              <h2>Publish Prose</h2>
-              <form className="mt-5" onSubmit={handleproseData}>
-                {/* Title input */}
-                <div className="form-outline mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Title </label>
-                  <input
-                    type="text"
-                    id="form6Example3"
-                    className="form-control"
-                    placeholder="Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                </div>
+          <div className="row justify-content-center">
+            <div className="col-lg-10">
+              <div className="card shadow-lg border-0">
+                <div className="card-body p-5">
+                  <h3 className="mb-4 text-center text-primary">Publish Your Prose</h3>
+                  <form onSubmit={handleproseData}>
+                    {/* Title */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">Title <span className="text-danger">*</span></label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter your prose title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                      />
+                    </div>
 
-                {/* Category input */}
-                <div className="form-group fs-5 mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Category </label>
-                  <select
-                    className="form-select mb-2"
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    aria-label=".form-select-lg example"
-                  >
-                    <option value="">Select Category</option>
-                    {allCategory.map((data, index) => (
-                      <option key={index} value={data._id}>
-                        {data.Category_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                    {/* Category */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">Category <span className="text-danger">*</span></label>
+                      <select
+                        className="form-select"
+                        value={categoryId}
+                        onChange={(e) => setCategoryId(e.target.value)}
+                      >
+                        <option value="">-- Select Category --</option>
+                        {allCategory.map((cat, index) => (
+                          <option key={index} value={cat._id}>
+                            {cat.Category_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                {/* prose input */}
-                <div className="form-outline mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Prose </label>
-                  {/* <textarea
-                    className="form-control"
-                    id="form6Example7"
-                    rows="4"
-                    placeholder="prose"
-                    value={prose}
-                    onChange={(e) => setProse(e.target.value)}
-                  ></textarea> */}
-                <JoditEditor
-                    ref={editor}
-                    className="text-dark"
-                    value={prose}
-                    onChange={newContent => setProse(newContent)}
-                  />
-                </div>
+                    {/* Prose Editor */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">Prose <span className="text-danger">*</span></label>
+                      <JoditEditor
+                        ref={editor}
+                        value={prose}
+                        onChange={(newContent) => setProse(newContent)}
+                      />
+                    </div>
 
+                    {/* Tag */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">Tag <span className="text-danger">*</span></label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="#Tag"
+                        value={tag}
+                        onChange={(e) => setTag(e.target.value)}
+                      />
+                    </div>
 
-                {/* Tag input */}
-                <div className="form-outline mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Tag </label>
-                  <input
-                    type="text"
-                    id="form6Example3"
-                    className="form-control"
-                    placeholder="#tag"
-                    value={tag}
-                    onChange={(e) => setTag(e.target.value)}
-                  />
-                </div>
+                    {/* Language */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">Language <span className="text-danger">*</span></label>
+                      <select
+                        className="form-select"
+                        value={language}
+                        onChange={(e) => setLanguage(e.target.value)}
+                      >
+                        <option value="">-- Select Language --</option>
+                        <option value="Hindi">Hindi</option>
+                        <option value="English">English</option>
+                      </select>
+                    </div>
 
-                <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Language</label>
-                  <select className="form-select" aria-label="Default select example" value={language}
-                    onChange={(e) => setLanguage(e.target.value)}>
-                    <option selected>Select Language</option>
-                    <option value="hindi">Hindi</option>
-                    <option value="English">English</option>
-                  </select>
-                </div>
-                {/* prose image */}
-                <div className="mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Upload Image </label>
-                  <input
-                    className="form-control"
-                    type="file"
-                    id="formFile"
-                    accept="image/*"
-                    onChange={(e) => setImage(e.target.files[0])}
-                  />
-                </div>
+                    {/* Image Upload */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">Upload Image <span className="text-danger">*</span></label>
+                      <input
+                        type="file"
+                        className="form-control"
+                        accept="image/*"
+                        onChange={(e) => setImage(e.target.files[0])}
+                      />
+                    </div>
 
-                {/* Submit button */}
-                <button
-                  type="submit"
-                  className="btn btn-primary-1 btn-block mb-4"
-                >
-                  Post
-                </button>
-              </form>
-            </div>
-            <div className="col-2">
-              
+                    {/* Submit Button */}
+                    <div className="d-grid">
+                      <button type="submit" className="btn btn-primary py-2 fw-semibold">
+                        🚀 Post Prose
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <ToastContainer />
             </div>
           </div>
         </div>
       </main>
-      <ToastContainer />
     </>
   );
 }

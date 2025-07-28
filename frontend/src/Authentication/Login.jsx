@@ -204,12 +204,12 @@ export default function Login() {
                       <span className="text-center my-3 d-block">or</span>
 
 
-                      <div className="">
+                      {/* <div className="">
                         <a href="#" className="btn btn-block py-2 btn-facebook">
                           <span className="fa fa-facebook mr-2"></span> Sign In with facebook
                         </a>
                         <a href="#" className="btn btn-block py-2 btn-google"><span className=" fa fa-google mr-2"></span> Sign In with Google</a>
-                      </div>
+                      </div> */}
                       <div className="signup mt-3 text-center">Don't have account?
                         <Link to="/register">Sign Up Now</Link>
                       </div>

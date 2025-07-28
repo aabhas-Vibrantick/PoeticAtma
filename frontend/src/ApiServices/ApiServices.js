@@ -1,19 +1,18 @@
 import axios from "axios";
 
-const BASE_URL = "https://api.poeticatma.com/admin/";
-export const BASE_URL_IMG = "https://api.poeticatma.com/";
+// const BASE_URL = "https://api.poeticatma.com/admin/";
+// export const BASE_URL_IMG = "https://api.poeticatma.com/";
 
 // Change this temporarily while developing
-// const isProduction = window.location.hostname !== "localhost";
+const isProduction = window.location.hostname !== "localhost";
 
-// const BASE_URL = isProduction
-//   ? "http://89.116.32.160:8000/admin/"
-//   : "http://localhost:8000/admin/";
+export const BASE_URL = isProduction
+  ? "http://89.116.32.160:8000/admin/"
+  : "http://localhost:8000/admin/";
 
-// export const BASE_URL_IMG = isProduction
-//   ? "http://89.116.32.160:8000/"
-//   : "http://localhost:8000/";
-
+export const BASE_URL_IMG = isProduction
+  ? "http://89.116.32.160:8000/"
+  : "http://localhost:8000/";
 
 class apiServices {
   register(data) {
@@ -30,9 +29,10 @@ class apiServices {
       Authorization: sessionStorage.getItem("token"),
     };
 
-    return axios.post(BASE_URL + "updateCustomerProfile", data, { headers: header });
+    return axios.post(BASE_URL + "updateCustomerProfile", data, {
+      headers: header,
+    });
   }
-
 
   verifyEmail(data) {
     return axios.post(BASE_URL + "verifyMail", data);
@@ -136,7 +136,7 @@ class apiServices {
   }
 
   addTestimonial(data) {
-    const header = { 
+    const header = {
       Accept: "application/json",
       Authorization: sessionStorage.getItem("token"),
     };
@@ -358,7 +358,7 @@ class apiServices {
 
     return axios.post(BASE_URL + "getsingle_category", data, {
       headers: header,
-    }); 
+    });
   }
 
   updatecategory(data) {
@@ -412,15 +412,14 @@ class apiServices {
     const header = {
       Accept: "application/json",
       Authorization: sessionStorage.getItem("token"),
-    }; 
+    };
 
     return axios.get(BASE_URL + "getallblog", {
       headers: {
-      Accept: "application/json",
-      Authorization: sessionStorage.getItem("token"),
-    },
-});
-;
+        Accept: "application/json",
+        Authorization: sessionStorage.getItem("token"),
+      },
+    });
   }
 
   getallblogbyUserId(data) {
@@ -813,6 +812,64 @@ class apiServices {
     return axios.post(BASE_URL + "addshayari", data, { headers: header });
   }
 
+  addquote(data) {
+    const header = {
+      Accept: "application/json",
+      Authorization: sessionStorage.getItem("token"),
+    };
+
+    return axios.post(BASE_URL + "add-quote", data, {
+      headers: header,
+    });
+  }
+
+  getAllQuotes() {
+    const header = {
+      Accept: "application/json",
+      Authorization: sessionStorage.getItem("token"),
+    };
+
+    return axios.get(BASE_URL + "view-quote", { headers: header });
+  }
+
+  getQuoteById(id) {
+    const header = {
+      Accept: "application/json",
+      Authorization: sessionStorage.getItem("token"),
+    };
+
+    return axios.get(`${BASE_URL}get-quote/${id}`, { headers: header });
+  }
+
+  updateQuote(data) {
+    const header = {
+      Accept: "application/json",
+      Authorization: sessionStorage.getItem("token"),
+    };
+
+    return axios.post(BASE_URL + "update-quote", data, {
+      headers: header,
+    });
+  }
+
+  deleteQuote(id) {
+    const header = {
+      Accept: "application/json",
+      Authorization: sessionStorage.getItem("token"),
+    };
+
+    return axios.delete(`${BASE_URL}delete-quote/${id}`, { headers: header });
+  }
+
+  getLatestQuote(data) {
+    const header = {
+      Accept: "application/json",
+      Authorization: sessionStorage.getItem("token"),
+    };
+
+    return axios.get(BASE_URL + "get-latest-quote", { headers: header });
+  }
+
   getallshayari(data) {
     const header = {
       Accept: "application/json",
@@ -1026,6 +1083,34 @@ class apiServices {
     return axios.post(BASE_URL + "addsher", data, { headers: header });
   }
 
+  approveSher(data) {
+  const header = {
+    Accept: "application/json",
+    Authorization: sessionStorage.getItem("token"),
+  };
+
+  return axios.post(BASE_URL + "approvesher", data, { headers: header });
+}
+
+approveShayari(data) {
+  const header = {
+    Accept: "application/json",
+    Authorization: sessionStorage.getItem("token"),
+  };
+
+  return axios.post(BASE_URL + "approveShayari", data, { headers: header });
+}
+
+approveProse(data) {
+  const headers = {
+    Accept: "application/json",
+    Authorization: sessionStorage.getItem("token"),
+  };
+
+  return axios.post(BASE_URL + "approveProse", data, { headers });
+}
+
+
   getallsher(data) {
     const header = {
       Accept: "application/json",
@@ -1074,6 +1159,8 @@ class apiServices {
       headers: header,
     });
   }
+
+  
 
   getenglishSherByUserId(data) {
     const header = {

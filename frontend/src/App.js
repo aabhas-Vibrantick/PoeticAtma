@@ -101,6 +101,9 @@ import HelpDesk from "./Pages/HelpDesk";
 import PrivacyPolicy from "./Pages/PrivacyPolicy";
 import FAQs from "./Pages/FAQs";
 import TermsAndConditions from './Pages/TermsAndConditions';
+import AddQuote from "./Admin/pages/Add/AddQuote";
+import ViewQuote from "./Admin/pages/Update/ViewQuote";
+
 
 function App() {
   return (
@@ -167,11 +170,12 @@ function App() {
             <Route path="/admin" element={<AdminHome />} />
             <Route path="/admin/all-message" element={<Messages />} />
             <Route path="/admin/add-user" element={<AddUser />} />
-
+            <Route path="/admin/add-quote" element={<AddQuote/>}/>
             <Route path="/admin/add-book" element={<Addbook />} />
             <Route path="/admin/book-list" element={<Booklist />} />
             <Route path="/admin/order-list" element={<Orderlist />} />
             <Route path="/admin/update-book/:_id" element={<Updatebook />} />
+            <Route path="/admin/view-quote/" element={<ViewQuote/>}/>
 
             <Route path="/admin/add-testimonial" element={<Addtestimonial />} />
             <Route
@@ -262,6 +266,9 @@ function App() {
             <Route path="/admin/update-prose/:_id" element={<UpProse />} />
             <Route path="/admin/update-sher/:_id" element={<UpSher />} />
             <Route path="/admin/update-shayari/:_id" element={<UpShayari />} />
+
+            
+            
 
             <Route
               path="/admin/up-blogcategory/:_id"

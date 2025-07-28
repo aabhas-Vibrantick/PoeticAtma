@@ -110,7 +110,7 @@ export default function Register() {
       .register(data)
       .then((x) => {
         setTimeout(() => {
-          setLoading(false);
+          setLoading(false); 
         }, 1000);
 
         if (x.data.success) {
@@ -243,12 +243,12 @@ export default function Register() {
                       <span className="text-center my-3 d-block">or</span>
 
 
-                      <div className="">
+                      {/* <div className="">
                         <a href="#" className="btn btn-block py-2 btn-facebook">
                           <span className="fa fa-facebook mr-2"></span> Sign Up with facebook
                         </a>
                         <a href="#" className="btn btn-block py-2 btn-google"><span className=" fa fa-google mr-2"></span> Sign Up with Google</a>
-                      </div>
+                      </div> */}
                       <div className="signup mt-3 text-center">Have an Account?
                         <Link to="/login">Sign In Now</Link>
                       </div>

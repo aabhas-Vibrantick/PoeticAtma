@@ -83,7 +83,7 @@ export default function Footer() {
 
               <div className="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4 text-start footer-top-icons footer-bottom-link">
                 <h6 className="text-uppercase fw-bold mb-4">Contact</h6>
-                <p><i className="fas fa-home me-3 "></i> Vibrantick Infotech<br/>
+                <p><i className="fas fa-home me-3 "></i> 
                       Office No 36, Second Floor, D-185, Phase 8B, Industrial Area, Sector 74, Sahibzada Ajit Singh Nagar (Mohali), Punjab-160055 
                 </p>
                 <p>

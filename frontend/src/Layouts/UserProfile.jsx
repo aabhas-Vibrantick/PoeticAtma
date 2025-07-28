@@ -14,6 +14,7 @@ import UserOrderlist from "../User/Pages/UserDataPages/UVieworders";
 import Clock from "../Admin/pages/Clock";
 import { FaBars, FaBlogger, FaFileAlt, FaUser, FaLock, FaList } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
+import UserProfileTab from "../Components/UserProfileTab";
 
 const routes = [
   { tab: 1, name: "Dashboard", icon: <FaList /> },
@@ -101,40 +102,7 @@ export default function UserDashboard() {
       case 9: return <UserProseList />;
       case 10: return <UserOrderlist />;
       case 11:
-        return (
-          <div className="container mt-4">
-            <div className="row">
-              <div className="col-md-4 text-center">
-                <img src={BASE_URL_IMG + customerData.Image} alt="Profile" className="img-fluid rounded-circle mb-3" onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/avtar.png";
-                                      }}/>
-                <h4>{customerData.name}</h4>
-                <p>{customerData.bio}</p>
-              </div>
-              <div className="col-md-8">
-                <h5>Profile Info</h5>
-                <ul className="list-group"> 
-                  {[
-                    { label: "Full Name", value: customerData.name },
-                    { label: "Pen Name", value: customerData.penname },
-                    { label: "Email", value: customerData.email },
-                    { label: "Contact", value: customerData.contact },
-                    { label: "Address", value: customerData.address },
-                    { label: "Facebook", value: customerData.facebook },
-                    { label: "Instagram", value: customerData.instagram },
-                    { label: "LinkedIn", value: customerData.linkdin },
-                    { label: "Twitter", value: customerData.twiter },
-                  ].map((item, i) => (
-                    <li key={i} className="list-group-item d-flex justify-content-between">
-                      <strong>{item.label}</strong><span>{item.value || "-"}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        );
+         return <UserProfileTab customerData={customerData} />;
       default: return <div>Invalid Tab</div>;
     }
   };

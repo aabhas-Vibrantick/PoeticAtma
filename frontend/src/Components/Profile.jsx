@@ -90,7 +90,7 @@ export default function Porfile() {
       .getallshayaribyUserId(unique)
       .then((data) => {
         if (data.data.success) {
-          const filteredShayaris = data.data.data.filter((shayari) => shayari.status === true);
+          const filteredShayaris = data.data.data.filter((shayari) => shayari.isApproved === true);
           setAllShayari(filteredShayaris);
         } else {
           toast.error(data.data.message);
@@ -104,7 +104,7 @@ export default function Porfile() {
       .getallsherbyUserId(unique)
       .then((data) => {
         if (data.data.success) {
-          const filteredShers = data.data.data.filter((sher) => sher.status === true);
+          const filteredShers = data.data.data.filter((sher) => sher.isApproved === true);
           setAllSher(filteredShers);
         } else {
           toast.error(data.data.message);
@@ -118,7 +118,7 @@ export default function Porfile() {
       .getallprosebyUserId(unique)
       .then((data) => {
         if (data.data.success) {
-          const filteredProses = data.data.data.filter((prose) => prose.status === true);
+          const filteredProses = data.data.data.filter((prose) => prose.isApproved === true);
           setAllProse(filteredProses);
         } else {
           toast.error(data.data.message);
@@ -132,7 +132,7 @@ export default function Porfile() {
       .getallblogbyUserId(unique)
       .then((data) => {
         if (data.data.success) {
-          const filteredBlogs = data.data.data.filter((blog) => blog.status === true);
+          const filteredBlogs = data.data.data.filter((blog) => blog.isApproved === true);
           setAllBlog(filteredBlogs);
         } else {
           toast.error(data.data.message);
@@ -318,7 +318,7 @@ export default function Porfile() {
                   </li>
                 </ul>
                 <h2 className="" id="namename">
-                  @{userDetail?.name}
+                  {userDetail?.name}
                   <span>{userDetail?.penname}</span>
                   {userDetail?.bedgeverify ? (
                     <img
@@ -471,7 +471,7 @@ export default function Porfile() {
                         <button
                           onClick={() => handleTabChange(3)}
                           className={`profileTabbtn ${activeTab === 3 && 'active'}`}>
-                          NAZM
+                          PROSE
                         </button>
                       </div>
                     </> : <></>}

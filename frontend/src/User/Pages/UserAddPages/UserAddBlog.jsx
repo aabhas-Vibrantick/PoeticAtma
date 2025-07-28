@@ -3,7 +3,7 @@ import apiServices from "../../../ApiServices/ApiServices";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import JoditEditor from 'jodit-react';
+import JoditEditor from "jodit-react";
 
 function UserAddBlog() {
   const nav = useNavigate();
@@ -11,7 +11,7 @@ function UserAddBlog() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [blog, setBlog] = useState("");
-  const [image, setImage] = useState(null); 
+  const [image, setImage] = useState(null);
   const [allCategory, setAllCategory] = useState([]);
   const [categoryId, setCategoryId] = useState("");
   const [tag, setTag] = useState("");
@@ -44,122 +44,127 @@ function UserAddBlog() {
       const response = await apiServices.addblog(formData);
       if (response.data.success) {
         toast.success(response.data.message);
-        setTimeout(() => {
-          nav("/user-profile");
-        }, 3000);
+        setTimeout(() => nav("/user-profile"), 3000);
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      // console.error(error);
       toast.error("Something went wrong");
     }
   };
 
   return (
     <>
-      <main className=" ">
+      <main className="bg-light py-5">
         <div className="container">
-          <div className="row">
-            <div className="col-2"></div>
-            <div className="col">
-              <h2>Publish Blog</h2>
-              <form className="mt-5" onSubmit={handleblogData}>
+          <div className="row justify-content-center">
+            <div className="col-lg-10">
+              <div className="card shadow-lg border-0">
+                <div className="card-body p-5">
+                  <h3 className="mb-4 text-center text-primary">
+                    Publish Blog
+                  </h3>
+                  <form onSubmit={handleblogData}>
+                    {/* Category */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">
+                        Category <span className="text-danger">*</span>
+                      </label>
+                      <select
+                        className="form-select"
+                        value={categoryId}
+                        onChange={(e) => setCategoryId(e.target.value)}
+                      >
+                        <option value="">-- Select Category --</option>
+                        {allCategory.map((cat, index) => (
+                          <option key={index} value={cat._id}>
+                            {cat.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                {/* Category input */}
+                    {/* Title */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">
+                        Title <span className="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter blog title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                      />
+                    </div>
 
-                <div className="form-group fs-5 mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Select Category</label>
-                  <select
-                    className="form-select mb-2"
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    aria-label=".form-select-lg example"
-                  >
-                    <option value="">Select Category</option>
-                    {allCategory.map((data, index) => (
-                      <option key={index} value={data._id}>
-                        {data.Category_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {/* Title input */}
-                <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Title</label>
-                  <input
-                    type="text"
-                    id="form6Example3"
-                    className="form-control"
-                    placeholder="Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                </div>
-                <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Description </label>
-                  <input
-                    type="text"
-                    id="form6Example3"
-                    className="form-control"
-                    placeholder=""
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  />
-                </div>
-                {/* Blog input */}
-                <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Blog content </label>
-                  
-                  <JoditEditor
-                    ref={editor}
-                    value={blog}
-                    className="text-dark"
-                    onChange={newContent => setBlog(newContent)}
-                  />
-                </div>
+                    {/* Description */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">
+                        Short Description <span className="text-danger">*</span>
+                      </label>
+                      <textarea
+                        className="form-control"
+                        rows="3"
+                        placeholder="Enter a brief description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                      ></textarea>
+                    </div>
 
-              
+                    {/* Tag */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">
+                        Tags <span className="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter comma-separated tags (e.g., poetry,life,freedom)"
+                        value={tag}
+                        onChange={(e) => setTag(e.target.value)}
+                      />
+                    </div>
 
-                {/* tag input */}
-                <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Tag</label>
-                  <input
-                    type="text"
-                    id="form6Example3"
-                    className="form-control"
-                    placeholder="#tag"
-                    value={tag}
-                    onChange={(e) => setTag(e.target.value)}
-                  />
-                </div>
-                {/* Blog image */}
-                <div className="mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Upload Image </label>
-                  <input
-                    className="form-control"
-                    type="file"
-                    id="formFile"
-                    accept="image/*"
-                    onChange={(e) => setImage(e.target.files[0])}
-                  />
-                </div>
+                    {/* Blog Content */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">
+                        Blog Content <span className="text-danger">*</span>
+                      </label>
+                      <JoditEditor
+                        ref={editor}
+                        value={blog}
+                        onChange={(newContent) => setBlog(newContent)}
+                      />
+                    </div>
 
-                {/* Submit button */}
-                <button
-                  type="submit"
-                  className="btn btn-primary-1 btn-block mb-4"
-                >
-                  Post
-                </button>
-              </form>
-             
+                    {/* Image Upload */}
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold">
+                        Cover Image <span className="text-danger">*</span>
+                      </label>
+                      <input
+                        type="file"
+                        className="form-control"
+                        accept="image/*"
+                        onChange={(e) => setImage(e.target.files[0])}
+                      />
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="text-center">
+                      <button type="submit" className="btn btn-primary px-4">
+                        Publish Blog
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
-            <div className="col-2"></div>
           </div>
         </div>
+        <ToastContainer position="top-center" />
       </main>
-      <ToastContainer />
     </>
   );
 }

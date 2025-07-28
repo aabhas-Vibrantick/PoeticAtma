@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { FaBars, FaHome, FaLock, FaMoneyBill, FaUser,FaUserPlus, FaBook } from "react-icons/fa";
+import { FaBars, FaHome, FaLock, FaMoneyBill, FaUser,FaUserPlus, FaBook, FaQuoteRight } from "react-icons/fa";
 import { MdMessage, MdRateReview } from "react-icons/md";
 import {  BiSearch } from "react-icons/bi";
 import { BiCog } from "react-icons/bi";
@@ -36,6 +36,22 @@ const routes = [
         icon: <FaUser />,
       },
     ],
+  },
+  {
+    name:"Quote",
+    icon: <FaQuoteRight/>,
+    subRoutes:[
+      {
+        path:"/admin/add-quote",
+        name:"Add Quote",
+        icon: <FaQuoteRight/>
+      },
+      {
+        path: "/admin/view-quote",
+        name: "Manage Quote",
+        icon: <FaQuoteRight />,
+      },
+    ]
   },
   {
     name: "Books",

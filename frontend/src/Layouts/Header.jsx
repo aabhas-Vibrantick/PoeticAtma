@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import apiServices, { BASE_URL_IMG } from "../ApiServices/ApiServices";
 import { ToastContainer, toast } from "react-toastify";
 
+
+
 export default function Header() {
   const user_type = sessionStorage.getItem('user_type')
   const authenticate = sessionStorage.getItem('authenticate')

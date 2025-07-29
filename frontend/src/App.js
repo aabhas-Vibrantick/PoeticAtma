@@ -163,6 +163,10 @@ function App() {
             <Route path="/update-prose/:_id" element={<UpdateProse />} />
             <Route path="/update-sher/:_id" element={<UpdateSher />} />
             <Route path="/update-shayari/:_id" element={<UpdateShayari />} />
+            <Route path="/sher/:id" element={<Sher/>} />
+            <Route path="/shayari/:id" element={<Shayari />} />
+            <Route path="/prose/:id" element={<Prose />} />
+
             <Route path="*" element={<Error />} />
           </Route>
 

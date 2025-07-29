@@ -415,10 +415,10 @@ export default function SingleSher() {
                                     </li>
                                   </>
                                 )}
-                                <a className="m-r-15 text-inverse-lighter px-4">
+                                {/* <a className="m-r-15 text-inverse-lighter px-4">
                                   <i className="fa fa-comments fa-fw fa-lg m-r-3 mx-2"></i>
                                   Comment
-                                </a>
+                                </a> */}
 
                                 <a className="m-r-15 text-inverse-lighter ">
                                   <i className="fa-solid fa-eye mx-2"></i>
@@ -464,495 +464,289 @@ export default function SingleSher() {
         </div> */}
                   </div>
                   {authenticate ? (
-                    <>
-                      <section className="">
-                        <div className="container my-5 py-5">
-                          <h2 className="comments-title text-start">
-                            {" "}
-                            <i className="fa fa-comments fa-fw fa-lg m-r-3 mx-3"></i>
-                            Comments
-                          </h2>
+  <section className="">
+    <div className="container my-5 py-5">
+      <h2 className="comments-title text-start">
+        <i className="fa fa-comments fa-fw fa-lg m-r-3 mx-3"></i> Comments
+      </h2>
+      <div className="card">
+        <div className="card-body p-4">
+          <div className="my-3 d-flex flex-row gap-2">
+            <textarea
+              className="form-control col-9"
+              placeholder="Write a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+            <button className="replybutton" onClick={createComment}>
+              <div className="svg-wrapper-1">
+                <div className="svg-wrapper">
+                  <svg height="24" width="24" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <span>Send</span>
+            </button>
+          </div>
 
-                          <div className="card">
-                            <div className="card-body p-4">
-                              <div className=" my-3 d-flex flex-row gap-2">
-                                <textarea
-                                  className=" form-control col-9"
-                                  placeholder="Write a comment..."
-                                  value={newComment}
-                                  onChange={(e) =>
-                                    setNewComment(e.target.value)
-                                  }
-                                />
-                                <button
-                                  className="replybutton "
-                                  onClick={createComment}
-                                >
-                                  <div className="svg-wrapper-1">
-                                    <div className="svg-wrapper">
-                                      <svg
-                                        height="24"
-                                        width="24"
-                                        viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path
-                                          d="M0 0h24v24H0z"
-                                          fill="none"
-                                        ></path>
-                                        <path
-                                          d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
-                                          fill="currentColor"
-                                        ></path>
-                                      </svg>
-                                    </div>
-                                  </div>
-                                  <span>Send</span>
-                                </button>
+          {comments && comments.length > 0 ? (
+            comments.map((comment) => (
+              <div className="row mt-5" key={comment._id}>
+                <div className="col">
+                  <div className="d-flex flex-start">
+                    <img
+                      className="rounded-circle shadow-1-strong me-3"
+                      src={
+                        comment?.userId?.Image
+                          ? BASE_URL_IMG + comment.userId.Image
+                          : "/assets/images/avtar.png"
+                      }
+                      alt="avatar"
+                      width="65"
+                      height="65"
+                      onError={(e) =>
+                        (e.target.src = "/assets/images/avtar.png")
+                      }
+                    />
+                    <div className="flex-grow-1 flex-shrink-1">
+                      <div>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <p className="mb-1 text-capitalize">
+                            <Link to={`/poets-profile/${comment.userId?._id}`}>
+                              {comment.userId.name}
+                            </Link>{" "}
+                            <span className="small">
+                              {format(new Date(comment.created_at), "MMMM d, yyyy")}
+                            </span>
+                          </p>
+                          <a
+                            href="#!"
+                            className={`px-3 ${
+                              showReply[comment._id] ? "active-reply-button" : ""
+                            }`}
+                            onClick={() => toggleReply(comment._id)}
+                          >
+                            <i className="fas fa-reply fa-xs"></i>
+                            <span className="small">
+                              {showReply[comment._id] ? "Hide Reply" : "Show Reply"}
+                            </span>
+                          </a>
+                        </div>
+                        <p className="small mb-0">{comment.text}</p>
+                      </div>
+
+                      {showReply[comment._id] && (
+                        <div className="d-flex flex-start mt-4">
+                          <textarea
+                            className="repinput gap-2"
+                            placeholder="Reply..."
+                            value={newReply}
+                            onChange={(e) => setNewReply(e.target.value)}
+                            required
+                          />
+                          <button
+                            className="replybutton"
+                            onClick={() => createReply(comment._id)}
+                          >
+                            <div className="svg-wrapper-1">
+                              <div className="svg-wrapper">
+                                <svg height="24" width="24" viewBox="0 0 24 24">
+                                  <path d="M0 0h24v24H0z" fill="none" />
+                                  <path
+                                    d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                                    fill="currentColor"
+                                  />
+                                </svg>
                               </div>
-                              {/* ==================start comment main map================ */}
-                              {comments && comments.length > 0 ? (
-                                comments.map((comment) => (
-                                  <div className="row mt-5" key={comment._id}>
-                                    <div className="col">
-                                      {/* ==================start comment content================ */}
-                                      <div className="d-flex flex-start">
-                                        <img
-                                          className="rounded-circle shadow-1-strong me-3"
-                                          src={
-                                            BASE_URL_IMG +
-                                              comment?.userId?.Image ||
-                                            "/assets/images/avtar.png"
-                                          }
-                                          alt="avatar"
-                                          width="65"
-                                          height="65"
-                                          onError={(e) => {
-                                            e.target.src =
-                                              "/assets/images/avtar.png";
-                                          }}
-                                        />
-                                        <div className="flex-grow-1 flex-shrink-1">
-                                          <div>
-                                            <div className="d-flex justify-content-between align-items-center">
-                                              <p className="mb-1 text-capitalize">
-                                                <Link
-                                                  to={
-                                                    "/poets-profile/" +
-                                                    `${comment?.userId?._id}`
-                                                  }
-                                                ></Link>{" "}
-                                                {comment.userId.name}
-                                                <span className="small">
-                                                  {" "}
-                                                  {format(
-                                                    new Date(
-                                                      comment.created_at
-                                                    ),
-                                                    "MMMM d, yyyy"
-                                                  )}
-                                                </span>
-                                              </p>
-                                              {/* ==================end comment content================ */}
-                                              <a
-                                                href="#!"
-                                                className={`px-3 ${
-                                                  showReply[comment._id]
-                                                    ? "active-reply-button"
-                                                    : ""
-                                                }`}
-                                                onClick={() => {
-                                                  toggleReply(comment._id);
-                                                }}
-                                              >
-                                                <i className="fas fa-reply fa-xs"></i>
-                                                <span className="small">
-                                                  {" "}
-                                                  {showReply[comment._id]
-                                                    ? "Hide Reply"
-                                                    : "show Reply"}
-                                                </span>
-                                              </a>
-                                              {showReply[comment._id] && (
-                                                <div className="d-flex flex-start mt-4">
-                                                  <textarea
-                                                    className=" repinput  gap-2 "
-                                                    placeholder="   Reply..."
-                                                    value={newReply}
-                                                    onChange={(e) =>
-                                                      setNewReply(
-                                                        e.target.value
-                                                      )
-                                                    }
-                                                    required
-                                                  />
-                                                  <button
-                                                    className="replybutton "
-                                                    onClick={() =>
-                                                      createReply(comment._id)
-                                                    }
-                                                  >
-                                                    <div className="svg-wrapper-1">
-                                                      <div className="svg-wrapper">
-                                                        <svg
-                                                          height="24"
-                                                          width="24"
-                                                          viewBox="0 0 24 24"
-                                                          xmlns="http://www.w3.org/2000/svg"
-                                                        >
-                                                          <path
-                                                            d="M0 0h24v24H0z"
-                                                            fill="none"
-                                                          ></path>
-                                                          <path
-                                                            d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
-                                                            fill="currentColor"
-                                                          ></path>
-                                                        </svg>
-                                                      </div>
-                                                    </div>
-                                                    <span>Send</span>
-                                                  </button>
-                                                </div>
-                                              )}
-                                            </div>
-                                            <p className="small mb-0">
-                                              {comment.text}
-                                            </p>
-                                          </div>
+                            </div>
+                            <span>Send</span>
+                          </button>
+                        </div>
+                      )}
 
-                                          {comment.replies &&
-                                            comment.replies.length > 0 && (
-                                              <div
-                                                className=""
-                                                key={`replies-${comment._id}`}
-                                              >
-                                                {comment.replies.map(
-                                                  (reply) => (
-                                                    <div
-                                                      className="d-flex flex-start mt-4"
-                                                      key={reply._id}
-                                                    >
-                                                      <a
-                                                        className="me-3"
-                                                        href="#"
-                                                      >
-                                                        <img
-                                                          className="rounded-circle shadow-1-strong"
-                                                          src={
-                                                            BASE_URL_IMG +
-                                                              reply?.userId
-                                                                ?.Image ||
-                                                            "/assets/images/avtar.png"
-                                                          }
-                                                          alt="avatar"
-                                                          width="65"
-                                                          height="65"
-                                                          onError={(e) => {
-                                                            e.target.src =
-                                                              "/assets/images/avtar.png";
-                                                          }}
-                                                        />
-                                                      </a>
-                                                      <div className="flex-grow-1 flex-shrink-1">
-                                                        <div>
-                                                          <div className="d-flex justify-content-between align-items-center">
-                                                            <p className="mb-1 text-capitalize">
-                                                              <Link
-                                                                to={
-                                                                  "/poets-profile/" +
-                                                                  `${reply?.userId?._id}`
-                                                                }
-                                                              ></Link>{" "}
-                                                              {
-                                                                reply.userId
-                                                                  .name
-                                                              }
-                                                              <span className="small">
-                                                                -{" "}
-                                                                {format(
-                                                                  new Date(
-                                                                    reply.created_at
-                                                                  ),
-                                                                  "MMMM d, yyyy"
-                                                                )}
-                                                              </span>
-                                                            </p>
-                                                          </div>
-                                                          <p className="small mb-0">
-                                                            {reply.text}
-                                                          </p>
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                  )
-                                                )}
-                                              </div>
-                                            )}
-
-                                          {/* </div>
-             )} */}
-                                          {/* ==================end togel for show hide  replies================ */}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))
-                              ) : (
-                                <p>No comments available</p>
-                              )}
-                              {/* ==================end comment main map================ */}
+                      {comment.replies &&
+                        comment.replies.map((reply) => (
+                          <div className="d-flex flex-start mt-4" key={reply._id}>
+                            <a className="me-3" href="#">
+                              <img
+                                className="rounded-circle shadow-1-strong"
+                                src={
+                                  reply?.userId?.Image
+                                    ? BASE_URL_IMG + reply.userId.Image
+                                    : "/assets/images/avtar.png"
+                                }
+                                alt="avatar"
+                                width="65"
+                                height="65"
+                                onError={(e) =>
+                                  (e.target.src = "/assets/images/avtar.png")
+                                }
+                              />
+                            </a>
+                            <div className="flex-grow-1 flex-shrink-1">
+                              <div>
+                                <div className="d-flex justify-content-between align-items-center">
+                                  <p className="mb-1 text-capitalize">
+                                    <Link to={`/poets-profile/${reply.userId?._id}`}>
+                                      {reply.userId.name}
+                                    </Link>{" "}
+                                    <span className="small">
+                                      -{" "}
+                                      {format(new Date(reply.created_at), "MMMM d, yyyy")}
+                                    </span>
+                                  </p>
+                                </div>
+                                <p className="small mb-0">{reply.text}</p>
+                              </div>
                             </div>
                           </div>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p>No comments available</p>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+) : (
+  <section className="">
+    <div className="container my-5 py-5">
+      <h2 className="comments-title text-start">
+        <i className="fa fa-comments fa-fw fa-lg m-r-3 mx-3"></i> Comments
+      </h2>
+      <div className="card">
+        <div className="card-body p-4">
+          <div className="my-3 d-flex flex-row gap-2">
+            <textarea
+              className="form-control col-9"
+              placeholder="Write a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+            <button className="replybutton" onClick={handleReadMoreClick}>
+              <div className="svg-wrapper-1">
+                <div className="svg-wrapper">
+                  <svg height="24" width="24" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <span>Send</span>
+            </button>
+          </div>
+
+          {/* Same comment list can be reused here (read-only mode) */}
+          {comments && comments.length > 0 ? (
+            comments.map((comment) => (
+              <div className="row mt-5" key={comment._id}>
+                <div className="col">
+                  <div className="d-flex flex-start">
+                    <img
+                      className="rounded-circle shadow-1-strong me-3"
+                      src={
+                        comment?.userId?.Image
+                          ? BASE_URL_IMG + comment.userId.Image
+                          : "/assets/images/avtar.png"
+                      }
+                      alt="avatar"
+                      width="65"
+                      height="65"
+                      onError={(e) =>
+                        (e.target.src = "/assets/images/avtar.png")
+                      }
+                    />
+                    <div className="flex-grow-1 flex-shrink-1">
+                      <div>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <p className="mb-1 text-capitalize">
+                            <Link to={`/poets-profile/${comment.userId?._id}`}>
+                              {comment.userId.name}
+                            </Link>{" "}
+                            <span className="small">
+                              {format(new Date(comment.created_at), "MMMM d, yyyy")}
+                            </span>
+                          </p>
+                          <a
+                            href="#!"
+                            className={`px-3 ${
+                              showReply[comment._id] ? "active-reply-button" : ""
+                            }`}
+                            onClick={() => toggleReply(comment._id)}
+                          >
+                            <i className="fas fa-reply fa-xs"></i>
+                            <span className="small">
+                              {showReply[comment._id] ? "Hide Reply" : "Show Reply"}
+                            </span>
+                          </a>
                         </div>
-                      </section>
-                    </>
-                  ) : (
-                    <>
-                      <section className="">
-                        <div className="container my-5 py-5">
-                          <h2 className="comments-title text-start">
-                            {" "}
-                            <i className="fa fa-comments fa-fw fa-lg m-r-3"></i>
-                            Comments
-                          </h2>
+                        <p className="small mb-0">{comment.text}</p>
+                      </div>
 
-                          <div className="card">
-                            <div className="card-body p-4">
-                              <div className=" my-3 d-flex flex-row gap-2">
-                                <textarea
-                                  className=" form-control col-9"
-                                  placeholder="Write a comment..."
-                                  value={newComment}
-                                  onChange={(e) =>
-                                    setNewComment(e.target.value)
-                                  }
-                                />
-                                <button
-                                  className="replybutton "
-                                  onClick={handleReadMoreClick}
-                                >
-                                  <div className="svg-wrapper-1">
-                                    <div className="svg-wrapper">
-                                      <svg
-                                        height="24"
-                                        width="24"
-                                        viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                      >
-                                        <path
-                                          d="M0 0h24v24H0z"
-                                          fill="none"
-                                        ></path>
-                                        <path
-                                          d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
-                                          fill="currentColor"
-                                        ></path>
-                                      </svg>
-                                    </div>
-                                  </div>
-                                  <span>Send</span>
-                                </button>
+                      {comment.replies &&
+                        comment.replies.map((reply) => (
+                          <div className="d-flex flex-start mt-4" key={reply._id}>
+                            <a className="me-3" href="#">
+                              <img
+                                className="rounded-circle shadow-1-strong"
+                                src={
+                                  reply?.userId?.Image
+                                    ? BASE_URL_IMG + reply.userId.Image
+                                    : "/assets/images/avtar.png"
+                                }
+                                alt="avatar"
+                                width="65"
+                                height="65"
+                                onError={(e) =>
+                                  (e.target.src = "/assets/images/avtar.png")
+                                }
+                              />
+                            </a>
+                            <div className="flex-grow-1 flex-shrink-1">
+                              <div>
+                                <div className="d-flex justify-content-between align-items-center">
+                                  <p className="mb-1 text-capitalize">
+                                    <Link to={`/poets-profile/${reply.userId?._id}`}>
+                                      {reply.userId.name}
+                                    </Link>{" "}
+                                    <span className="small">
+                                      -{" "}
+                                      {format(new Date(reply.created_at), "MMMM d, yyyy")}
+                                    </span>
+                                  </p>
+                                </div>
+                                <p className="small mb-0">{reply.text}</p>
                               </div>
-                              {/* ==================start comment main map================ */}
-                              {comments && comments.length > 0 ? (
-                                comments.map((comment) => (
-                                  <div className="row mt-5" key={comment._id}>
-                                    <div className="col">
-                                      {/* ==================start comment content================ */}
-                                      <div className="d-flex flex-start">
-                                        <img
-                                          className="rounded-circle shadow-1-strong me-3"
-                                          src={
-                                            BASE_URL_IMG +
-                                              comment?.userId?.Image ||
-                                            "/assets/images/avtar.png"
-                                          }
-                                          alt="avatar"
-                                          width="65"
-                                          height="65"
-                                          onError={(e) => {
-                                            e.target.src =
-                                              "/assets/images/avtar.png";
-                                          }}
-                                        />
-                                        <div className="flex-grow-1 flex-shrink-1">
-                                          <div>
-                                            <div className="d-flex justify-content-between align-items-center">
-                                              <p className="mb-1 text-capitalize">
-                                                <Link
-                                                  to={
-                                                    "/poets-profile/" +
-                                                    `${comment?.userId?._id}`
-                                                  }
-                                                ></Link>{" "}
-                                                {comment.userId.name}
-                                                <span className="small">
-                                                  {format(
-                                                    new Date(
-                                                      comment.created_at
-                                                    ),
-                                                    "MMMM d, yyyy"
-                                                  )}
-                                                </span>
-                                              </p>
-                                              {/* ==================end comment content================ */}
-                                              <a
-                                                href="#!"
-                                                className={`px-3 ${
-                                                  showReply[comment._id]
-                                                    ? "active-reply-button"
-                                                    : ""
-                                                }`}
-                                                onClick={() => {
-                                                  toggleReply(comment._id);
-                                                }}
-                                              >
-                                                <i className="fas fa-reply fa-xs"></i>
-                                                <span className="small">
-                                                  {" "}
-                                                  {showReply[comment._id]
-                                                    ? "Hide Reply"
-                                                    : "show Reply"}
-                                                </span>
-                                              </a>
-                                              {showReply[comment._id] && (
-                                                <div className="d-flex flex-start mt-4">
-                                                  <textarea
-                                                    className=" repinput  gap-2 "
-                                                    placeholder="Reply to this comment..."
-                                                    value={newReply}
-                                                    onChange={(e) =>
-                                                      setNewReply(
-                                                        e.target.value
-                                                      )
-                                                    }
-                                                    required
-                                                  />
-                                                  <button
-                                                    className="replybutton "
-                                                    onClick={
-                                                      handleReadMoreClick
-                                                    }
-                                                  >
-                                                    <div className="svg-wrapper-1">
-                                                      <div className="svg-wrapper">
-                                                        <svg
-                                                          height="24"
-                                                          width="24"
-                                                          viewBox="0 0 24 24"
-                                                          xmlns="http://www.w3.org/2000/svg"
-                                                        >
-                                                          <path
-                                                            d="M0 0h24v24H0z"
-                                                            fill="none"
-                                                          ></path>
-                                                          <path
-                                                            d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
-                                                            fill="currentColor"
-                                                          ></path>
-                                                        </svg>
-                                                      </div>
-                                                    </div>
-                                                    <span>Send</span>
-                                                  </button>
-                                                </div>
-                                              )}
-                                            </div>
-                                            <p className="small mb-0">
-                                              {comment.text}
-                                            </p>
-                                          </div>
-
-                                          {comment.replies &&
-                                            comment.replies.length > 0 && (
-                                              <div
-                                                className=""
-                                                key={`replies-${comment._id}`}
-                                              >
-                                                {comment.replies.map(
-                                                  (reply) => (
-                                                    <div
-                                                      className="d-flex flex-start mt-4"
-                                                      key={reply._id}
-                                                    >
-                                                      <a
-                                                        className="me-3"
-                                                        href="#"
-                                                      >
-                                                        <img
-                                                          className="rounded-circle shadow-1-strong"
-                                                          src={
-                                                            BASE_URL_IMG +
-                                                              reply?.userId
-                                                                ?.Image ||
-                                                            "/assets/images/avtar.png"
-                                                          }
-                                                          alt="avatar"
-                                                          width="65"
-                                                          height="65"
-                                                          onError={(e) => {
-                                                            e.target.src =
-                                                              "/assets/images/avtar.png";
-                                                          }}
-                                                        />
-                                                      </a>
-                                                      <div className="flex-grow-1 flex-shrink-1">
-                                                        <div>
-                                                          <div className="d-flex justify-content-between align-items-center">
-                                                            <p className="mb-1 text-capitalize">
-                                                              <Link
-                                                                to={
-                                                                  "/poets-profile/" +
-                                                                  `${reply?.userId?._id}`
-                                                                }
-                                                              >
-                                                                {" "}
-                                                                {
-                                                                  reply.userId
-                                                                    .name
-                                                                }
-                                                              </Link>
-                                                              <span className="small">
-                                                                -
-                                                                {format(
-                                                                  new Date(
-                                                                    reply.created_at
-                                                                  ),
-                                                                  "MMMM d, yyyy"
-                                                                )}
-                                                              </span>
-                                                            </p>
-                                                          </div>
-                                                          <p className="small mb-0">
-                                                            {reply.text}
-                                                          </p>
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                  )
-                                                )}
-                                              </div>
-                                            )}
-
-                                          {/* </div>
-             )} */}
-                                          {/* ==================end togel for show hide  replies================ */}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))
-                              ) : (
-                                <p>No comments available</p>
-                              )}
-                              {/* ==================end comment main map================ */}
                             </div>
                           </div>
-                        </div>
-                      </section>
-                    </>
-                  )}
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p>No comments available</p>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
                 </div>
               </div>
               <div className="col-lg-4 m-15px-tb blog-aside">

@@ -171,6 +171,7 @@ Link {
   font-size: 18px;
   font-weight: 400;
   color: var(--white);
+  font-family: 'oswaldregular', 'rozha_oneregular', 'MehrNastaliqRegular';
 }
 
 .top-social-media {
@@ -184,6 +185,7 @@ Link {
   font-size: 16px;
   padding-top: 7px;
   font-weight: 500;
+  font-family: 'oswaldregular', 'rozha_oneregular', 'MehrNastaliqRegular';
 }
 
 .top-social-media a {
@@ -344,6 +346,7 @@ footer start
 
 .footer-bottom-link p {
   color: var(--white);
+  font-family: 'oswaldregular', 'rozha_oneregular', 'MehrNastaliqRegular';
 }
 
 .footer-bottom-link h6 {
@@ -356,6 +359,7 @@ footer start
 
 .footer-info span {
   color: var(--white);
+  /* font-family: 'oswaldregular', 'rozha_oneregular', 'MehrNastaliqRegular'; */
 }
 
 /* ======================

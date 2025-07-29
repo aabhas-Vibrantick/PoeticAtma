@@ -353,10 +353,10 @@ export default function Singleblog() {
 
                           </>
                         )}
-                        <a className="m-r-15 text-inverse-lighter px-4">
+                        {/* <a className="m-r-15 text-inverse-lighter px-4">
                           <i className="fa fa-comments fa-fw fa-lg m-r-3 mx-2"></i>
                           Comment
-                        </a>
+                        </a> */}
                         <a className="m-r-15 text-inverse-lighter">
                           <i className="fa-solid fa-eye mx-2"></i>
                           <span className=" text-muted">{viewCount} Views</span>

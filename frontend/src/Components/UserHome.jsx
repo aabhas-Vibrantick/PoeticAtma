@@ -9,6 +9,8 @@ import Example from "./example";
 import Testimonials from "./Testimonials";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Sidebar from "./Sidebar";
+import LeftSidebar from "./LeftSidebar";
+import ContentCard from "./ContentCard";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -283,6 +285,17 @@ export default function UserHome() {
   font-size: 1rem;
   font-weight: 500;
 }
+  .left-sidebar-ads {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: #ffffffff;
+  border-right: 1px solid #ddd;
+  padding: 16px;
+}
+
+
 
 
 `}
@@ -402,324 +415,217 @@ export default function UserHome() {
             </div>
           </div>
         </section>
-
         {/* ================== START MAIN CONTENT + SIDEBAR WRAP ================== */}
-        <div className="container-fluid ">
+        <div className="container-fluid">
           <div className="row">
-            {/* MAIN LEFT CONTENT (9 columns) */}
-            <div className="col-xxl-8">
-              {/* Existing SHER Section */}
-              <section className="waviy-body">
-                <div className="waviy">
-                  <h1>
-                    <span className="px-3">SHER</span>
-                  </h1>
-                  <hr className="headinghr" />
-                </div>
-              </section>
+            {/* LEFT SIDEBAR (Google AdSense) */}
+            <div className="col-lg-3 col-xxl-3 d-none d-lg-block">
               <div
+                className="sidebar-wrapper p-4 bg-white rounded-3 shadow-sm border"
                 style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  position: "sticky",
+                  top: "0px",
+                  height: "50vh",
+                  overflowY: "auto",
                 }}
               >
-                <div className="CardRatingwrapNew">
-                  <section>
-                    <div
-                      className="row"
-                      style={{ marginLeft: "auto", marginRight: "auto" }}
-                    >
-                      {Array.isArray(topSher) &&
-                        topSher.map((blog) => (
-                          <div className="col-lg-4" key={blog._id}>
-                            <div className="homeblog-card">
-                              <div
-                                style={{
-                                  justifyContent: "center",
-                                  alignContent: "center",
-                                }}
-                              >
-                                <img
-                                  src={BASE_URL_IMG + blog?.Image}
-                                  alt="Blog Image"
-                                  onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = "/default_image.jpg";
-                                  }}
-                                />
-                              </div>
-                              <div className="homeblog-info">
-                                <div className="blogtitlecontent-container">
-                                  <h2 className="text-start blogtitlecontent">
-                                    {blog?.title}
-                                  </h2>
-                                </div>
-                                <div className="blogcontent-container">
-                                  <p className="blogcontent ">{blog?.sher}</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </section>
-                </div>
-              </div>
-
-              {/* SHAYARI Section */}
-              <section className="waviy-body">
-                <div className="waviy">
-                  <h1>
-                    <span className="px-3">SHAYARI</span>
-                  </h1>
-                  <hr className="headinghr" />
-                </div>
-              </section>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <div className="CardRatingwrapNew">
-                  <section>
-                    <div
-                      className="row"
-                      style={{ marginLeft: "auto", marginRight: "auto" }}
-                    >
-                      {Array.isArray(topSher) &&
-                        topShayari.map((blog) => (
-                          <div className="col-lg-4" key={blog._id}>
-                            <div className="homeblog-card">
-                              <div
-                                style={{
-                                  justifyContent: "center",
-                                  alignContent: "center",
-                                }}
-                              >
-                                <img
-                                  src={BASE_URL_IMG + blog?.Image}
-                                  alt="Blog Image"
-                                  onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = "/default_image.jpg";
-                                  }}
-                                />
-                              </div>
-                              <div className="homeblog-info">
-                                <div className="blogtitlecontent-container">
-                                  <h2 className="text-start blogtitlecontent">
-                                    {blog?.title}
-                                  </h2>
-                                </div>
-                                <div className="blogcontent-container">
-                                  <p className="blogcontent">{blog?.shayari}</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </section>
-                </div>
-              </div>
-
-              {/* PROSE Section */}
-              <section className="waviy-body">
-                <div className="waviy">
-                  <h1>
-                    <span className="px-3">PROSE</span>
-                  </h1>
-                  <hr className="headinghr" />
-                </div>
-              </section>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <div className="CardRatingwrapNew">
-                  <section>
-                    <div
-                      className="row"
-                      style={{ marginLeft: "auto", marginRight: "auto" }}
-                    >
-                      {Array.isArray(topProse) &&
-                        topProse.map((blog) => (
-                          <div className="col-lg-4" key={blog._id}>
-                            <div className="homeblog-card">
-                              <div
-                                style={{
-                                  justifyContent: "center",
-                                  alignContent: "center",
-                                }}
-                              >
-                                <img
-                                  src={BASE_URL_IMG + blog?.Image}
-                                  alt="Blog Image"
-                                  onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = "/default_image.jpg";
-                                  }}
-                                />
-                              </div>
-                              <div className="homeblog-info">
-                                <div className="blogtitlecontent-container">
-                                  <h2 className="text-start blogtitlecontent">
-                                    {blog?.title}
-                                  </h2>
-                                </div>
-                                <div className="blogcontent-container">
-                                  <p className="blogcontent ">{blog?.prose}</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </section>
-                </div>
+                <LeftSidebar />
               </div>
             </div>
 
-              {/* SIDEBAR RIGHT (3 columns) */}
-              <div className="col-lg-4 col-xxl-3">
-                <div className="">
-                  <Sidebar
-                    topSher={topSher}
-                    topShayari={topShayari}
-                    topProse={topProse}
-                  />
-                </div>
-              </div>
+            {/* MAIN CONTENT SECTION */}
+            <div className="col-lg-6 col-xxl-6">
+              {/* SHER Section */}
+              <section className="waviy-body">
+  <div className="waviy">
+    <h1><span className="px-3">SHER</span></h1>
+    <hr className="headinghr" />
+  </div>
+</section>
+<div className="d-flex justify-content-center align-items-center">
+  <div className="CardRatingwrapNew">
+    <section>
+      <div className="row mx-auto">
+        {Array.isArray(topSher) &&
+          topSher.map((item) => (
+            <ContentCard key={item._id} type="sher" item={item} baseUrl={BASE_URL_IMG} />
+          ))}
+      </div>
+    </section>
+  </div>
+</div>
+
+{/* Repeat for SHAYARI */}
+<section className="waviy-body">
+  <div className="waviy">
+    <h1><span className="px-3">SHAYARI</span></h1>
+    <hr className="headinghr" />
+  </div>
+</section>
+<div className="d-flex justify-content-center align-items-center">
+  <div className="CardRatingwrapNew">
+    <section>
+      <div className="row mx-auto">
+        {Array.isArray(topShayari) &&
+          topShayari.map((item) => (
+            <ContentCard key={item._id} type="shayari" item={item} baseUrl={BASE_URL_IMG} />
+          ))}
+      </div>
+    </section>
+  </div>
+</div>
+
+{/* Repeat for PROSE */}
+<section className="waviy-body">
+  <div className="waviy">
+    <h1><span className="px-3">PROSE</span></h1>
+    <hr className="headinghr" />
+  </div>
+</section>
+<div className="d-flex justify-content-center align-items-center">
+  <div className="CardRatingwrapNew">
+    <section>
+      <div className="row mx-auto">
+        {Array.isArray(topProse) &&
+          topProse.map((item) => (
+            <ContentCard key={item._id} type="prose" item={item} baseUrl={BASE_URL_IMG} />
+          ))}
+      </div>
+    </section>
+  </div>
+</div>
+
+                  
+                
+            </div>
+
+            {/* RIGHT SIDEBAR */}
+            <div className="col-lg-3 col-xxl-3">
+              <Sidebar
+                topSher={topSher}
+                topShayari={topShayari}
+                topProse={topProse}
+              />
             </div>
           </div>
-          {/* ================== END MAIN CONTENT + SIDEBAR WRAP ================== */}
-          ...
-          <section className="quote-highlight-section">
-            <div className="quote-box shadow-sm rounded text-center p-4">
-              <h2 className="quote-title mb-1">आज का उद्धरण</h2>
-              <p className="quote-subtitle mb-4">कवि कह गया है</p>
+        </div>
+        {/* ================== END MAIN CONTENT + SIDEBAR WRAP ================== */}
+        <section className="quote-highlight-section">
+          <div className="quote-box shadow-sm rounded text-center p-4">
+            <h2 className="quote-title mb-1">आज का उद्धरण</h2>
+            <p className="quote-subtitle mb-4">कवि कह गया है</p>
 
-              <blockquote className="quote-content mx-auto">
-                <p className="mb-4">
-                  {quoteData?.quote || "उद्धरण लोड हो रहा है..."}
-                </p>
-                <footer className="quote-author text-primary fw-semibold">
-                  {quoteData?.author || "लेखक"}
-                </footer>
-              </blockquote>
+            <blockquote className="quote-content mx-auto">
+              <p className="mb-4">
+                {quoteData?.quote || "उद्धरण लोड हो रहा है..."}
+              </p>
+              <footer className="quote-author text-primary fw-semibold">
+                {quoteData?.author || "लेखक"}
+              </footer>
+            </blockquote>
 
-              <div className="quote-icons mt-3 d-flex justify-content-center gap-3">
-                <i className="bi bi-heart-fill text-danger"></i>
-                <i className="bi bi-share-fill text-secondary"></i>
-              </div>
+            <div className="quote-icons mt-3 d-flex justify-content-center gap-3">
+              <i className="bi bi-heart-fill text-danger"></i>
+              <i className="bi bi-share-fill text-secondary"></i>
             </div>
-          </section>
-          <section className="waviy-body">
-            <div className="waviy">
-              <h1>
-                NEW<span className="px-3">ARRIVALS</span>
-              </h1>
-              <hr className="headinghr" />
+          </div>
+        </section>
+        <section className="waviy-body">
+          <div className="waviy">
+            <h1>
+              NEW<span className="px-3">ARRIVALS</span>
+            </h1>
+            <hr className="headinghr" />
+          </div>
+        </section>
+        <div className="CardRatingwrap">
+          <div className="container">
+            <div className="maincardRading">
+              {allbook.map((book) => (
+                <div className="CardBoxWrap" key={book._id}>
+                  <img src={BASE_URL_IMG + book?.Image} className="img-fluid" />
+                  <div className="contentWrapcard">
+                    <h3 className="cardtext2">{book?.title}</h3>
+                    <p className="nametext">Author:{book?.author}</p>
+                    <p className="rstext">&#8377;{book?.Book_Price}</p>
+                    <div className="radingStar"></div>
+                    <Link to={"/single-book/" + `${book?._id}`}>
+                      {" "}
+                      <button>See the Book</button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
             </div>
-          </section>
-          <div className="CardRatingwrap">
-            <div className="container">
-              <div className="maincardRading">
-                {allbook.map((book) => (
-                  <div className="CardBoxWrap" key={book._id}>
-                    <img
-                      src={BASE_URL_IMG + book?.Image}
-                      className="img-fluid"
-                    />
-                    <div className="contentWrapcard">
-                      <h3 className="cardtext2">{book?.title}</h3>
-                      <p className="nametext">Author:{book?.author}</p>
-                      <p className="rstext">&#8377;{book?.Book_Price}</p>
-                      <div className="radingStar"></div>
-                      <Link to={"/single-book/" + `${book?._id}`}>
-                        {" "}
-                        <button>See the Book</button>
-                      </Link>
+          </div>
+        </div>
+        <section className="waviy-body">
+          <div className="waviy">
+            <h1>
+              <span className="px-3">BLOGS</span>
+            </h1>
+            <hr className="headinghr" />
+          </div>
+        </section>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div className="CardRatingwrapNew">
+            <section>
+              <div className="d-flex">
+                {featuredBlogs.map((blog) => (
+                  <div className="col-lg-4" key={blog._id}>
+                    <div className="homeblog-card">
+                      <div
+                        style={{
+                          justifyContent: "center",
+                          alignContent: "center",
+                        }}
+                      >
+                        <img
+                          src={BASE_URL_IMG + blog?.Image}
+                          alt="Blog Image"
+                          onError={(e) => {
+                            e.target.onerror = null; // Prevent infinite loop
+                            e.target.src = "/default_image.jpg";
+                          }}
+                        />
+                      </div>
+                      <div className="homeblog-info">
+                        <div className="blogtitlecontent-container">
+                          <h2 className="text-start blogtitlecontent">
+                            {blog?.title}
+                          </h2>
+                        </div>
+                        <div className="blogcontent-container">
+                          <p className="blogcontent ">{blog?.description}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
-          <section className="waviy-body">
-            <div className="waviy">
-              <h1>
-                <span className="px-3">BLOGS</span>
-              </h1>
-              <hr className="headinghr" />
-            </div>
-          </section>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <div className="CardRatingwrapNew">
-              <section>
-                <div className="d-flex">
-                  {featuredBlogs.map((blog) => (
-                    <div className="col-lg-4" key={blog._id}>
-                      <div className="homeblog-card">
-                        <div
-                          style={{
-                            justifyContent: "center",
-                            alignContent: "center",
-                          }}
-                        >
-                          <img
-                            src={BASE_URL_IMG + blog?.Image}
-                            alt="Blog Image"
-                            onError={(e) => {
-                              e.target.onerror = null; // Prevent infinite loop
-                              e.target.src = "/default_image.jpg";
-                            }}
-                          />
-                        </div>
-                        <div className="homeblog-info">
-                          <div className="blogtitlecontent-container">
-                            <h2 className="text-start blogtitlecontent">
-                              {blog?.title}
-                            </h2>
-                          </div>
-                          <div className="blogcontent-container">
-                            <p className="blogcontent ">{blog?.description}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            </div>
-          </div>
-          <div className="testimonialApp shadow-lg text-center">
-            {/* <h1 className="fs-1 fw-bold text-testi">
-            What People Talking About Poetic Atma?
-          </h1> */}
-            <Testimonials />
-          </div>
-          <div className="exampleApp ">
-            <Example />
-          </div>
-          <div className="exampleApp ">
-            <Insta />
+            </section>
           </div>
         </div>
-        <ToastContainer />
-      
+        <div className="testimonialApp shadow-lg text-center">
+          {/* <h1 className="fs-1 fw-bold text-testi">
+            What People Talking About Poetic Atma?
+          </h1> */}
+          <Testimonials />
+        </div>
+        <div className="exampleApp ">
+          <Example />
+        </div>
+        <div className="exampleApp ">
+          <Insta />
+        </div>
+      </div>
+      <ToastContainer />
     </>
   );
 }

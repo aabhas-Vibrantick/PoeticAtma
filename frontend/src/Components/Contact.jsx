@@ -48,7 +48,7 @@ export default function Contact() {
     <>
       <section id="contact" className="contact my-5">
         <div className="container-fluid px-0">
-          <div className="row g-0">
+          <div className="d-flex g-0">
             {/* Left Image */}
             <div className="col-lg-6 d-none d-lg-block">
               <div
@@ -64,7 +64,7 @@ export default function Contact() {
             </div>
 
             {/* Right Form & Info */}
-            <div className="col-lg-6 p-5 bg-light">
+            <div className="col-lg-6  bg-light">
               <h2 className="mb-4 text-center fw-bold text-primary">Contact Us</h2>
 
               {/* Contact Info Boxes */}

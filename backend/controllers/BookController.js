@@ -49,7 +49,7 @@ function addBook(req, res) {
     Bookobj.userId = req.decoded;
 
     if (req.file) {
-      Bookobj.Image = "Book_Image/" + req.file.filename;
+      Bookobj.Image = "book_image/" + req.file.filename;
     }
 
     Bookobj.save();

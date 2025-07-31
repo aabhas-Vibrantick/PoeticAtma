@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://api.poeticatma.com/admin/";
+export const BASE_URL = "https://api.poeticatma.com/admin/";
 export const BASE_URL_IMG = "https://api.poeticatma.com/";
 
 // Change this temporarily while developing
@@ -23,16 +23,16 @@ class apiServices {
     return axios.post(BASE_URL + "adduser", data);
   }
 
-  updateCustomerProfile(data) {
-    const header = {
-      Accept: "application/json",
-      Authorization: sessionStorage.getItem("token"),
-    };
+ updateCustomerProfile(data) {
+  const headers = {
+    Authorization: sessionStorage.getItem("token"), // keep token
+    // Don't manually set Content-Type here
+  };
 
-    return axios.post(BASE_URL + "updateCustomerProfile", data, {
-      headers: header,
-    });
-  }
+  return axios.post(BASE_URL + "updateCustomerProfile", data, {
+    headers: headers,
+  });
+}
 
   verifyEmail(data) {
     return axios.post(BASE_URL + "verifyMail", data);

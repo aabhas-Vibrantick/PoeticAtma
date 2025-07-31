@@ -420,87 +420,97 @@ export default function UserHome() {
           <div className="row">
             {/* LEFT SIDEBAR (Google AdSense) */}
             <div className="col-lg-3 col-xxl-3 d-none d-lg-block">
-              <div
-                className="sidebar-wrapper p-4 bg-white rounded-3 shadow-sm border"
-                style={{
-                  position: "sticky",
-                  top: "0px",
-                  height: "50vh",
-                  overflowY: "auto",
-                }}
-              >
+              <div className="sidebar-wrapper p-4 bg-white rounded-3 shadow-sm border">
                 <LeftSidebar />
               </div>
             </div>
 
             {/* MAIN CONTENT SECTION */}
-            <div className="col-lg-6 col-xxl-6">
+            <div className="col-lg-6 col-xxl-6 col-sm-6 col-md-6">
               {/* SHER Section */}
               <section className="waviy-body">
-  <div className="waviy">
-    <h1><span className="px-3">SHER</span></h1>
-    <hr className="headinghr" />
-  </div>
-</section>
-<div className="d-flex justify-content-center align-items-center">
-  <div className="CardRatingwrapNew">
-    <section>
-      <div className="row mx-auto">
-        {Array.isArray(topSher) &&
-          topSher.map((item) => (
-            <ContentCard key={item._id} type="sher" item={item} baseUrl={BASE_URL_IMG} />
-          ))}
-      </div>
-    </section>
-  </div>
-</div>
+                <div className="waviy">
+                  <h1>
+                    <span className="px-3">SHER</span>
+                  </h1>
+                  <hr className="headinghr" />
+                </div>
+              </section>
+              <div className="d-flex justify-content-center align-items-center">
+                <div className="CardRatingwrapNew">
+                  <section>
+                    <div className="row mx-auto">
+                      {Array.isArray(topSher) &&
+                        topSher.map((item) => (
+                          <ContentCard
+                            key={item._id}
+                            type="sher"
+                            item={item}
+                            baseUrl={BASE_URL_IMG}
+                          />
+                        ))}
+                    </div>
+                  </section>
+                </div>
+              </div>
 
-{/* Repeat for SHAYARI */}
-<section className="waviy-body">
-  <div className="waviy">
-    <h1><span className="px-3">SHAYARI</span></h1>
-    <hr className="headinghr" />
-  </div>
-</section>
-<div className="d-flex justify-content-center align-items-center">
-  <div className="CardRatingwrapNew">
-    <section>
-      <div className="row mx-auto">
-        {Array.isArray(topShayari) &&
-          topShayari.map((item) => (
-            <ContentCard key={item._id} type="shayari" item={item} baseUrl={BASE_URL_IMG} />
-          ))}
-      </div>
-    </section>
-  </div>
-</div>
+              {/* Repeat for SHAYARI */}
+              <section className="waviy-body">
+                <div className="waviy">
+                  <h1>
+                    <span className="px-3">SHAYARI</span>
+                  </h1>
+                  <hr className="headinghr" />
+                </div>
+              </section>
+              <div className="d-flex justify-content-center align-items-center">
+                <div className="CardRatingwrapNew custom-width">
+                  <section>
+                    <div className="row mx-auto">
+                      {Array.isArray(topShayari) &&
+                        topShayari.map((item) => (
+                          <ContentCard
+                            key={item._id}
+                            type="shayari"
+                            item={item}
+                            baseUrl={BASE_URL_IMG}
+                          />
+                        ))}
+                    </div>
+                  </section>
+                </div>
+              </div>
 
-{/* Repeat for PROSE */}
-<section className="waviy-body">
-  <div className="waviy">
-    <h1><span className="px-3">PROSE</span></h1>
-    <hr className="headinghr" />
-  </div>
-</section>
-<div className="d-flex justify-content-center align-items-center">
-  <div className="CardRatingwrapNew">
-    <section>
-      <div className="row mx-auto">
-        {Array.isArray(topProse) &&
-          topProse.map((item) => (
-            <ContentCard key={item._id} type="prose" item={item} baseUrl={BASE_URL_IMG} />
-          ))}
-      </div>
-    </section>
-  </div>
-</div>
-
-                  
-                
+              {/* Repeat for PROSE */}
+              <section className="waviy-body">
+                <div className="waviy">
+                  <h1>
+                    <span className="px-3">PROSE</span>
+                  </h1>
+                  <hr className="headinghr" />
+                </div>
+              </section>
+              <div className="d-flex justify-content-center align-items-center">
+                <div className="CardRatingwrapNew">
+                  <section>
+                    <div className="row mx-auto">
+                      {Array.isArray(topProse) &&
+                        topProse.map((item) => (
+                          <ContentCard
+                            key={item._id}
+                            type="prose"
+                            item={item}
+                            baseUrl={BASE_URL_IMG}
+                          />
+                        ))}
+                    </div>
+                  </section>
+                </div>
+              </div>
             </div>
 
             {/* RIGHT SIDEBAR */}
-            <div className="col-lg-3 col-xxl-3">
+            <div className="col-lg-2 col-xxl-3">
               <Sidebar
                 topSher={topSher}
                 topShayari={topShayari}
@@ -576,7 +586,7 @@ export default function UserHome() {
         >
           <div className="CardRatingwrapNew">
             <section>
-              <div className="d-flex">
+              <div className="d-flex flex-wrap">
                 {featuredBlogs.map((blog) => (
                   <div className="col-lg-4" key={blog._id}>
                     <div className="homeblog-card">
@@ -618,12 +628,13 @@ export default function UserHome() {
           </h1> */}
           <Testimonials />
         </div>
-        <div className="exampleApp ">
+        <div className="exampleApp  custom-carousel">
           <Example />
         </div>
-        <div className="exampleApp ">
+        <div className="exampleApp custom-carousel">
           <Insta />
         </div>
+        
       </div>
       <ToastContainer />
     </>

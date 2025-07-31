@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./Testimonial.css";
+import { Link } from "react-router-dom";
 
 const Testimonials = () => {
   const sliderRef = useRef(null);
@@ -54,8 +55,37 @@ const Testimonials = () => {
                   onError={(e) => (e.target.src = "/default_image.jpg")}
                 />
               </div>
-              <div className="user-name">{t.UserName}</div>
-              <p className="testimonial-text-modern">{t.description}</p>
+              <div className="testimonial-content d-flex flex-column gap-2 justify-content-center align-items-center text-center">
+                <div className="user-name">{t.UserName}</div>
+                <p className="testimonial-text-modern">{t.description}</p>
+                <div className="rating">
+                  <ul
+                    className="d-flex gap-1 p-0 m-0"
+                    style={{ listStyle: "none" }}
+                  >
+                    <li>
+                      <i className="fa-solid fa-star"></i>
+                    </li>
+                    <li>
+                      <i className="fa-solid fa-star"></i>
+                    </li>
+                    <li>
+                      <i className="fa-solid fa-star"></i>
+                    </li>
+                    <li>
+                      <i className="fa-solid fa-star"></i>
+                    </li>
+                    <li>
+                      <i className="fa-solid fa-star"></i>
+                    </li>
+                  </ul>
+                </div>
+                <div className="testimonial-btn mt-2">
+                  <Link to="/poets" className="btn btn-primary">
+                    View More
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         ))}

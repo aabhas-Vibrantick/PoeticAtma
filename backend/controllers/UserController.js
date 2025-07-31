@@ -1,6 +1,8 @@
 //mongodb customer model
 const Customer = require("../models/CustomerModel");
 
+const mongoose = require("mongoose");
+
 //mongodb user model
 const User = require("../models/UserModel");
 
@@ -990,48 +992,91 @@ verifyEmail = async (req, res) => {
 
 const updateCustomerProfile = async (req, res) => {
   try {
-    const { userId, address, facebook, instagram, linkdin, twiter } = req.body;
+    console.log("🟢 Controller hit");
+    console.log("REQ BODY", req.body);
+    console.log("REQ FILE", req.file);
 
-    if (!userId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "userId is required" });
-    }
-
-    const updateFields = {
+    const {
+      _id,
+      name,
+      penname,
+      email,
+      contact,
       address,
+      bio,
       facebook,
       instagram,
       linkdin,
       twiter,
-    };
+      bedgeverify,
+    } = req.body;
 
-    if (req.file) {
-      updateFields.Image = "customer_photo/" + req.file.filename;
+    console.log("Incoming _id:", _id);
+
+    if (!_id || !mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({
+        success: false,
+        message: "_id (valid User ID) is required",
+      });
     }
 
-    const updatedCustomer = await Customer.findOneAndUpdate(
-      { userId },
-      updateFields,
-      { new: true }
-    );
-
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Profile updated",
-        data: updatedCustomer,
-      });
-  } catch (err) {
-    console.error("Update Profile Error:", err);
-    res
-      .status(500)
-      .json({
+    const user = await User.findById(_id);
+    if (!user) {
+      return res.status(404).json({
         success: false,
-        message: "Failed to update profile",
-        error: err.message,
+        message: "User not found",
       });
+    }
+
+    // Update User
+    user.name = name ?? user.name;
+    user.penname = penname ?? user.penname;
+    user.email = email ?? user.email;
+    user.bedgeverify = bedgeverify ?? user.bedgeverify;
+
+    if (req.file) {
+      user.Image = `customer_photo/${req.file.filename}`;
+    }
+
+    await user.save();
+
+    let customer = await Customer.findOne({ userId: _id.toString() });
+    if (!customer) {
+      customer = new Customer({ userId: _id.toString() });
+    } else {
+      customer.userId = _id.toString(); // Just to be safe
+    }
+
+    customer.name = name ?? customer.name;
+    customer.penname = penname ?? customer.penname;
+    customer.email = email ?? customer.email;
+    customer.contact = contact ?? customer.contact;
+    customer.address = address ?? customer.address;
+    customer.bio = bio ?? customer.bio;
+    customer.facebook = facebook ?? customer.facebook;
+    customer.instagram = instagram ?? customer.instagram;
+    customer.linkdin = linkdin ?? customer.linkdin;
+    customer.twiter = twiter ?? customer.twiter;
+    customer.bedgeverify = bedgeverify ?? customer.bedgeverify;
+
+    if (req.file) {
+      customer.Image = `customer_photo/${req.file.filename}`;
+    }
+
+    await customer.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: { user, customer },
+    });
+  } catch (error) {
+    console.error("Update Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update profile",
+      error: error.message,
+    });
   }
 };
 

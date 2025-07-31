@@ -15,39 +15,78 @@ export default class Example extends Component {
   slides = [
     {
       key: uuidv4(),
-      content: <ExampleContent videoLink={"https://www.youtube.com/embed/crxWB7VdxDw?si=N6mM7pgptRgwcFLn"} />
+      content: (
+        <ExampleContent videoLink={"https://www.youtube.com/embed/crxWB7VdxDw?si=N6mM7pgptRgwcFLn"} />
+      )
     },
     {
       key: uuidv4(),
-      content: <ExampleContent videoLink={"https://www.youtube.com/embed/WgIvZoMOaQ0?si=rBFx8Rn--ljHzIcG"} />
+      content: (
+        <ExampleContent videoLink={"https://www.youtube.com/embed/WgIvZoMOaQ0?si=rBFx8Rn--ljHzIcG"} />
+      )
     },
     {
       key: uuidv4(),
-      content: <ExampleContent videoLink={"https://www.youtube.com/embed/-Uz0nSWIlhc?si=3bS9WrzzguFxlX6-"} />
+      content: (
+        <ExampleContent videoLink={"https://www.youtube.com/embed/-Uz0nSWIlhc?si=3bS9WrzzguFxlX6-"} />
+      )
     },
     {
       key: uuidv4(),
-      content: <ExampleContent videoLink={"https://www.youtube.com/embed/YpUZMGGGOZI?si=kl5ygBzrxCVlgB_D"} />
+      content: (
+        <ExampleContent videoLink={"https://www.youtube.com/embed/YpUZMGGGOZI?si=kl5ygBzrxCVlgB_D"} />
+      )
     },
     {
       key: uuidv4(),
-      content: <ExampleContent videoLink={"https://www.youtube.com/embed/5m3WozJnOVs?si=XGTj4OX-zWzqc26A"} />
+      content: (
+        <ExampleContent videoLink={"https://www.youtube.com/embed/5m3WozJnOVs?si=XGTj4OX-zWzqc26A"} />
+      )
     },
     {
       key: uuidv4(),
-      content: <ExampleContent videoLink={"https://www.youtube.com/embed/alwIcLw2CUs?si=WM-KGsl2sH31h1KK"} />
+      content: (
+        <ExampleContent videoLink={"https://www.youtube.com/embed/alwIcLw2CUs?si=WM-KGsl2sH31h1KK"} />
+      )
     },
     {
       key: uuidv4(),
-      content: <ExampleContent videoLink={"https://www.youtube.com/embed/xLEZEdEKq_o?si=OKWFzEnEeIou3qqp"} />
+      content: (
+        <ExampleContent videoLink={"https://www.youtube.com/embed/xLEZEdEKq_o?si=OKWFzEnEeIou3qqp"} />
+      )
     },
     {
       key: uuidv4(),
-      content: <ExampleContent videoLink={"https://www.youtube.com/embed/twD7_mQhANU?si=uShwpAhl_8-ZqadA"} />
+      content: (
+        <ExampleContent videoLink={"https://www.youtube.com/embed/twD7_mQhANU?si=uShwpAhl_8-ZqadA"} />
+      )
     }
   ].map((slide, index) => {
     return { ...slide, onClick: () => this.setState({ goToSlide: index }) };
   });
+
+  componentDidMount() {
+    this.updateDimensions();
+    window.addEventListener("resize", this.updateDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions);
+  }
+
+  updateDimensions = () => {
+    const width = window.innerWidth;
+    let offset = 2;
+
+    if (width <= 768) {
+      offset = 1;
+    }
+    if (width <= 480) {
+      offset = 0;
+    }
+
+    this.setState({ offsetRadius: offset });
+  };
 
   onChangeInput = e => {
     this.setState({
@@ -57,7 +96,14 @@ export default class Example extends Component {
 
   render() {
     return (
-      <div style={{ width: "80%", height: "400px", margin: "0 auto" }}>
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "800px",
+          height: "400px",
+          margin: "0 auto"
+        }}
+      >
         <Carousel
           slides={this.slides}
           goToSlide={this.state.goToSlide}

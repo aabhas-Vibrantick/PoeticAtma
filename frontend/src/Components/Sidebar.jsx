@@ -72,7 +72,7 @@ const Sidebar = ({ topSher, topShayari, topProse }) => {
       {/* Advertisement */}
       <div className="sidebar-section mb-5 text-center">
         <img
-          src="/assets/images/ad-sample.jpg"
+          src="Add.jpg"
           className="img-fluid rounded-3 border shadow-sm"
           alt="Advertisement"
         />

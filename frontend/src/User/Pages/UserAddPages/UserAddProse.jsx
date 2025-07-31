@@ -140,9 +140,9 @@ function UserAddProse() {
                     </div>
 
                     {/* Submit Button */}
-                    <div className="d-grid">
-                      <button type="submit" className="btn btn-primary py-2 fw-semibold">
-                        🚀 Post Prose
+                    <div className="text-center">
+                      <button type="submit" className="btn btn-primary px-4">
+                        Publish Prose
                       </button>
                     </div>
                   </form>

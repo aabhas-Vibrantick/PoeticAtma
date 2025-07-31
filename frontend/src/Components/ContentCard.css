@@ -1,0 +1,12 @@
+@media (max-width:666px){
+.custom-card{
+    width: 50%;
+}
+.homeblog-card img{
+    height:115px;
+}
+.homeblog-info h2{
+    font-size: 17px;
+    font-weight: 550;
+}
+}

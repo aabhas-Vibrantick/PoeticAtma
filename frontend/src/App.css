@@ -181,6 +181,12 @@ Timeline
   height: 300px;
 }
 
+@media (max-width:666px){
+  .you-card{
+    width:305px;
+  }
+}
+
 .ytimeline-content {
   background: #fff;
   border: 1px solid #e6e6e6;

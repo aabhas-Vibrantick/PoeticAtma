@@ -316,33 +316,33 @@ export default function UserHome() {
             <SwiperSlide className="homeswiper-slide">
               <img src="/assets/images/authentication_img.jpeg" />
             </SwiperSlide>
-            <SwiperSlide className="homeswiper-slide">
+            {/* <SwiperSlide className="homeswiper-slide">
               <img src="/assets/images/Sad_shayari_image_download(1).jpg" />
-            </SwiperSlide>
+            </SwiperSlide> */}
             <SwiperSlide className="homeswiper-slide">
               {" "}
               <img src="/assets/images/authentication_img.jpeg" />
             </SwiperSlide>
-            <SwiperSlide className="homeswiper-slide">
+            {/* <SwiperSlide className="homeswiper-slide">
               {" "}
               <img src="/assets/images/Sad_shayari_image_download(1).jpg" />
-            </SwiperSlide>
+            </SwiperSlide> */}
             <SwiperSlide className="homeswiper-slide">
               {" "}
               <img src="/assets/images/authentication_img.jpeg" />
             </SwiperSlide>
-            <SwiperSlide className="homeswiper-slide">
+            {/* <SwiperSlide className="homeswiper-slide">
               {" "}
               <img src="/assets/images/Sad_shayari_image_download(1).jpg" />
-            </SwiperSlide>
+            </SwiperSlide> */}
             <SwiperSlide className="homeswiper-slide">
               {" "}
               <img src="/assets/images/authentication_img.jpeg" />
             </SwiperSlide>
-            <SwiperSlide className="homeswiper-slide">
+            {/* <SwiperSlide className="homeswiper-slide">
               {" "}
               <img src="/assets/images/Sad_shayari_image_download(1).jpg" />
-            </SwiperSlide>
+            </SwiperSlide> */}
             <SwiperSlide className="homeswiper-slide">
               {" "}
               <img src="/assets/images/authentication_img.jpeg" />
@@ -421,13 +421,13 @@ export default function UserHome() {
           <div className="row">
             {/* LEFT SIDEBAR (Google AdSense) */}
             <div className="col-lg-2 col-xxl-2 d-none d-lg-block">
-              <div className="rounded-3 shadow-sm border">
+              <div className="bg-white rounded-3 shadow-sm border">
                 <LeftSidebar />
               </div>
             </div>
 
             {/* MAIN CONTENT SECTION */}
-            <div className="col-lg-6 ">
+            <div className="col-lg-8 col-xxl-8 col-md-12  ">
               {/* SHER Section */}
               <section className="waviy-body">
                 <div className="waviy">
@@ -589,7 +589,7 @@ export default function UserHome() {
             <section>
               <div className="d-flex flex-wrap">
                 {featuredBlogs.map((blog) => (
-                  <div className="col-lg-4" key={blog._id}>
+                  <div className="col-lg-4 blog-card" key={blog._id}>
                     <div className="homeblog-card">
                       <div
                         style={{

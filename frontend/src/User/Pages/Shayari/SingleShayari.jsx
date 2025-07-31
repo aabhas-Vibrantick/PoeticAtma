@@ -834,34 +834,40 @@ export default function SingleShayari() {
                   </div>
                   <div className="widget-body">
                     {alllatest.map((data, index) => (
-                      <div className="latest-post-aside media">
-                        <div className="lpa-left media-body">
-                          <div className="lpa-title">
-                            <h5 className="shayaricontent-container2 "> <Link className="shayaricontent2 " to={"/single-shayari/" + `${data?._id}`}>{data?.shayari}</Link></h5>
+  <div className="latest-post-aside media" key={data?._id || index}>
+    <div className="lpa-left media-body">
+      <div className="lpa-title">
+        <h5 className="shayaricontent-container2">
+          <Link className="shayaricontent2" to={`/single-shayari/${data?._id}`}>
+            {data?.shayari}
+          </Link>
+        </h5>
+      </div>
+      <div className="lpa-meta">
+        {data?.userId?._id ? (
+          <Link className="name" to={`/poets-profile/${data.userId._id}`}>
+            {data.userId.name}
+          </Link>
+        ) : (
+          <span className="name">Admin</span>
+        )}
+      </div>
+    </div>
+    <div className="lpa-right">
+      <Link to={`/single-shayari/${data?._id}`}>
+        <img
+          src={`${BASE_URL_IMG}${data?.Image?.startsWith("/") ? data?.Image.slice(1) : data?.Image}`}
+          alt=""
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "/default_image.jpg";
+          }}
+        />
+      </Link>
+    </div>
+  </div>
+))}
 
-                          </div>
-                          <div className="lpa-meta">
-                            {/* <a  href="#">
-                              Rachel Roth
-                            </a> */}
-                            <Link className="name" to={"/poets-profile/" + `${data?.userId?._id}`}>{data?.userId?.name || "Admin"}</Link>
-                            {/* <a className="date" href="#">
-                               {format(new Date(data.created_at), 'MMMM d, yyyy')}
-                            </a> */}
-                          </div>
-                        </div>
-                        <div className="lpa-right">
-                          {/* <a href="#"> */}
-                          <Link to={"/single-shayari/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="" 
-                          onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}/></Link>
-                          {/* <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt="" /> */}
-                          {/* </a> */}
-                        </div>
-                      </div>
-                    ))}
 
                   </div>
                 </div>

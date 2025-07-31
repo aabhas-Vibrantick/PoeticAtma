@@ -7,7 +7,6 @@ const LeftSidebar = () => {
         .left-sidebar {
           transition: all 0.3s ease;
           font-family: "Segoe UI", sans-serif;
-          padding: 16px;
           background: #fff;
           border-radius: 12px;
           box-shadow: 0 0 12px rgba(0,0,0,0.05);

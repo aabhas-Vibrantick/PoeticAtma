@@ -1,20 +1,19 @@
 import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import apiServices, { BASE_URL_IMG } from '../../../ApiServices/ApiServices'
-import { toast, ToastContainer } from 'react-toastify'
+import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
+import { toast, ToastContainer } from "react-toastify";
 import ScaleLoader from "react-spinners/ScaleLoader";
 import { useEffect, useState } from "react";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 export default function Englishshayari() {
   const [allEnglish, setAllEnglish] = useState([]);
   const [loading, setLoading] = useState(true);
-  const authenticate = sessionStorage.getItem('authenticate')
+  const authenticate = sessionStorage.getItem("authenticate");
   const [alllatest, setAlllatest] = useState([]);
   const parse = require("html-react-parser");
   const handleReadMoreClick = () => {
-
     if (!authenticate) {
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
   };
   const override = {
@@ -30,11 +29,13 @@ export default function Englishshayari() {
       setLoading(false);
     }, 3000);
 
-
-    apiServices.getByEnglish()
-      .then(response => {
+    apiServices
+      .getByEnglish()
+      .then((response) => {
         if (response.data.success) {
-          const filteredShayaris = response.data.allenglish.filter((shayari) => shayari.status === true);
+          const filteredShayaris = response.data.allenglish.filter(
+            (shayari) => shayari.status === true
+          );
           setAllEnglish(filteredShayaris);
           // setAllEnglish(response.data.allenglish);
           // // console.log("english",response)
@@ -43,14 +44,17 @@ export default function Englishshayari() {
           // console.error(response.data.message);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         // console.error('Error:', error);
       });
 
-    apiServices.latestShayari()
+    apiServices
+      .latestShayari()
       .then((data) => {
         if (data.data.success) {
-          const filteredShayaris = data.data.data.filter((shayari) => shayari.status === true);
+          const filteredShayaris = data.data.data.filter(
+            (shayari) => shayari.status === true
+          );
           setAlllatest(filteredShayaris);
           // setAllBest(data.data.data);
           // // console.log(data);
@@ -64,31 +68,32 @@ export default function Englishshayari() {
       });
   }, [loading]);
 
-      // ========search========
-      const [searchQuery, setSearchQuery] = useState('');
-      const [searchResults, setSearchResults] = useState([]);
-       //search handle
-       const handleSearchQueryChange = (e) => {
-        setSearchQuery(e.target.value);
-      };
-      const performSearch = (query) => {
-        const filteredResults = allEnglish.filter((proses) => {
-          const fullName = proses.title + proses.tags + proses.shayari +proses.userId.name;
-          return fullName.toLowerCase().includes(query.toLowerCase());
-        });
-    
-        setSearchResults(filteredResults);
-      };
-    
-      const handleSearch = (e) => {
-        e.preventDefault();
-        if (searchQuery === '') {
-          // If search input is empty, show all poets
-          setSearchResults(allEnglish);
-        } else {
-          performSearch(searchQuery);
-        }
-      };
+  // ========search========
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  //search handle
+  const handleSearchQueryChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+  const performSearch = (query) => {
+    const filteredResults = allEnglish.filter((proses) => {
+      const fullName =
+        proses.title + proses.tags + proses.shayari + proses.userId.name;
+      return fullName.toLowerCase().includes(query.toLowerCase());
+    });
+
+    setSearchResults(filteredResults);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery === "") {
+      // If search input is empty, show all poets
+      setSearchResults(allEnglish);
+    } else {
+      performSearch(searchQuery);
+    }
+  };
   return (
     <>
       <ScaleLoader loading={loading} cssOverride={override} size={70} />
@@ -123,7 +128,6 @@ export default function Englishshayari() {
                                         e.target.src = "/default_image.jpg";
                                       }}
                                     />
-                                    
                                   </Link>
                                 </div>
 
@@ -195,7 +199,9 @@ export default function Englishshayari() {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${data?.sher.replace(
+                                    `${data?.title}\n\n${(
+                                      data?.sher || ""
+                                    ).replace(
                                       /<[^>]+>/g,
                                       ""
                                     )}\n\nRead more: https://poeticatma.com/single-shayari/${
@@ -300,7 +306,9 @@ export default function Englishshayari() {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${data?.sher.replace(
+                                    `${data?.title}\n\n${(
+                                      data?.sher || ""
+                                    ).replace(
                                       /<[^>]+>/g,
                                       ""
                                     )}\n\nRead more: https://poeticatma.com/single-shayari/${
@@ -342,8 +350,8 @@ export default function Englishshayari() {
                   <div className="blogbox categories">
                     <ul className="list-unstyled">
                       <li>
-                        <Link to="/hindi-shayari" >
-                        <i className="fa-solid fa-heart"></i>Hindi
+                        <Link to="/hindi-shayari">
+                          <i className="fa-solid fa-heart"></i>Hindi
                         </Link>
                         {/* <a href="#">
                           <i className="fa-solid fa-heart"></i>Love
@@ -351,15 +359,15 @@ export default function Englishshayari() {
                       </li>
                       <li>
                         <Link to="/top20-shayari">
-                        <i className="fa-solid fa-heart"></i>Top-20 Shayari
+                          <i className="fa-solid fa-heart"></i>Top-20 Shayari
                         </Link>
                         {/* <a href="#">
                           <i className="fa-solid fa-heart-crack"></i>Sad
                         </a> */}
                       </li>
                       <li>
-                        <Link to="/shayari-Image" >
-                        <i className="fa-solid fa-heart"></i>Shayari Images
+                        <Link to="/shayari-Image">
+                          <i className="fa-solid fa-heart"></i>Shayari Images
                         </Link>
                       </li>
                     </ul>
@@ -439,9 +447,9 @@ export default function Englishshayari() {
                               alt=""
                               className=""
                               onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
+                                e.target.onerror = null;
+                                e.target.src = "/default_image.jpg";
+                              }}
                             />
                           </Link>
                           {/* <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt="" /> */}

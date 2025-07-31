@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import apiServices, { BASE_URL_IMG } from "../ApiServices/ApiServices";
 import { useState } from "react";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import WhatsAppWidget from "./WhatsAppWidget";
 import Marquee from "react-fast-marquee";
 import Example from "./example";
 import Testimonials from "./Testimonials";
@@ -419,14 +420,14 @@ export default function UserHome() {
         <div className="container-fluid">
           <div className="row">
             {/* LEFT SIDEBAR (Google AdSense) */}
-            <div className="col-lg-3 col-xxl-3 d-none d-lg-block">
-              <div className="sidebar-wrapper p-4 bg-white rounded-3 shadow-sm border">
+            <div className="col-lg-2 col-xxl-2 d-none d-lg-block">
+              <div className="rounded-3 shadow-sm border">
                 <LeftSidebar />
               </div>
             </div>
 
             {/* MAIN CONTENT SECTION */}
-            <div className="col-lg-6 col-xxl-6 col-sm-6 col-md-6">
+            <div className="col-lg-6 ">
               {/* SHER Section */}
               <section className="waviy-body">
                 <div className="waviy">
@@ -634,7 +635,7 @@ export default function UserHome() {
         <div className="exampleApp custom-carousel">
           <Insta />
         </div>
-        
+        <WhatsAppWidget/>
       </div>
       <ToastContainer />
     </>

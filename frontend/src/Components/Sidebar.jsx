@@ -43,7 +43,7 @@ const Sidebar = ({ topSher, topShayari, topProse }) => {
 
   return (
     <>
-    <style>{`.sidebar-wrapper {
+      <style>{`.sidebar-wrapper {
   transition: all 0.3s ease;
   font-family: "Segoe UI", sans-serif;
 }
@@ -68,8 +68,6 @@ const Sidebar = ({ topSher, topShayari, topProse }) => {
   transition: background-color 0.2s ease;
 }
 `}</style>
-    <div className="sidebar-wrapper p-4 bg-white rounded-3 shadow-sm border">
-      {/* Advertisement */}
       <div className="sidebar-section mb-5 text-center">
         <img
           src="Add.jpg"
@@ -77,12 +75,14 @@ const Sidebar = ({ topSher, topShayari, topProse }) => {
           alt="Advertisement"
         />
       </div>
+      <div className="sidebar-wrapper p-4 bg-white rounded-3 shadow-sm border">
+        {/* Advertisement */}
 
-      {/* Sidebar Sections */}
-      {renderSection("Trending Sher", topSher, "text-primary")}
-      {renderSection("Latest Shayari", topShayari, "text-success")}
-      {renderSection("Featured Prose", topProse, "text-warning")}
-    </div>
+        {/* Sidebar Sections */}
+        {renderSection("Trending Sher", topSher, "text-primary")}
+        {renderSection("Latest Shayari", topShayari, "text-success")}
+        {renderSection("Featured Prose", topProse, "text-warning")}
+      </div>
     </>
   );
 };

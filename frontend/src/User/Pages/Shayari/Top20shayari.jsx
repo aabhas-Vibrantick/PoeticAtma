@@ -1,20 +1,19 @@
 import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import apiServices, { BASE_URL_IMG } from '../../../ApiServices/ApiServices'
-import { toast, ToastContainer } from 'react-toastify'
+import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
+import { toast, ToastContainer } from "react-toastify";
 import ScaleLoader from "react-spinners/ScaleLoader";
 import { useEffect, useState } from "react";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 export default function Top20shayari() {
   const [allPopular, setAllPopular] = useState([]);
   const [loading, setLoading] = useState(true);
-  const authenticate = sessionStorage.getItem('authenticate')
+  const authenticate = sessionStorage.getItem("authenticate");
   const [alllatest, setAlllatest] = useState([]);
   const parse = require("html-react-parser");
   const handleReadMoreClick = () => {
-
     if (!authenticate) {
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
   };
   const override = {
@@ -30,10 +29,13 @@ export default function Top20shayari() {
       setLoading(false);
     }, 3000);
 
-    apiServices.getPopularShayari()
+    apiServices
+      .getPopularShayari()
       .then((data) => {
         if (data.data.success) {
-          const filteredShayaris = data.data.data.filter((shayari) => shayari.status === true);
+          const filteredShayaris = data.data.data.filter(
+            (shayari) => shayari.status === true
+          );
           setAllPopular(filteredShayaris);
           // setAllPopular(data.data.data);
           // // console.log(data);
@@ -46,10 +48,13 @@ export default function Top20shayari() {
         toast.error("Something went wrong");
       });
 
-    apiServices.latestShayari()
+    apiServices
+      .latestShayari()
       .then((data) => {
         if (data.data.success) {
-          const filteredShayaris = data.data.data.filter((shayari) => shayari.status === true);
+          const filteredShayaris = data.data.data.filter(
+            (shayari) => shayari.status === true
+          );
           setAlllatest(filteredShayaris);
           // setAllBest(data.data.data);
           // // console.log(data);
@@ -63,32 +68,32 @@ export default function Top20shayari() {
       });
   }, [loading]);
 
+  // ========search========
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  //search handle
+  const handleSearchQueryChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+  const performSearch = (query) => {
+    const filteredResults = allPopular.filter((proses) => {
+      const fullName =
+        proses.title + proses.tags + proses.shayari + proses.userId?.name;
+      return fullName.toLowerCase().includes(query.toLowerCase());
+    });
 
-    // ========search========
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
-     //search handle
-     const handleSearchQueryChange = (e) => {
-      setSearchQuery(e.target.value);
-    };
-    const performSearch = (query) => {
-      const filteredResults = allPopular.filter((proses) => {
-        const fullName = proses.title + proses.tags + proses.shayari +proses.userId?.name;
-        return fullName.toLowerCase().includes(query.toLowerCase());
-      });
-  
-      setSearchResults(filteredResults);
-    };
-  
-    const handleSearch = (e) => {
-      e.preventDefault();
-      if (searchQuery === '') {
-        // If search input is empty, show all poets
-        setSearchResults(allPopular);
-      } else {
-        performSearch(searchQuery);
-      }
-    };
+    setSearchResults(filteredResults);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery === "") {
+      // If search input is empty, show all poets
+      setSearchResults(allPopular);
+    } else {
+      performSearch(searchQuery);
+    }
+  };
   return (
     <>
       <ScaleLoader loading={loading} cssOverride={override} size={70} />
@@ -194,7 +199,9 @@ export default function Top20shayari() {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${data?.sher.replace(
+                                    `${data?.title}\n\n${(
+                                      data?.sher || ""
+                                    ).replace(
                                       /<[^>]+>/g,
                                       ""
                                     )}\n\nRead more: https://poeticatma.com/single-shayari/${
@@ -299,7 +306,9 @@ export default function Top20shayari() {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${data?.sher.replace(
+                                    `${data?.title}\n\n${(
+                                      data?.sher || ""
+                                    ).replace(
                                       /<[^>]+>/g,
                                       ""
                                     )}\n\nRead more: https://poeticatma.com/single-shayari/${
@@ -370,8 +379,8 @@ export default function Top20shayari() {
                   <div className="blogbox categories">
                     <ul className="list-unstyled">
                       <li>
-                        <Link to="/english-shayari" >
-                        <i className="fa-solid fa-heart"></i>English
+                        <Link to="/english-shayari">
+                          <i className="fa-solid fa-heart"></i>English
                         </Link>
                         {/* <a href="#">
                           <i className="fa-solid fa-heart"></i>Love
@@ -379,15 +388,15 @@ export default function Top20shayari() {
                       </li>
                       <li>
                         <Link to="/hindi-shayari">
-                        <i className="fa-solid fa-heart"></i>Hindi
+                          <i className="fa-solid fa-heart"></i>Hindi
                         </Link>
                         {/* <a href="#">
                           <i className="fa-solid fa-heart-crack"></i>Sad
                         </a> */}
                       </li>
                       <li>
-                        <Link to="/shayari-Image" >
-                        <i className="fa-solid fa-heart"></i>Shayari Images
+                        <Link to="/shayari-Image">
+                          <i className="fa-solid fa-heart"></i>Shayari Images
                         </Link>
                       </li>
                     </ul>
@@ -467,9 +476,9 @@ export default function Top20shayari() {
                               alt=""
                               className=""
                               onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
+                                e.target.onerror = null;
+                                e.target.src = "/default_image.jpg";
+                              }}
                             />
                           </Link>
                           {/* <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt="" /> */}

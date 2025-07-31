@@ -181,10 +181,12 @@ export default function Bestprose() {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${data?.sher.replace(
+                                    `${data?.title}\n\n${(
+                                      data?.sher || ""
+                                    ).replace(
                                       /<[^>]+>/g,
                                       ""
-                                    )}\n\nRead more: https://poeticatma.com/single-prose/${
+                                    )}\n\nRead more: https://poeticatma.com/single-shayari/${
                                       data?._id
                                     }`
                                   )}`}
@@ -268,10 +270,12 @@ export default function Bestprose() {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${data?.sher.replace(
+                                    `${data?.title}\n\n${(
+                                      data?.sher || ""
+                                    ).replace(
                                       /<[^>]+>/g,
                                       ""
-                                    )}\n\nRead more: https://poeticatma.com/single-prose/${
+                                    )}\n\nRead more: https://poeticatma.com/single-shayari/${
                                       data?._id
                                     }`
                                   )}`}

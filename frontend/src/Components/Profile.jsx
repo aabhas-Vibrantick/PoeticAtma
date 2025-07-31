@@ -343,7 +343,8 @@ export default function Porfile() {
                     </a>
                   </li>
                 </ul>
-                <p className="">{userDetail?.bio}</p>
+               {userDetail?.bio && <p>{userDetail.bio}</p>}
+
               </div>
 
               <div className="row follow-button-1">

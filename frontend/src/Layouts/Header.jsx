@@ -57,6 +57,8 @@ export default function Header() {
     toast.success("Logged Out Successfully")
   }
 
+  
+
   return (
     <>
       <header id="header" className="container-fluid fixed-top  header-transparent ">
@@ -149,7 +151,7 @@ export default function Header() {
                     <li className="nav-item">
                       <Link to="/blogs">
                         <a className="nav-link text-dark">
-                          BLOG
+                          BLOGS
                         </a>
                       </Link>
                     </li>
@@ -157,7 +159,7 @@ export default function Header() {
                     <li className="nav-item">
                       <Link to="/contact">
                         <a className="nav-link text-dark">
-                          CONTACT US
+                          CONTACT 
                         </a>
                       </Link>
                     </li>
@@ -280,7 +282,7 @@ export default function Header() {
                     <li className="nav-item">
                       <Link to="/blogs">
                         <a className="nav-link text-dark">
-                          BLOG
+                          BLOGS
                         </a>
                       </Link>
                     </li>

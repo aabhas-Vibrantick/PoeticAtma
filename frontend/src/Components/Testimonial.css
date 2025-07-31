@@ -109,3 +109,21 @@
 .testimonial-btn{
   background-color: yellowgreen;
 }
+
+@media (max-width:400px){
+  .profile-pic-container img {
+   max-width: 138px;
+  }
+}
+
+@media (max-width:350px){
+  .profile-pic-container img {
+   max-width: 110px;
+  }
+}
+
+@media (min-width: 768px) and(max-width: 1024px !important){
+  .profile-pic-container img {
+   min-width: 110px;
+  }
+}

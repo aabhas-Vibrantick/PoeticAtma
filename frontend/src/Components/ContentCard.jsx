@@ -38,7 +38,7 @@ const ContentCard = ({ type, item, baseUrl }) => {
         </div>
         <div className="homeblog-info">
           <div className="blogtitlecontent-container">
-            {/* <h2 className="text-start blogtitlecontent">{trimToWords{item?.title},5}</h2> */}
+            <h2 className="text-start blogtitlecontent">{item?.title}</h2>
           </div>
           <div className="blogcontent-container">
             <p className="blogcontent">{trimToWords(textMap[type], 20)}</p>

@@ -162,12 +162,12 @@ export default function Shayari(){
           <div className="container sher">
             <div className=" sher-2 ">
               <h1>SHAYARI COLLECTIONS</h1>
-              <p>
+              {/* <p>
                 This page brings together countless splendid shayari by noted
                 poets handpicked from the long poetic tradition of Urdu. Readers
                 can sort these Urdu shayari by poets, topics, emotions etc. and
                 see their poetic tastes cultivate like never before.
-              </p>
+              </p> */}
               <hr />
             </div>
 

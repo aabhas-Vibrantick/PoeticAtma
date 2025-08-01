@@ -164,12 +164,12 @@ export default function Prose() {
         <div className="container sher">
           <div className=" sher-2 ">
             <h1>PROSE COLLECTIONS</h1>
-            <p>
+            {/* <p>
               This page brings together countless splendid prose by noted poets
               handpicked from the long poetic tradition of Urdu. Readers can
               sort these Urdu prose by poets, topics, emotions etc. and see
               their poetic tastes cultivate like never before.
-            </p>
+            </p> */}
             <hr />
           </div>
 

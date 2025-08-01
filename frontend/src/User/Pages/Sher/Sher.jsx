@@ -152,12 +152,12 @@ export default function Sher() {
         <div className="container sher">
           <div className=" sher-2 ">
             <h1>SHER COLLECTIONS</h1>
-            <p>
+            {/* <p>
               This page brings together countless splendid sher by noted poets
               handpicked from the long poetic tradition of Urdu. Readers can
               sort these Urdu sher by poets, topics, emotions etc. and see their
               poetic tastes cultivate like never before.
-            </p>
+            </p> */}
             <hr />
           </div>
 

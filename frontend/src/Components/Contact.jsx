@@ -3,6 +3,17 @@ import apiservices from "../ApiServices/ApiServices";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Contact.css";
+
+// Utility functions
+const sanitizeInput = (input) => {
+  const temp = input.trim();
+  const pattern = /[<>$]/g;
+  return temp.replace(pattern, "");
+};
+
+const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const validatePhone = (phone) => /^[0-9]{10}$/.test(phone);
+
 export default function Contact() {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -17,12 +28,23 @@ export default function Contact() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
+    // Validate email and phone before proceeding
+    if (!validateEmail(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (!validatePhone(contact)) {
+      toast.error("Please enter a valid 10-digit phone number.");
+      return;
+    }
+
     const data = {
-      name,
-      email,
-      subject,
-      message,
-      contact,
+      name: sanitizeInput(name),
+      email: sanitizeInput(email),
+      subject: sanitizeInput(subject),
+      message: sanitizeInput(message),
+      contact: sanitizeInput(contact),
     };
 
     apiservices
@@ -64,8 +86,11 @@ export default function Contact() {
             </div>
 
             {/* Right Form & Info */}
-            <div className="col-lg-6  bg-light">
-              <h2 className="mb-4 text-center fw-bold custom-icon-color">Contact Us</h2>
+            <div className="col-lg-6 bg-light">
+              <h2 className="mb-4 text-center fw-bold custom-icon-color">
+                Contact Us
+              </h2>
+
               {/* Contact Info Boxes */}
               <div className="row g-4 mb-4">
                 <div className="col-md-6 d-flex align-items-start">
@@ -80,7 +105,7 @@ export default function Contact() {
                 </div>
 
                 <div className="col-md-6 d-flex align-items-start">
-                  <i className="fa-regular fa-clock fa-xl me-3 custom-icon-color  mt-1"></i>
+                  <i className="fa-regular fa-clock fa-xl me-3 custom-icon-color mt-1"></i>
                   <div>
                     <h5 className="fw-bold">Open Hours:</h5>
                     <p className="mb-0">Mon - Sat: 10:00 AM - 6:30 PM</p>
@@ -88,18 +113,24 @@ export default function Contact() {
                 </div>
 
                 <div className="col-md-6 d-flex align-items-start">
-                  <i className="fa-solid fa-envelope fa-xl me-3 custom-icon-color  mt-1"></i>
+                  <i className="fa-solid fa-envelope fa-xl me-3 custom-icon-color mt-1"></i>
                   <div>
                     <h5 className="fw-bold">Email:</h5>
-                    <p className="mb-0">poeticatma@gmail.com<br />info@poeticatma.com</p>
+                    <p className="mb-0">
+                      poeticatma@gmail.com<br />
+                      info@poeticatma.com
+                    </p>
                   </div>
                 </div>
 
                 <div className="col-md-6 d-flex align-items-start">
-                  <i className="fa-solid fa-phone-volume fa-xl me-3 custom-icon-color  mt-1"></i>
+                  <i className="fa-solid fa-phone-volume fa-xl me-3 custom-icon-color mt-1"></i>
                   <div>
                     <h5 className="fw-bold">Call:</h5>
-                    <p className="mb-0">+91 76579 99786<br />+91 86995 24005</p>
+                    <p className="mb-0">
+                      +91 76579 99786<br />
+                      +91 86995 24005
+                    </p>
                   </div>
                 </div>
               </div>
@@ -128,6 +159,7 @@ export default function Contact() {
                     />
                   </div>
                 </div>
+
                 <div className="form-group mt-3">
                   <input
                     type="text"
@@ -138,6 +170,7 @@ export default function Contact() {
                     required
                   />
                 </div>
+
                 <div className="form-group mt-3">
                   <input
                     type="tel"
@@ -148,6 +181,7 @@ export default function Contact() {
                     required
                   />
                 </div>
+
                 <div className="form-group mt-3">
                   <textarea
                     className="form-control"
@@ -158,6 +192,7 @@ export default function Contact() {
                     required
                   ></textarea>
                 </div>
+
                 <div className="text-center mt-4">
                   <button type="submit" className="btn btn-primary btn-lg px-5 rounded-pill">
                     Send Message

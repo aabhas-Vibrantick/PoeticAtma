@@ -159,7 +159,7 @@ updateBook = (req, res) => {
           Bookdata.bookstatus = req.body.bookstatus;
           Bookdata.userId = req.decoded;
           if (req.file) {
-            Bookdata.Image = "Book_photo/" + req.file.filename;
+            Bookdata.Image = "book_image/" + req.file.filename;
           }
           Bookdata.save();
 

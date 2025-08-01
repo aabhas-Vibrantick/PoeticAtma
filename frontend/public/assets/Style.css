@@ -171,7 +171,7 @@ Link {
   font-size: 18px;
   font-weight: 400;
   color: var(--white);
-  font-family: 'oswaldregular', 'rozha_oneregular', 'MehrNastaliqRegular';
+  font-family: "Cinzel", serif;
 }
 
 .top-social-media {
@@ -185,7 +185,7 @@ Link {
   font-size: 16px;
   padding-top: 7px;
   font-weight: 500;
-  font-family: 'oswaldregular', 'rozha_oneregular', 'MehrNastaliqRegular';
+  font-family: "Cinzel", serif;
 }
 
 .top-social-media a {
@@ -244,7 +244,7 @@ Link {
   text-decoration: none;
   font-weight: bold;
   /* font-family: 'Raleway', sans-serif; */
-  font-family: 'oswaldregular','rozha_oneregular','MehrNastaliqRegular';
+  font-family: "Cinzel", serif;
   position: relative;
   z-index: 1;
 }
@@ -302,6 +302,7 @@ footer start
 
 .foote-bg2 a {
   color: var(--black);
+  font-family:"Cinzel", serif;
 }
 
 .poetic-logo2 {
@@ -346,11 +347,12 @@ footer start
 
 .footer-bottom-link p {
   color: var(--white);
-  font-family: 'oswaldregular', 'rozha_oneregular', 'MehrNastaliqRegular';
+  font-family: "Cinzel", serif;
 }
 
 .footer-bottom-link h6 {
   color: var(--white);
+  font-family: "Cinzel", serif;
 }
 
 .footer-bottom-link p:hover {
@@ -359,7 +361,7 @@ footer start
 
 .footer-info span {
   color: var(--white);
-  /* font-family: 'oswaldregular', 'rozha_oneregular', 'MehrNastaliqRegular'; */
+  font-family: "Cinzel", serif;
 }
 
 /* ======================
@@ -3074,13 +3076,13 @@ position: relative;
 .waviy h1 {
   font-size: 60px;
   color: var(--black);
-  font-family: 'oswaldregular','rozha_oneregular','MehrNastaliqRegular';
+  font-family: "Cinzel", serif;
 }
 
 .waviy h1 span {
   color: #1f2e6c;
   font-weight: bold;
-  font-family: 'oswaldregular','rozha_oneregular','MehrNastaliqRegular';
+  font-family: "Cinzel", serif;
 }
 
 /* .waviy span {

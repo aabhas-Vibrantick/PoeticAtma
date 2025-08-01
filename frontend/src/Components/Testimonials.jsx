@@ -43,7 +43,7 @@ const Testimonials = () => {
 
   return (
     <div className="testimonial-section" id="testimonials">
-      <h2 className="testimonial-heading">Voices of PoeticAtma</h2>
+      <h2 className="testimonial-heading">What People Talk About Us ?</h2>
       <Slider ref={sliderRef} {...settings}>
         {testimonials.map((t) => (
           <div key={t._id} className="testimonial-slide-modern">

@@ -4027,3 +4027,31 @@ a.blue {
 
 
 
+/* sign in */
+/* For 414px screens (iPhone Plus, Pro Max) */
+@media screen and (max-width: 450px) {
+  .passswitch {
+    left: 300px; /* adjust as needed */
+  }
+}
+
+/* For 375px screens (iPhone X/11/12/13 Mini) */
+@media screen and (max-width: 375px) {
+  .passswitch {
+    left: 252px;
+  }
+}
+
+/* For 360px screens (most Android phones) */
+@media screen and (max-width: 360px) {
+  .passswitch {
+    left: 204px;
+  }
+}
+
+/* For 320px screens (older/small phones) */
+@media screen and (max-width: 320px) {
+  .passswitch {
+    left: 196px;
+  }
+}

@@ -29,15 +29,15 @@ const PrivacyPolicy = () => {
 
     return (
         <div>
-            <section className="container-fluid bg-warning bread">
+            <section className="container-fluid bg-warning bread-privacy">
                 <div className="py-5">
                     <div className="pt-lg-5 pt-3 p-lg-4 pb-3">
-                        <h2 className="fs-1 mt-5 pt-lg-5 pt-sm-3">
-                            Privacy Policies
+                        <h2 className="fs-1 mt-5 pt-lg-5 pt-sm-3 text-white">
+                            Privacy Policy
                         </h2>
-                        <p className="fs-5 ">
+                        {/* <p className="fs-5 ">
                             At Poetic Atma, we understand the importance of privacy and are committed to protecting the personal information of our users. We only collect information that is necessary for providing and improving our services, and we never share your data with third parties without your consent.
-                        </p>
+                        </p> */}
                     </div>
                 </div>
             </section>

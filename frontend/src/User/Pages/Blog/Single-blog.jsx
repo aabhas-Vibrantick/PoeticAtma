@@ -971,8 +971,7 @@ export default function Singleblog() {
                       </div>
                       <div className="media-body">
                         <h6 className="text-capitalize">
-                          Hello, I'm
-                          <br />
+                          
                           <Link
                             className="name"
                             to={"/poets-profile/" + `${allBlog?.userId?._id}`}

@@ -14,13 +14,13 @@ export default function Footer() {
               <i className="fab fa-facebook-f"></i>
             </a>
             <a href="https://www.youtube.com/@poeticatma" className="me-4" target="_blank">
-              <i className="fa-brands fa-youtube"></i>
+              <i className="fab fa-brands fab fa-youtube"></i>
             </a>
             <a href="https://www.instagram.com/poeticatma/" className="me-4 link-insta" target="_blank">
-              <i className="fab fa-instagram"></i>
+              <i className="fab  fa-instagram"></i>
             </a>
             <a href="https://wa.me/919888323607" target="_blank" className="me-4">
-              <i className="fa-brands fa-whatsapp"></i>
+              <i className="fab fa-brands fab fa-whatsapp"></i>
             </a>
           </div>
         </section>

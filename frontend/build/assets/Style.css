@@ -684,8 +684,48 @@ footer end
 /* ------------blog blog-banner end----------- */
 
 /* ------------breadcrum------- */
-.bread {
-  background-image: url(./images/cover.jpg);
+.bread-helpdesk {
+  background-image: url(./images/helpDesk.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;       
+  background-position: center;
+  width: 100%;
+  height: 300px;               
+  display: block;
+  overflow: hidden;
+}
+
+.bread-faq{
+  background-image: url(./images/faq.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;       
+  background-position: center;
+  width: 100%;
+  height: 300px;               
+  display: block;
+  overflow: hidden;
+}
+
+.bread-privacy{
+  background-image: url(./images/privacy.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;       
+  background-position: center;
+  width: 100%;
+  height: 300px;               
+  display: block;
+  overflow: hidden;
+}
+
+.bread-terms-cond{
+  background-image: url(./images/terms-cond.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;       
+  background-position: center;
+  width: 100%;
+  height: 300px;               
+  display: block;
+  overflow: hidden;
 }
 
 
@@ -2964,7 +3004,7 @@ main {
 }
 
 .homeblog-card img {
-  height: 80%;
+  height: 130px;
   border-radius: 10px;
   width: 100%;
   object-fit: cover;
@@ -3416,11 +3456,11 @@ a.blue {
 
 /* ===========Home ===================== */
 .CardRatingwrap {
-  padding: 40px 0;
+  padding: 108px 0;
 }
 
 .CardRatingwrapNew {
-  padding-bottom: 9px;
+  padding-bottom: 36px;
 }
 
 .maincardRading {
@@ -3778,12 +3818,14 @@ a.blue {
 .swiper-rtl .swiper-button-prev:after {
   content: 'next';
   color: #fff;
+  display: none;
 }
 
 .swiper-button-prev:after,
 .swiper-rtl .swiper-button-next:after {
   content: 'prev';
   color: #fff;
+  display: none;
 }
 
 .swiper-pagination-progressbar .swiper-pagination-progressbar-fill {

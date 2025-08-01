@@ -310,7 +310,11 @@ export default function UserHome() {
               color: "white",
             }}
             navigation={true}
-            modules={[Pagination, Navigation]}
+            autoplay={{
+      delay: 3000,
+      disableOnInteraction: false,
+    }}
+            modules={[Autoplay,Pagination, Navigation]}
             className="mySwiper-crousel"
           >
             <SwiperSlide className="homeswiper-slide">
@@ -454,7 +458,6 @@ export default function UserHome() {
                   </section>
                 </div>
               </div>
-
               {/* Repeat for SHAYARI */}
               <section className="waviy-body">
                 <div className="waviy">

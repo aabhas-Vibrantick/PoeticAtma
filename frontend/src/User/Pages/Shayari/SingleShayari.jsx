@@ -753,7 +753,7 @@ export default function SingleShayari() {
                         />
                       </div>
                       <div className="media-body">
-                        <h6 className="text-capitalize">Hello, I'm<br /> <Link className="name" to={"/poets-profile/" + `${shayari?.userId?._id}`}>{shayari?.userId?.name || "Admin"}</Link></h6>
+                        <h6 className="text-capitalize"> <Link className="name" to={"/poets-profile/" + `${shayari?.userId?._id}`}>{shayari?.userId?.name || "Admin"}</Link></h6>
                       </div>
                     </div>
                  

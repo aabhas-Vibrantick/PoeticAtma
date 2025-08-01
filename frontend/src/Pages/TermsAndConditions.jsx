@@ -7,19 +7,19 @@ const TermsAndConditions = () => {
 
   return (
     <div>
-      <section className="container-fluid bg-warning bread">
+      <section className="container-fluid bg-warning bread-terms-cond">
         <div className="py-5">
           <div className="pt-lg-5 pt-3 p-lg-4 pb-3">
-            <h2 className="fs-1 mt-5 pt-lg-5 pt-sm-3">
+            <h2 className="fs-1 mt-5 pt-lg-5 pt-sm-3 text-white">
               Terms and Conditions
             </h2>
-            <p className="fs-5">
+            {/* <p className="fs-5">
               Please read these Terms and Conditions carefully before using our
               website. By accessing or using any part of the site, you agree to
               be bound by these terms. If you do not agree to all the terms and
               conditions, then you may not access the website or use any
               services.
-            </p>
+            </p> */}
           </div>
         </div>
       </section>

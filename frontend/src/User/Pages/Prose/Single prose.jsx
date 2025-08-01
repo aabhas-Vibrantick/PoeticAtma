@@ -726,7 +726,7 @@ export default function Singleprose() {
                         />
                       </div>
                       <div className="media-body">
-                      <h6 className="text-capitalize">Hello, I'm<br /><Link className="name" to={"/poets-profile/" + `${prose?.userId?._id}`}>{prose?.userId?.name || "Admin"}</Link></h6>
+                      <h6 className="text-capitalize"><Link className="name" to={"/poets-profile/" + `${prose?.userId?._id}`}>{prose?.userId?.name || "Admin"}</Link></h6>
                       </div>
                     </div>
                     

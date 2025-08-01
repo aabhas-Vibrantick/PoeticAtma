@@ -308,12 +308,12 @@ export default function Porfile() {
                 <ul className="brands brands-inline hidden-xs">
                   <li>
                     <a href={userDetail?.facebook || "#"} target="_blank">
-                      <i className="fa fa-facebook"></i>
+                      <i className="fab fa-facebook-f"></i>
                     </a>
                   </li>
                   <li>
                     <a href={userDetail?.twiter || "#"} target="_blank">
-                      <i className="fa fa-twitter"></i>
+                      <i className="fas fab-brands fas fa-twitter-f"></i>
                     </a>
                   </li>
                 </ul>
@@ -334,7 +334,7 @@ export default function Porfile() {
                   <li>
                     <a href={userDetail?.instagram || "#"} target="_blank">
 
-                      <i className="fa fa-instagram"></i>
+                      <i className="fab fa-brands fab fa-instagram"></i>
                     </a>
                   </li>
                   <li>
@@ -421,7 +421,7 @@ export default function Porfile() {
                     )}
 
                     <a href="" className="btn-2 btn-light btn-lg text-dark">
-                      <i className="fa-solid fa-share-nodes"></i>
+                      <i className="fas fa-solid fas fa-share-nodes"></i>
                       <span style={{ paddingLeft: 8, }}>
                         Share
                       </span>

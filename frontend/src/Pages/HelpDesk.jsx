@@ -29,10 +29,10 @@ const HelpDesk = () => {
 
     return (
         <div>
-            <section className="container-fluid bg-warning bread">
+            <section className="container-fluid bg-warning bread-helpdesk">
                 <div className="py-5">
                     <div className="pt-lg-5 pt-3 p-lg-4 pb-3">
-                        <h2 className="fs-1 mt-5 pt-lg-5 pt-sm-3">
+                        <h2 className="fs-1 mt-5 pt-lg-5 pt-sm-3 text-white">
                             Helpdesk
                         </h2>
                     </div>

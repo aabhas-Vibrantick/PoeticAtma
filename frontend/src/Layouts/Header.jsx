@@ -65,7 +65,7 @@ export default function Header() {
         <div className="row top-header">
           <div className="col-lg-8  top-header-content text-center">
             <span className="top-company-name fw-bold">
-              Have any Question? Email Us<i className="fa-solid fa-envelope px-3"></i>
+              Have any Question? Email Us<i className="fas fa-solid fas fa-envelope px-3"></i>
               info@poeticatma.com
               <span className="mx-2">|</span>
               Chandigarh, India
@@ -76,16 +76,16 @@ export default function Header() {
             <div className="top-social-media text-center">
               <p>Find Us On</p>
               <a href="https://www.facebook.com/poeticatma" className="top-social-icon" target="_blank">
-                <i className="fa-brands fa-facebook"></i>
+                <i className="fab fa-brands fab fa-facebook"></i>
               </a>
               <a href="https://www.youtube.com/@poeticatma" className="top-social-icon" target="_blank">
-                <i className="fa-brands fa-youtube"></i>
+                <i className="fab fa-brands fab fa-youtube"></i>
               </a>
               <a href="https://www.instagram.com/poeticatma/" className="top-social-icon" target="_blank">
-                <i className="fa-brands fa-instagram"></i>
+                <i className="fab fa-brands fab fa-instagram"></i>
               </a>
               <a href="https://wa.me/919888323607" target="_blank" className="top-social-icon">
-                <i className="fa-brands fa-whatsapp"></i>
+                <i className="fab fa-brands fab fa-whatsapp"></i>
               </a>
             </div>
 

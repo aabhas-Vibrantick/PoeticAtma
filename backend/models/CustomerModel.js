@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const customerschema = new mongoose.Schema({
-  name: { type: String, default: null },
-  penname: { type: String, default: null },
-  email: { type: String, default: null },
-  password: { type: String, default: null },
+  name: { type: String, default: "", },
+  penname: { type: String, default: "", },
+  email: { type: String, default: "", },
+  password: { type: String, default: "", },
   contact: { type: Number, default: 0 },
   address: { type: String},
   bio: { type: String},

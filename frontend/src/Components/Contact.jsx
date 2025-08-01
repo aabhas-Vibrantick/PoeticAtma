@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import apiservices from "../ApiServices/ApiServices";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import "./Contact.css";
 export default function Contact() {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -65,12 +65,11 @@ export default function Contact() {
 
             {/* Right Form & Info */}
             <div className="col-lg-6  bg-light">
-              <h2 className="mb-4 text-center fw-bold text-primary">Contact Us</h2>
-
+              <h2 className="mb-4 text-center fw-bold custom-icon-color">Contact Us</h2>
               {/* Contact Info Boxes */}
               <div className="row g-4 mb-4">
                 <div className="col-md-6 d-flex align-items-start">
-                  <i className="fa-solid fa-location-dot fa-xl me-3 text-primary mt-1"></i>
+                  <i className="fa-solid fa-location-dot fa-xl me-3 custom-icon-color mt-1"></i>
                   <div>
                     <h5 className="fw-bold">Location:</h5>
                     <p className="mb-0">
@@ -81,7 +80,7 @@ export default function Contact() {
                 </div>
 
                 <div className="col-md-6 d-flex align-items-start">
-                  <i className="fa-regular fa-clock fa-xl me-3 text-primary mt-1"></i>
+                  <i className="fa-regular fa-clock fa-xl me-3 custom-icon-color  mt-1"></i>
                   <div>
                     <h5 className="fw-bold">Open Hours:</h5>
                     <p className="mb-0">Mon - Sat: 10:00 AM - 6:30 PM</p>
@@ -89,7 +88,7 @@ export default function Contact() {
                 </div>
 
                 <div className="col-md-6 d-flex align-items-start">
-                  <i className="fa-solid fa-envelope fa-xl me-3 text-primary mt-1"></i>
+                  <i className="fa-solid fa-envelope fa-xl me-3 custom-icon-color  mt-1"></i>
                   <div>
                     <h5 className="fw-bold">Email:</h5>
                     <p className="mb-0">poeticatma@gmail.com<br />info@poeticatma.com</p>
@@ -97,7 +96,7 @@ export default function Contact() {
                 </div>
 
                 <div className="col-md-6 d-flex align-items-start">
-                  <i className="fa-solid fa-phone-volume fa-xl me-3 text-primary mt-1"></i>
+                  <i className="fa-solid fa-phone-volume fa-xl me-3 custom-icon-color  mt-1"></i>
                   <div>
                     <h5 className="fw-bold">Call:</h5>
                     <p className="mb-0">+91 76579 99786<br />+91 86995 24005</p>

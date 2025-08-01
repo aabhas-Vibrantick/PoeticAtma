@@ -316,33 +316,33 @@ export default function UserHome() {
             <SwiperSlide className="homeswiper-slide">
               <img src="/assets/images/authentication_img.jpeg" />
             </SwiperSlide>
-            {/* <SwiperSlide className="homeswiper-slide">
-              <img src="/assets/images/Sad_shayari_image_download(1).jpg" />
-            </SwiperSlide> */}
+            <SwiperSlide className="homeswiper-slide">
+              <img src="/assets/images/bannerImage.jpg" />
+            </SwiperSlide>
             <SwiperSlide className="homeswiper-slide">
               {" "}
               <img src="/assets/images/authentication_img.jpeg" />
             </SwiperSlide>
-            {/* <SwiperSlide className="homeswiper-slide">
+            <SwiperSlide className="homeswiper-slide">
               {" "}
-              <img src="/assets/images/Sad_shayari_image_download(1).jpg" />
-            </SwiperSlide> */}
+              <img src="/assets/images/bannerImage.jpg" />
+            </SwiperSlide>
             <SwiperSlide className="homeswiper-slide">
               {" "}
               <img src="/assets/images/authentication_img.jpeg" />
             </SwiperSlide>
-            {/* <SwiperSlide className="homeswiper-slide">
+            <SwiperSlide className="homeswiper-slide">
               {" "}
-              <img src="/assets/images/Sad_shayari_image_download(1).jpg" />
-            </SwiperSlide> */}
+              <img src="/assets/images/bannerImage.jpg" />
+            </SwiperSlide>
             <SwiperSlide className="homeswiper-slide">
               {" "}
               <img src="/assets/images/authentication_img.jpeg" />
             </SwiperSlide>
-            {/* <SwiperSlide className="homeswiper-slide">
+            <SwiperSlide className="homeswiper-slide">
               {" "}
-              <img src="/assets/images/Sad_shayari_image_download(1).jpg" />
-            </SwiperSlide> */}
+              <img src="/assets/images/bannerImage.jpg" />
+            </SwiperSlide>
             <SwiperSlide className="homeswiper-slide">
               {" "}
               <img src="/assets/images/authentication_img.jpeg" />

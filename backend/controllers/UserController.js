@@ -53,7 +53,7 @@ function sendVerifyMail({ name, email, token, expirationTime }) {
     },
   });
 
-  const verifyLink = `http://localhost:3000/verify/${token}`; //chang localhost to IP addr
+  const verifyLink = `https://poeticatma.com/verify/${token}`; //chang localhost to IP addr
 
   const mailOptions = {
     from: '"Poetic Atma" <info@poeticatma.com>',

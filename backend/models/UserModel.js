@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
 const userschema = new mongoose.Schema({
-  name: { type: String, default: null },
-  email: { type: String, default: null },
-  password: { type: String, default: null },
+  name: { type: String, default: "",},
+  email: { type: String, default: "", },
+  password: { type: String, default: "", },
   userType: { type: Number, default: 2 }, //1= admin, 2=customer
-  Image: { type: String, default: null },
+  Image: { type: String, default: "", },
   created_at: { type: Date, default: Date.now() },
   verificationToken: String,
   tokenExpirationTime: Date,

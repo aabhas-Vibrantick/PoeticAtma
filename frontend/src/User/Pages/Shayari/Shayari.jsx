@@ -178,7 +178,7 @@ export default function Shayari(){
                   <h4>HINDI SHAYARI COLLECTION </h4>
                 </div>
                 <div className="col-lg-2 responsiveMode">
-                  <Link to="/hindi-shayari"> View More</Link>
+                  <Link to="/hindi-shayari"> View All</Link>
                 </div>
               </div>
 
@@ -233,7 +233,7 @@ export default function Shayari(){
                   <h4>ENGLISH SHAYARI COLLECTION</h4>
                 </div>
                 <div className="col-lg-2 responsiveMode">
-                  <Link to="/english-shayari"> View More</Link>
+                  <Link to="/english-shayari"> View All</Link>
                 </div>
               </div>
               <hr />
@@ -290,7 +290,7 @@ export default function Shayari(){
                   <h4>TOP-20 SHAYARI COLLECTION</h4>
                 </div>
                 <div className="col-lg-2 responsiveMode">
-                  <Link to="/top20-shayari"> View More</Link>
+                  <Link to="/top20-shayari"> View All</Link>
                 </div>
               </div>
 
@@ -347,7 +347,7 @@ export default function Shayari(){
                 </div>
                 <div className="col-lg-2">
                   {" "}
-                  <Link to="/occasion-shayari">View More</Link>
+                  <Link to="/occasion-shayari">View All</Link>
                 </div>
               </div>
 
@@ -403,7 +403,7 @@ export default function Shayari(){
                   <h4>SHAYARI IMAGE</h4>
                 </div>
                 <div className="col-lg-2 responsiveMode">
-                  <Link to="/shayari-Image"> View More</Link>
+                  <Link to="/shayari-Image"> View All</Link>
                 </div>
               </div>
 
@@ -460,7 +460,7 @@ export default function Shayari(){
                   <h4>BEST SHAYARI COLLECTION</h4>
                 </div>
                 <div className="col-lg-2 responsiveMode">
-                  <Link to="/best-shayari"> View More</Link>
+                  <Link to="/best-shayari"> View All</Link>
                 </div>
               </div>
 

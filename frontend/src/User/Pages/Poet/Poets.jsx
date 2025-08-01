@@ -130,7 +130,7 @@ export default function Poets() {
             </div>
           </div>
           <div className="text-center">
-            <h6 className="mb-1 fw-semibold text-muted">Prose</h6>
+            <h6 className="mb-1 fw-semibold text-muted">Nazm</h6>
             <div className="fw-bold">
               {Totaldashboardtwo?.[data.userId._id] || 0}
             </div>

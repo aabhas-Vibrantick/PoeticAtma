@@ -179,7 +179,7 @@ export default function Prose() {
                 <h4>HINDI PROSE COLLECTION</h4>
               </div>
               <div className="col-lg-2 responsiveMode">
-                <Link to="/hindi-prose"> View More</Link>
+                <Link to="/hindi-prose"> View All</Link>
               </div>
             </div>
 
@@ -235,7 +235,7 @@ export default function Prose() {
                 <h4>ENGLISH PROSE COLLECTION</h4>
               </div>
               <div className="col-lg-2 responsiveMode">
-                <Link to="/english-prose"> View More</Link>
+                <Link to="/english-prose"> View All</Link>
               </div>
             </div>
 
@@ -291,7 +291,7 @@ export default function Prose() {
                 <h4>TOP-10 PROSE COLLECTION</h4>
               </div>
               <div className="col-lg-2 responsiveMode">
-                <Link to="/top20-prose"> View More</Link>
+                <Link to="/top20-prose"> View All</Link>
               </div>
             </div>
 
@@ -347,7 +347,7 @@ export default function Prose() {
                 <h4>PROSE FOR FICTION</h4>
               </div>
               <div className="col-lg-2 responsiveMode">
-                <Link to="/occasion-prose"> View More</Link>
+                <Link to="/occasion-prose"> View All</Link>
               </div>
             </div>
 
@@ -403,7 +403,7 @@ export default function Prose() {
                 <h4>PROSE IMAGE</h4>
               </div>
               <div className="col-lg-2 responsiveMode">
-                <Link to="/prose-Image"> View More</Link>
+                <Link to="/prose-Image"> View All</Link>
               </div>
             </div>
 
@@ -457,7 +457,7 @@ export default function Prose() {
                 <h4>BEST Prose COLLECTION</h4>
               </div>
               <div className="col-lg-2 responsiveMode">
-                <Link to="/best-prose"> View More</Link>
+                <Link to="/best-prose"> View All</Link>
               </div>
             </div>
 

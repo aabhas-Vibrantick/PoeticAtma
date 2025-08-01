@@ -3,7 +3,7 @@ import axios from "axios";
 export const BASE_URL = "https://api.poeticatma.com/admin/";
 export const BASE_URL_IMG = "https://api.poeticatma.com/";
 
-// Change this temporarily while developing
+//Change this temporarily while developing
 // const isProduction = window.location.hostname !== "localhost";
 
 // export const BASE_URL = isProduction

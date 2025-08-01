@@ -297,6 +297,33 @@ export default function UserHome() {
 }
 
 
+.heading-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* optional for mobile */
+}
+
+/* Your custom button */
+.custom-yellow-btn  {
+  background-color: #FFD700; /* Yellow */
+  color: #000;               /* Black text */
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+ 
+}
+
+/* Hover effect */
+.custom-yellow-btn:hover {
+  background-color: #e6c200;
+}
+
+
+
+
 
 
 `}
@@ -311,10 +338,10 @@ export default function UserHome() {
             }}
             navigation={true}
             autoplay={{
-      delay: 3000,
-      disableOnInteraction: false,
-    }}
-            modules={[Autoplay,Pagination, Navigation]}
+              delay: 3000,
+              disableOnInteraction: false,
+            }}
+            modules={[Autoplay, Pagination, Navigation]}
             className="mySwiper-crousel"
           >
             <SwiperSlide className="homeswiper-slide">
@@ -434,12 +461,15 @@ export default function UserHome() {
             <div className="col-lg-8 col-xxl-8 col-md-12  ">
               {/* SHER Section */}
               <section className="waviy-body">
-                <div className="waviy">
-                  <h1>
-                    <span className="px-3">SHER</span>
-                  </h1>
-                  <hr className="headinghr" />
+                <div className="d-flex justify-content-between align-items-center flex-wrap">
+                  {/* Title */}
+                  <div className="waviy">
+                    <h1 className="m-0">
+                      <span className="px-3">SHER</span>
+                    </h1>
+                  </div>
                 </div>
+                <hr className="headinghr mt-2" />
               </section>
               <div className="d-flex justify-content-center align-items-center">
                 <div className="CardRatingwrapNew">
@@ -454,6 +484,11 @@ export default function UserHome() {
                             baseUrl={BASE_URL_IMG}
                           />
                         ))}
+                    </div>
+                    <div className="col-12 d-flex justify-content-center mt-3">
+                      <Link to="/shers" className="btn custom-yellow-btn">
+                        View More
+                      </Link>
                     </div>
                   </section>
                 </div>
@@ -481,6 +516,11 @@ export default function UserHome() {
                           />
                         ))}
                     </div>
+                    <div className="col-12 d-flex justify-content-center mt-3">
+                      <Link to="/shayari" className="btn custom-yellow-btn">
+                        View More
+                      </Link>
+                    </div>
                   </section>
                 </div>
               </div>
@@ -507,6 +547,11 @@ export default function UserHome() {
                             baseUrl={BASE_URL_IMG}
                           />
                         ))}
+                    </div>
+                    <div className="col-12 d-flex justify-content-center mt-3">
+                      <Link to="/prose" className="btn custom-yellow-btn">
+                        View More
+                      </Link>
                     </div>
                   </section>
                 </div>
@@ -623,6 +668,11 @@ export default function UserHome() {
                   </div>
                 ))}
               </div>
+              <div className="col-12 d-flex justify-content-center mt-3">
+                <Link to="/blogs" className="btn custom-yellow-btn">
+                  View More
+                </Link>
+              </div>
             </section>
           </div>
         </div>
@@ -638,7 +688,7 @@ export default function UserHome() {
         <div className="exampleApp custom-carousel">
           <Insta />
         </div>
-        <WhatsAppWidget/>
+        <WhatsAppWidget />
       </div>
       <ToastContainer />
     </>

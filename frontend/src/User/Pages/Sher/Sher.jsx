@@ -165,7 +165,7 @@ export default function Sher() {
             <h4>TRENDING TAGS</h4>
             <p>Looking for a sher centering around a particular emotion, feeling, subject or topic? Look no further!
             </p>
-            <a>View More</a>
+            <a>View All</a>
             <hr/>
             <div className="first-s">
             <Swiper
@@ -219,7 +219,7 @@ export default function Sher() {
                 <h4>Hindi SHER COLLECTION</h4>
               </div>
               <div className="col-lg-2 responsiveMode">
-                <Link to="/hindi-sher"> View More</Link>
+                <Link to="/hindi-sher"> View All</Link>
               </div>
             </div>
 
@@ -275,7 +275,7 @@ export default function Sher() {
                 <h4>ENGLISH SHER COLLECTION</h4>
               </div>
               <div className="col-lg-2 responsiveMode">
-                <Link to="/english-sher"> View More</Link>
+                <Link to="/english-sher"> View All</Link>
               </div>
             </div>
 
@@ -331,7 +331,7 @@ export default function Sher() {
                 <h4>TOP-20 SHER COLLECTION</h4>
               </div>
               <div className="col-lg-2 responsiveMode">
-                <Link to="/top20-sher"> View More</Link>
+                <Link to="/top20-sher"> View All</Link>
               </div>
             </div>
 
@@ -387,7 +387,7 @@ export default function Sher() {
                 <h4>SHER FOR OCCASION</h4>
               </div>
               <div className="col-lg-2 responsiveMode">
-                <Link to="/occasion-sher"> View More</Link>
+                <Link to="/occasion-sher"> View All</Link>
               </div>
             </div>
 
@@ -443,7 +443,7 @@ export default function Sher() {
                 <h4>SHER IMAGE</h4>
               </div>
               <div className="col-lg-2 responsiveMode">
-                <Link to="/sher-Image"> View More</Link>
+                <Link to="/sher-Image"> View All</Link>
               </div>
             </div>
 
@@ -497,7 +497,7 @@ export default function Sher() {
                 <h4>BEST SHER COLLECTION</h4>
               </div>
               <div className="col-lg-2">
-                <Link to="/best-sher"> View More</Link>
+                <Link to="/best-sher"> View All</Link>
               </div>
             </div>
 

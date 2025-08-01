@@ -1,8 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import apiServices, { BASE_URL_IMG } from "../ApiServices/ApiServices";
 
 const Sidebar = ({ topSher, topShayari, topProse }) => {
-  const renderSection = (title, items, textClass) => (
+  const navigate = useNavigate();
+
+  const renderSection = (title, items, textClass, type) => (
     <div className="sidebar-section mb-5">
       <h5 className={`fw-semibold ${textClass} border-bottom pb-2 mb-3`}>
         <i className="bi bi-star-fill me-2 text-muted"></i>
@@ -13,6 +16,7 @@ const Sidebar = ({ topSher, topShayari, topProse }) => {
           <li
             key={item._id}
             className="list-group-item d-flex align-items-center border-0 px-0 py-2 sidebar-item"
+            onClick={() => navigate(`/single-${type}/${item._id}`)}
           >
             <img
               src={BASE_URL_IMG + item.Image}
@@ -43,31 +47,29 @@ const Sidebar = ({ topSher, topShayari, topProse }) => {
 
   return (
     <>
-      <style>{`.sidebar-wrapper {
-  transition: all 0.3s ease;
-  font-family: "Segoe UI", sans-serif;
-}
+      <style>{`
+        .sidebar-wrapper {
+          transition: all 0.3s ease;
+          font-family: "Segoe UI", sans-serif;
+        }
+        .sidebar-title {
+          font-size: 0.95rem;
+          color: #333;
+        }
+        .sidebar-item:hover {
+          background-color: #f8f9fa;
+          border-radius: 8px;
+          cursor: pointer;
+        }
+        .sidebar-section h5 {
+          font-size: 1.1rem;
+          letter-spacing: 0.5px;
+        }
+        .list-group-item {
+          transition: background-color 0.2s ease;
+        }
+      `}</style>
 
-.sidebar-title {
-  font-size: 0.95rem;
-  color: #333;
-}
-
-.sidebar-item:hover {
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.sidebar-section h5 {
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-}
-
-.list-group-item {
-  transition: background-color 0.2s ease;
-}
-`}</style>
       <div className="sidebar-section mb-5 text-center">
         <img
           src="Add.jpg"
@@ -75,13 +77,11 @@ const Sidebar = ({ topSher, topShayari, topProse }) => {
           alt="Advertisement"
         />
       </div>
-      <div className="sidebar-wrapper p-4 bg-white rounded-3 shadow-sm border">
-        {/* Advertisement */}
 
-        {/* Sidebar Sections */}
-        {renderSection("Trending Sher", topSher, "text-primary")}
-        {renderSection("Latest Shayari", topShayari, "text-success")}
-        {renderSection("Featured Prose", topProse, "text-warning")}
+      <div className="sidebar-wrapper p-4 bg-white rounded-3 shadow-sm border">
+        {renderSection("Trending Sher", topSher, "text-primary", "sher")}
+        {renderSection("Latest Shayari", topShayari, "text-success", "shayari")}
+        {renderSection("Featured Prose", topProse, "text-warning", "prose")}
       </div>
     </>
   );

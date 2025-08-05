@@ -7,8 +7,8 @@ async function addprose(req, res) {
   if (!req.body.Category_id) validation += "Category_id is required ";
   if (!req.body.prose) validation += "prose is required ";
   if (!req.body.language) validation += "language is required ";
-  if (!req.body.tag) validation += "tags are required ";
-  if (!req.file) validation += "upload image is required ";
+  // if (!req.body.tag) validation += "tags are required ";
+  // if (!req.file) validation += "upload image is required ";
 
   if (!!validation) {
     return res.json({
@@ -19,7 +19,9 @@ async function addprose(req, res) {
   }
 
   try {
-    const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
+    const tagsArray = req.body.tag
+    ? req.body.tag.split(",").map((tag) => tag.trim())
+    : [];
 
     const proseObj = new Prose();
     proseObj.title = req.body.title;
@@ -28,7 +30,7 @@ async function addprose(req, res) {
     proseObj.Category_id = req.body.Category_id;
     proseObj.tags = tagsArray;
     proseObj.userId = req.decoded;
-    proseObj.Image = "prose_photo/" + req.file.filename;
+    proseObj.Image = req.file ? "prose_photo/" + req.file.filename :"";
 
     const isAdmin = req.decoded && req.decoded.usertype === 1;
     proseObj.isApproved = isAdmin ? true : false;

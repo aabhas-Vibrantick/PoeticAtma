@@ -5,104 +5,82 @@ const Sher = require("../models/Sher/SherModel");
 const Prose = require("../models/Prose/ProseModel");
 
 dashboard = async (req, res) => {
-  let totalpenddingBlog;
-  let totalpenddingShayari;
-  let totalpenddingSher;
-  let totalpenddingProse;
+  try {
+    const userId = req.body.userId;
 
-  await User.countDocuments().then((authorcount) => {
-    totalauthor = authorcount;
-  });
-  await Blog.countDocuments().then((blogcount) => {
-    totalblog = blogcount;
-  });
-  await Shayari.countDocuments().then((shayaricount) => {
-    totalshayari = shayaricount;
-  });
-  await Sher.countDocuments().then((shercount) => {
-    totalsher = shercount;
-  });
-  await Prose.countDocuments().then((prosecount) => {
-    totalprose = prosecount;
-  });
+    // Global Totals
+    const totalAuthors = await User.countDocuments();
+    const totalBlogs = await Blog.countDocuments();
+    const totalShayaris = await Shayari.countDocuments();
+    const totalShers = await Sher.countDocuments();
+    const totalProses = await Prose.countDocuments();
 
-  // ================
-  await Blog.countDocuments({ userId: req.body.userId }).then(
-    (userblogcount) => {
-      usertotalblog = userblogcount;
-    }
-  );
-  await Shayari.countDocuments({ userId: req.body.userId }).then(
-    (usershayaricount) => {
-      usertotalshayari = usershayaricount;
-    }
-  );
-  await Sher.countDocuments({ userId: req.body.userId }).then(
-    (usershercount) => {
-      usertotalsher = usershercount;
-    }
-  );
-  await Prose.countDocuments({ userId: req.body.userId }).then(
-    (userprosecount) => {
-      usertotalprose = userprosecount;
-    }
-  );
-  // ================
+    // User-specific Totals
+    const userTotalBlogs = await Blog.countDocuments({ userId });
+    const userTotalShayaris = await Shayari.countDocuments({ userId });
+    const userTotalShers = await Sher.countDocuments({ userId });
+    const userTotalProses = await Prose.countDocuments({ userId });
 
-  await Shayari.countDocuments(req.body).then((allshayaricount) => {
-    alltotalshayari = allshayaricount;
-  });
-  await Sher.countDocuments(req.body).then((allshercount) => {
-    alltotalsher = allshercount;
-  });
-  await Prose.countDocuments(req.body).then((allprosecount) => {
-    alltotalprose = allprosecount;
-  });
-  
-  // -----------in active--------------
-  await Blog.countDocuments({ status: false }).then((blogpenddingcount) => {
-    totalpenddingblog = blogpenddingcount;
-  });
-  await Shayari.countDocuments({ status: false }).then(
-    (shayaripenddingcount) => {
-      totalpenddingshayari = shayaripenddingcount;
-    }
-  );
-  await Sher.countDocuments({ status: false }).then((sherpenddingcount) => {
-    totalpenddingsher = sherpenddingcount;
-  });
-  await Prose.countDocuments({ status: false }).then((prosependdingcount) => {
-    totalpenddingprose = prosependdingcount;
-  });
+    // User-specific Approved/Pending (optional if needed)
+    const approvedBlog = await Blog.countDocuments({ userId, status: true });
+    const pendingBlog = await Blog.countDocuments({ userId, status: false });
 
-  // await Order.countDocuments().then(ordercount =>{
-  //     totalorder = ordercount
-  // })
+    const approvedShayari = await Shayari.countDocuments({ userId, status: true });
+    const pendingShayari = await Shayari.countDocuments({ userId, status: false });
 
-  res.json({
-    status: 200,
-    success: true,
-    total_author: totalauthor,
-    total_blog: totalblog,
-    total_shayari: totalshayari,
-    total_sher: totalsher,
-    total_prose: totalprose,
+    const approvedSher = await Sher.countDocuments({ userId, status: true });
+    const pendingSher = await Sher.countDocuments({ userId, status: false });
 
-    usertotal_blog: usertotalblog,
-    usertotal_shayari: usertotalshayari,
-    usertotal_sher: usertotalsher,
-    usertotal_prose: usertotalprose,
+    const approvedProse = await Prose.countDocuments({ userId, status: true });
+    const pendingProse = await Prose.countDocuments({ userId, status: false });
 
-    alltotal_shayari: alltotalshayari,
-    alltotal_sher: alltotalsher,
-    alltotal_prose: alltotalprose,
+    // Global Pending Counts
+    const totalPendingBlogs = await Blog.countDocuments({ status: false });
+    const totalPendingShayaris = await Shayari.countDocuments({ status: false });
+    const totalPendingShers = await Sher.countDocuments({ status: false });
+    const totalPendingProses = await Prose.countDocuments({ status: false });
 
-    total_penddingblog: totalpenddingblog,
-    total_penddingshayari: totalpenddingshayari,
-    total_penddingsher: totalpenddingsher,
-    total_penddingprose: totalpenddingprose,
-    // total_order : totalorder,
-  });
+    return res.json({
+      status: 200,
+      success: true,
+
+      // 🔹 Global Totals
+      total_author: totalAuthors,
+      total_blog: totalBlogs,
+      total_shayari: totalShayaris,
+      total_sher: totalShers,
+      total_prose: totalProses,
+
+      // 🔹 User Totals
+      usertotal_blog: userTotalBlogs,
+      usertotal_shayari: userTotalShayaris,
+      usertotal_sher: userTotalShers,
+      usertotal_prose: userTotalProses,
+
+      // 🔹 User Approved/Pending
+      approvedBlog,
+      pendingBlog,
+      approvedShayari,
+      pendingShayari,
+      approvedSher,
+      pendingSher,
+      approvedProse,
+      pendingProse,
+
+      // 🔹 Global Pending
+      total_penddingblog: totalPendingBlogs,
+      total_penddingshayari: totalPendingShayaris,
+      total_penddingsher: totalPendingShers,
+      total_penddingprose: totalPendingProses,
+    });
+  } catch (error) {
+    console.error("Dashboard Error:", error);
+    return res.status(500).json({
+      status: 500,
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
 };
 
 module.exports = {

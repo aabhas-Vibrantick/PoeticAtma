@@ -15,12 +15,6 @@ function addsher(req, res) {
   if (!req.body.language) {
     validation += "language is required ";
   }
-  if (!req.body.tag) {
-    validation += "tags are required ";
-  }
-  if (!req.file) {
-    validation += "upload image is required ";
-  }
 
   if (!!validation) {
     return res.json({
@@ -30,7 +24,9 @@ function addsher(req, res) {
     });
   }
 
-  const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
+  const tagsArray = req.body.tag
+    ? req.body.tag.split(",").map((tag) => tag.trim())
+    : [];
 
   let sherobj = new Sher();
   sherobj.title = req.body.title;
@@ -39,9 +35,8 @@ function addsher(req, res) {
   sherobj.Category_id = req.body.Category_id;
   sherobj.tags = tagsArray;
   sherobj.userId = req.decoded;
-  sherobj.Image = "sher_photo/" + req.file.filename;
+  sherobj.Image = req.file ? "sher_photo/" + req.file.filename : "";
 
-  // Auto approve if usertype is 1 (admin)
   const isAdmin = req.decoded && req.decoded.usertype === 1;
   sherobj.isApproved = isAdmin ? true : false;
 
@@ -56,6 +51,7 @@ function addsher(req, res) {
     data: req.body,
   });
 }
+
 
 
 // --------get all sher start-----------

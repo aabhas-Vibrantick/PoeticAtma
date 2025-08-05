@@ -16,7 +16,7 @@ export default function Register() {
   const nav = useNavigate();
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState();
-  const [penname, setPenName] = useState();
+  const [penname, setPenName] = useState("");
   const [email, setEmail] = useState();
   const [contact, setContact] = useState();
   const [password, setPassword] = useState();
@@ -41,11 +41,11 @@ export default function Register() {
       setLoading(false);
       return;
     }
-    if (!penname) {
-      toast.error("Pen Name is required.");
-      setLoading(false);
-      return;
-    }
+    // if (!penname) {
+    //   toast.error("Pen Name is required.");
+    //   setLoading(false);
+    //   return;
+    // }
 
     if (!email.match(/^\S+@\S+\.\S+$/)) {
       toast.error("Please enter a valid email address.");
@@ -96,7 +96,7 @@ export default function Register() {
     let data = new FormData();
 
     data.append("name", name);
-    data.append("penname", penname);
+    data.append("penname", penname?.trim() || "");
     data.append("email", email);
     data.append("contact", contact);
     data.append("password", password);
@@ -175,7 +175,7 @@ export default function Register() {
                     </div>
                     <form onSubmit={handleForm} autoComplete="off">
                       <div className="form-group first">
-                        <label for="username">Full Name</label>
+                        <label for="username">Full Name<span className="text-danger">*</span></label>
                         <input type="text" className="form-control" placeholder="e.g. John Doe" id="username" autoComplete="off" value={name}
                           onChange={(e) => setName(e.target.value)}
                           onKeyPress={handleKeyPress}
@@ -184,22 +184,22 @@ export default function Register() {
                       <div className="form-group first">
                         <label for="username">Pen Name</label>
                         <input  type="text"  name="penname"  className="form-control"  placeholder="e.g. johndoe" id="penname"  autoComplete="off"  value={penname}  onChange={(e) => setPenName(e.target.value)} 
-                         onKeyPress={handleKeyPress}  required/>
+                         onKeyPress={handleKeyPress}  />
                       </div>
                       <div className="form-group first">
-                        <label for="username">Email Address</label>
+                        <label for="username">Email Address<span className="text-danger">*</span></label>
                         <input type="text" className="form-control" placeholder="e.g. john.doe@gmail.com" id="email" value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           required />
                       </div>
                       <div className="form-group first">
-                        <label for="username">Phone Number</label>
+                        <label for="username">Phone Number<span className="text-danger">*</span></label>
                         <input type="Number" className="form-control" placeholder="e.g. 9999999999" id="number" value={contact}
                           onChange={(e) => setContact(e.target.value)}
                           required min="0" />
                       </div>
                       <div className="form-group first ">
-                        <label for="password">Password</label>
+                        <label for="password">Password<span className="text-danger">*</span></label>
                         <input  type={showPassword ? "text" : "password"} name="signup-password" className="form-control" placeholder="********" id="signup-password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                         <a
                           className="passswitch"

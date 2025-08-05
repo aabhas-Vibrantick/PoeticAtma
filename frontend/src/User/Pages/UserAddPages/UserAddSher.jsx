@@ -27,7 +27,7 @@ function UserAddSher() {
   const handleSherData = async (e) => {
     e.preventDefault();
 
-    if (!title || !sher || !categoryId || !image || !tag || !language) {
+    if (!title || !sher || !categoryId || !language) {
       toast.error("Please fill in all fields.");
       return;
     }
@@ -36,9 +36,16 @@ function UserAddSher() {
     formData.append("title", title);
     formData.append("sher", sher);
     formData.append("Category_id", categoryId);
-    formData.append("Image", image);
-    formData.append("tag", tag);
+
     formData.append("language", language);
+
+    // Optional fields
+    if (image) {
+      formData.append("Image", image);
+    }
+    if (tag) {
+      formData.append("tag", tag);
+    }
 
     try {
       const response = await apiServices.addsher(formData);
@@ -61,12 +68,15 @@ function UserAddSher() {
             <div className="col-lg-10">
               <div className="card shadow-lg border-0">
                 <div className="card-body p-5">
-                  <h3 className="mb-4 text-center text-primary">Publish Sher</h3>
+                  <h3 className="mb-4 text-center text-primary">
+                    Publish Sher
+                  </h3>
                   <form onSubmit={handleSherData}>
-
                     {/* Title */}
                     <div className="mb-4">
-                      <label className="form-label fw-semibold">Title <span className="text-danger">*</span></label>
+                      <label className="form-label fw-semibold">
+                        Title <span className="text-danger">*</span>
+                      </label>
                       <input
                         type="text"
                         className="form-control"
@@ -78,7 +88,9 @@ function UserAddSher() {
 
                     {/* Category */}
                     <div className="mb-4">
-                      <label className="form-label fw-semibold">Category <span className="text-danger">*</span></label>
+                      <label className="form-label fw-semibold">
+                        Category <span className="text-danger">*</span>
+                      </label>
                       <select
                         className="form-select"
                         value={categoryId}
@@ -95,7 +107,9 @@ function UserAddSher() {
 
                     {/* Sher */}
                     <div className="mb-4">
-                      <label className="form-label fw-semibold">Sher <span className="text-danger">*</span></label>
+                      <label className="form-label fw-semibold">
+                        Sher <span className="text-danger">*</span>
+                      </label>
                       <JoditEditor
                         ref={editor}
                         value={sher}
@@ -105,7 +119,7 @@ function UserAddSher() {
 
                     {/* Tag */}
                     <div className="mb-4">
-                      <label className="form-label fw-semibold">Tags <span className="text-danger">*</span></label>
+                      <label className="form-label fw-semibold">Tags</label>
                       <input
                         type="text"
                         className="form-control"
@@ -117,7 +131,9 @@ function UserAddSher() {
 
                     {/* Language */}
                     <div className="mb-4">
-                      <label className="form-label fw-semibold">Language <span className="text-danger">*</span></label>
+                      <label className="form-label fw-semibold">
+                        Language <span className="text-danger">*</span>
+                      </label>
                       <select
                         className="form-select"
                         value={language}
@@ -131,13 +147,31 @@ function UserAddSher() {
 
                     {/* Image Upload */}
                     <div className="mb-4">
-                      <label className="form-label fw-semibold">Cover Image <span className="text-danger">*</span></label>
+                      <label className="form-label fw-semibold">
+                        Cover Image
+                      </label>
                       <input
                         type="file"
                         className="form-control"
                         accept="image/*"
                         onChange={(e) => setImage(e.target.files[0])}
                       />
+                      {/* Preview Section */}
+                      {image && (
+                        <div className="mt-3">
+                          <p className="mb-1 fw-bold">Image Preview:</p>
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt="Preview"
+                            className="img-thumbnail"
+                            style={{
+                              width: "200px",
+                              height: "200px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
 
                     {/* Submit Button */}
@@ -146,7 +180,6 @@ function UserAddSher() {
                         Publish Sher
                       </button>
                     </div>
-
                   </form>
                 </div>
               </div>

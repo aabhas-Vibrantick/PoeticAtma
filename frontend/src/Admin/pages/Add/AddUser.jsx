@@ -19,7 +19,7 @@ function AddUser() {
     let data = new FormData();
 
     data.append("name", name);
-    data.append("penname", penname);
+    data.append("penname", penname?.trim() || "");
     data.append("email", email);
     data.append("password", password);
     data.append("contact", contact);
@@ -98,7 +98,6 @@ function AddUser() {
                         value={penname}
                         onChange={(e) => setPenname(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        required
                       />
                     </div>
 

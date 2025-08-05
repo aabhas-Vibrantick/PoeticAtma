@@ -27,7 +27,7 @@ function UserAddShayari() {
   const handleShayariData = async (e) => {
     e.preventDefault();
 
-    if (!title || !shayari || !categoryId || !image || !tag || !language) {
+    if (!title || !shayari || !categoryId || !language) {
       toast.error("Please fill in all fields.");
       return;
     }
@@ -36,9 +36,14 @@ function UserAddShayari() {
     formData.append("title", title);
     formData.append("shayari", shayari);
     formData.append("Category_id", categoryId);
-    formData.append("Image", image);
-    formData.append("tag", tag);
     formData.append("language", language);
+
+    if (image) {
+      formData.append("Image", image);
+    }
+    if (tag) {
+      formData.append("tag", tag);
+    }
 
     try {
       const response = await apiServices.addshayari(formData);
@@ -105,7 +110,7 @@ function UserAddShayari() {
 
                     {/* Tag */}
                     <div className="mb-4">
-                      <label className="form-label fw-semibold">Tags <span className="text-danger">*</span></label>
+                      <label className="form-label fw-semibold">Tags</label>
                       <input
                         type="text"
                         className="form-control"
@@ -131,13 +136,29 @@ function UserAddShayari() {
 
                     {/* Image Upload */}
                     <div className="mb-4">
-                      <label className="form-label fw-semibold">Cover Image <span className="text-danger">*</span></label>
+                      <label className="form-label fw-semibold">Cover Image</label>
                       <input
                         className="form-control"
                         type="file"
                         accept="image/*"
                         onChange={(e) => setImage(e.target.files[0])}
                       />
+                       {/* Preview Section */}
+                      {image && (
+                        <div className="mt-3">
+                          <p className="mb-1 fw-bold">Image Preview:</p>
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt="Preview"
+                            className="img-thumbnail"
+                            style={{
+                              width: "200px",
+                              height: "200px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
 
                     {/* Submit Button */}

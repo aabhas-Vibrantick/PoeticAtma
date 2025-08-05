@@ -18,12 +18,12 @@ function addblog(req, res) {
     validation += "language is required ";
   }
 
-  if (req.body.Image == "") {
-    validation += "upload image";
-  }
-  if (req.body.tag == "") {
-    validation += "tag is required";
-  }
+  // if (req.body.Image == "") {
+  //   validation += "upload image";
+  // }
+  // if (req.body.tag == "") {
+  //   validation += "tag is required";
+  // }
 
   if (!!validation) {
     res.json({
@@ -40,13 +40,15 @@ function addblog(req, res) {
     blogobj.isFeatured = req.body.isFeatured;
     blogobj.Category_id = req.body.Category_id;
     // Handling the tag field
-    const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
+    const tagsArray = req.body.tag
+    ? req.body.tag.split(",").map((tag) => tag.trim())
+    : [];
     blogobj.tags = tagsArray;
 
     blogobj.userId = req.decoded;
 
     if (req.file) {
-      blogobj.Image = "blog_photo/" + req.file.filename;
+      blogobj.Image = req.file ? "blog_photo/" + req.file.filename:"";
     }
     blogobj
       .save()

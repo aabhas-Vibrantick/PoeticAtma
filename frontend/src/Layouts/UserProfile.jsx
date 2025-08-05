@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import apiServices, { BASE_URL_IMG } from "../ApiServices/ApiServices";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UserViewDashboard from "../User/Pages/UserDashboard/UserViewDashboard";
 import UserAddSher from "../User/Pages/UserAddPages/UserAddSher";
 import UserAddShayari from "../User/Pages/UserAddPages/userAddShayari";
 import UserAddProse from "../User/Pages/UserAddPages/UserAddProse";
@@ -12,8 +13,8 @@ import UserProseList from "../User/Pages/UserDataPages/UserViewProse";
 import UserShayariList from "../User/Pages/UserDataPages/UserViewShayari";
 import UserOrderlist from "../User/Pages/UserDataPages/UVieworders";
 import Clock from "../Admin/pages/Clock";
-import { FaBars, FaBlogger, FaFileAlt, FaUser, FaLock, FaList } from "react-icons/fa";
-import { AnimatePresence, motion } from "framer-motion";
+import { FaBars, FaBlogger, FaFileAlt, FaUser, FaList } from "react-icons/fa";
+import { motion } from "framer-motion";
 import UserProfileTab from "../Components/UserProfileTab";
 
 const routes = [
@@ -34,8 +35,22 @@ export default function UserDashboard() {
   const [id, setId] = useState(sessionStorage.getItem("_id"));
   const [customerData, setCustomerData] = useState({});
   const [viewtab, setTabview] = useState(1);
-  const [totals, setTotals] = useState({ shayari: 0, sher: 0, prose: 0, blog: 0 });
   const [isOpen, setIsOpen] = useState(true);
+
+  const [totals, setTotals] = useState({
+    shayari: 0,
+    sher: 0,
+    prose: 0,
+    blog: 0,
+    approvedSher: 0,
+    pendingSher: 0,
+    approvedShayari: 0,
+    pendingShayari: 0,
+    approvedProse: 0,
+    pendingProse: 0,
+    approvedBlog: 0,
+    pendingBlog: 0,
+  });
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
@@ -43,99 +58,189 @@ export default function UserDashboard() {
     window.scrollTo(0, 0);
     setId(sessionStorage.getItem("_id"));
 
-    const data = { userId: id };
+    const data = { userId: sessionStorage.getItem("_id") };
 
-    apiServices.getsinglecustomer(data).then((res) => {
-      if (res.data.success) {
-        setCustomerData(res.data.data);
-      } else {
-        toast.error(res.data.message);
-      }
-    }).catch(() => toast.error("Something went wrong"));
+    apiServices
+      .getsinglecustomer(data)
+      .then((res) => {
+        if (res.data.success) {
+          setCustomerData(res.data.data);
+        } else {
+          toast.error(res.data.message);
+        }
+      })
+      .catch(() => toast.error("Something went wrong"));
 
-    apiServices.dashboard(data).then((res) => {
-      setTotals({
-        shayari: res.data.usertotal_shayari,
-        sher: res.data.usertotal_sher,
-        prose: res.data.usertotal_prose,
-        blog: res.data.usertotal_blog
-      });
-    }).catch(() => toast.error("Something went wrong"));
-  }, [id]);
+    apiServices
+      .dashboard(data)
+      .then((res) => {
+        const d = res.data;
+        setTotals({
+          shayari: d.usertotal_shayari || 0,
+          sher: d.usertotal_sher || 0,
+          prose: d.usertotal_prose || 0,
+          blog: d.usertotal_blog || 0,
+
+          approvedSher: (d.usertotal_sher || 0) - (d.total_penddingsher || 0),
+          pendingSher: d.total_penddingsher || 0,
+
+          approvedShayari: (d.usertotal_shayari || 0) - (d.total_penddingshayari || 0),
+          pendingShayari: d.total_penddingshayari || 0,
+
+          approvedProse: (d.usertotal_prose || 0) - (d.total_penddingprose || 0),
+          pendingProse: d.total_penddingprose || 0,
+
+          approvedBlog: (d.usertotal_blog || 0) - (d.total_penddingblog || 0),
+          pendingBlog: d.total_penddingblog || 0,
+        });
+      })
+      .catch(() => toast.error("Something went wrong"));
+  }, []);
 
   const renderTab = () => {
     switch (viewtab) {
       case 1:
         return (
-          <div className="container-fluid">
-            <div className="row mt-3">
-              <Clock className="col text-start" />
-              <h1 className="col text-end">Welcome, <span className="upnametext">{customerData.name}</span></h1>
-            </div>
-            <div className="row py-3">
-              {[
-                { title: "Total Sher", count: totals.sher, color: "primary", tab: 7 },
-                { title: "Total Shayari", count: totals.shayari, color: "success", tab: 8 },
-                { title: "Total Prose", count: totals.prose, color: "danger", tab: 9 },
-                { title: "Total Blog", count: totals.blog, color: "warning", tab: 6 }
-              ].map((item, i) => (
-                <div className="col-md-3 mb-3" key={i}>
-                  <div className={`card border-${item.color}`}>
-                    <div className={`card-header bg-${item.color} text-white`}>{item.title}</div>
-                    <div className="card-body">
-                      <h3 className="card-title">{item.count}</h3>
-                      <button className={`btn btn-${item.color}`} onClick={() => setTabview(item.tab)}>View {item.title}</button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <UserViewDashboard
+            totals={totals}
+            customerData={customerData}
+            setTabview={setTabview}
+          />
         );
-      case 2: return <UserAddBlog />;
-      case 3: return <UserAddSher />;
-      case 4: return <UserAddShayari />;
-      case 5: return <UserAddProse />;
-      case 6: return <UserBlogList />;
-      case 7: return <UserSherList />;
-      case 8: return <UserShayariList />;
-      case 9: return <UserProseList />;
-      case 10: return <UserOrderlist />;
+      case 2:
+        return <UserAddBlog />;
+      case 3:
+        return <UserAddSher />;
+      case 4:
+        return <UserAddShayari />;
+      case 5:
+        return <UserAddProse />;
+      case 6:
+        return <UserBlogList />;
+      case 7:
+        return <UserSherList />;
+      case 8:
+        return <UserShayariList />;
+      case 9:
+        return <UserProseList />;
+      case 10:
+        return <UserOrderlist />;
       case 11:
-         return <UserProfileTab customerData={customerData} />;
-      default: return <div>Invalid Tab</div>;
+        return <UserProfileTab customerData={customerData} />;
+      default:
+        return <div>Invalid Tab</div>;
     }
   };
 
-  return (
+ return (
+  <>
+    <style>{`
+      .admin_main-container {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #f4f5f7;
+        min-height: 100vh;
+      }
+
+      .admin_sidebar {
+        width: 240px;
+        background-color: #000000ff;
+        color: white;
+        padding: 20px 10px;
+      }
+
+      .admin_top_section {
+        font-size: 20px;
+        font-weight: bold;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #374151;
+        text-align: center;
+        color: white;
+      }
+
+      .sidebar-item {
+        margin: 10px 0;
+        border-radius: 6px;
+        transition: background-color 0.3s;
+      }
+
+      .sidebar-item:hover {
+        background-color: #374151;
+      }
+
+      .sidebar-item button {
+        border: none;
+        background: none;
+        color: white;
+        text-align: left;
+        width: 100%;
+        padding: 10px 15px;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .active-tab {
+        background-color: #2563eb;
+      }
+
+      .active-tab button {
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .admin_sidebar {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          overflow-x: auto;
+          padding: 10px;
+        }
+
+        .admin_top_section {
+          display: none;
+        }
+
+        .sidebar-item button {
+          font-size: 14px;
+          justify-content: center;
+          padding: 8px;
+        }
+      }
+    `}</style>
+
     <div className="admin_main-container d-flex">
-      <motion.div
-        animate={{ width: isOpen ? "200px" : "60px" }}
-        className="admin_sidebar bg-light text-white p-2 vh-100"
-      >
-        <div className="admin_top_section d-flex justify-content-between align-items-center">
-          {isOpen && <h5 className="admin_logo">User Panel</h5>}
-          <FaBars onClick={toggleSidebar} className="cursor-pointer" />
-        </div>
-        <ul className="nav flex-column mt-4">
+      {/* Sidebar */}
+      <div className="admin_sidebar">
+        <div className="admin_top_section">User Panel</div>
+        <ul className="nav flex-column mt-3">
           {routes.map((item, index) => (
-            <li key={index} className={`nav-item ${viewtab === item.tab ? "bg-secondary" : ""}`}> 
+            <li
+              key={index}
+              className={`nav-item sidebar-item ${
+                viewtab === item.tab ? "active-tab" : ""
+              }`}
+            >
               <button
-                className="nav-link btn text-start text-black w-100 d-flex align-items-center"
+                className="nav-link btn text-white"
                 onClick={() => setTabview(item.tab)}
-                style = {{ fontSize : "15px" }}
               >
-                <span className="me-2">{item.icon}</span>
-                {isOpen && item.name}
+                <span>{item.icon}</span>
+                <span>{item.name}</span>
               </button>
             </li>
           ))}
         </ul>
-      </motion.div>
-      <div className="flex-grow-1 p-3">
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-grow-1 p-3 bg-light w-100">
         {renderTab()}
       </div>
+
       <ToastContainer />
     </div>
-  );
+  </>
+);
+
 }

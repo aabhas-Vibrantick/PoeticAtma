@@ -6,16 +6,12 @@ import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
 import { Link } from "react-router-dom";
 
 function AllUserList() {
-  const [toggleCleared, setToggleCleared] = React.useState(false);
+  const [toggleCleared, setToggleCleared] = useState(false);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterText, setFilterText] = useState("");
 
-//   ---------get data Api-----------
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 3500);
     fetchData();
   }, []);
 
@@ -24,22 +20,15 @@ function AllUserList() {
       const response = await apiServices.getallcustomer();
       if (response.data.success) {
         setUsers(response.data.data);
-        // console.log(response.data.data)
-        
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      // console.error(error);
       toast.error("Something went wrong");
     }
     setLoading(false);
   };
 
-  // const data = { _id: id };
-  
- 
-// -------------delete api--------
   const deleteuser = (id) => {
     const data = { _id: id };
     apiServices.deletecustomer(data).then((response) => {
@@ -49,63 +38,54 @@ function AllUserList() {
       } else {
         toast.error(response.data.message);
       }
-    }).catch((error) => {
-      // console.error(error);
+    }).catch(() => {
+      toast.error("Something went wrong");
     });
   };
 
-  // -------------change Status api--------
   const changeStatus = (id, status) => {
     setLoading(true);
     const upstatus = status ? '0' : '1';
-    const data = {
-      _id: id ,
-      status: upstatus,
-    };
-   
+    const data = { _id: id, status: upstatus };
+
     apiServices.changeStatus(data).then((response) => {
       if (response.data.success) {
-        
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
       }
       setLoading(false);
       fetchData();
-    }).catch((error) => {
-   
+    }).catch(() => {
       toast.error('Something went wrong!! Try Again Later');
       setLoading(false);
     });
   };
 
-
-  // --------toast selection function----
-  const handleChange = ({ selectedRows }) => {
-   
-    // console.log('Selected Rows: ', selectedRows);
+  const handleClear = () => {
+    setFilterText("");
   };
 
-  // -----colom data-----
+  const handleChange = ({ selectedRows }) => {
+    // console.log('Selected Rows:', selectedRows);
+  };
+
   const columns = [
-    { name: "Sr No.", selector: (_, index) => index + 1, sortable: true },
-    // {
-    //   name: "User Id",
-    //   selector: (row) => row.userId._id,
-    //   sortable: true,
-    // },
+    { name: "S.No", selector: (_, index) => index + 1, width: "70px" },
     {
-      name: "name",
+      name: "Name",
       selector: (row) => row.name,
       sortable: true,
     },
     {
       name: "Image",
+      width: "100px",
       cell: (row) => (
         <img
           src={BASE_URL_IMG + row.Image}
           alt=""
-          style={{ height: "150px", width: "150px" }}
+          className="img-thumbnail"
+          style={{ width: "70px", height: "70px", objectFit: "cover", borderRadius: "8px" }}
         />
       ),
     },
@@ -116,139 +96,123 @@ function AllUserList() {
     },
     {
       name: "Address",
-      selector: (row) => row.address,
-      sortable: true,
+      selector: (row) => row.address || "N/A",
     },
     {
       name: "Phone",
       selector: (row) => row.contact,
-      sortable: true,
     },
-    { name: 'Status', selector: row => row.userId?.status ? 'Active' : 'In-active' },
     {
-      name: "Action",
+      name: "Status",
+      selector: (row) => (row.userId?.status ? "Active" : "Inactive"),
       cell: (row) => (
-        <>
-          <div className="d-flex flex-column">
-            <div>
-              <Link to={`/admin/admin-profile/${row.userId?._id}`}>
-                <button className="btn btn-outline-success mx-1 my-1" 
-                style={{width:"100px",height:"40px"}}>
-                  Edit
-                </button>
-              </Link>
-            </div>
-            <div>
-              <button
-                className="btn btn-outline-danger mx-1 my-1"
-                onClick={() => deleteuser(row._id)}
-                style={{width:"100px",height:"40px"}}
-              >
-                Delete
-              </button>
-            </div>
-            <div>
-              <button
-                className="btn btn-outline-danger mx-1 my-1"
-                  onClick={() => changeStatus(row.userId._id, row.userId.status)}
-                style={{width:"100px",height:"40px"}}
-              >
-                Status
-              </button>
-            </div>
-          </div>
-        </>
+        <span className={`badge ${row.userId?.status ? "bg-success" : "bg-secondary"}`}>
+          {row.userId?.status ? "Active" : "Inactive"}
+        </span>
       ),
+    },
+    {
+      name: "Actions",
+      cell: (row) => (
+        <div className="d-flex flex-wrap gap-1">
+          <Link to={`/admin/admin-profile/${row.userId?._id}`}>
+            <button className="btn btn-sm btn-outline-primary">Edit</button>
+          </Link>
+          <button
+            className="btn btn-sm btn-outline-danger"
+            onClick={() => deleteuser(row._id)}
+          >
+            Delete
+          </button>
+          <button
+            className="btn btn-sm btn-outline-warning"
+            onClick={() => changeStatus(row.userId?._id, row.userId?.status)}
+          >
+            Status
+          </button>
+        </div>
+      ),
+      width: "250px",
     },
   ];
 
-  // expended function-----
+  const filteredUsers = users.filter((user) => {
+    const search = filterText.toLowerCase();
+    return (
+      user.name?.toLowerCase().includes(search) ||
+      user.email?.toLowerCase().includes(search) ||
+      (user.contact && typeof user.contact === "string" && user.contact.toLowerCase().includes(search)) ||
+      user.address?.toLowerCase().includes(search) ||
+      user.userId?._id?.toLowerCase().includes(search)
+    );
+  });
+
   const ExpandedComponent = ({ data }) => (
     <pre>{JSON.stringify(data, null, 2)}</pre>
   );
 
-  //  filter function--
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(filterText.toLowerCase()) ||
-      (user.email &&
-        user.email.toLowerCase().includes(filterText.toLowerCase())) ||
-      (user.contact &&
-        typeof user.contact === "string" &&
-        user.contact.toLowerCase().includes(filterText.toLowerCase())) ||
-      (user.address &&
-        user.address.toLowerCase().includes(filterText.toLowerCase())) ||
-      (user.userId &&
-        user.userId._id &&
-        user.userId._id.toLowerCase().includes(filterText.toLowerCase()))
-  );
-
-  // clear filter function
-  const handleClear = () => {
-    if (filterText) {
-      setFilterText("");
-    }
-  };
-
-
-  const headerStyle = {
-    backgroundColor: '#ffcc00',
-    color: 'white', 
-    fontWeight: 'bold',
-  };
   return (
     <>
-      <main className="main-container adminbody">
-        <div className="container  table-responsive py-5">
-      <div className="row my-3 ">
-        <div className="col-5 d-flex justify-center items-center gap-1 ">
-          <input
-            type="text"
-            className="form-control "
-            placeholder="Search"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-          />
-          <button
-            className="btn btn-danger"
-            type="button"
-            style={{ width: "100px", height: "38px" }}
-            onClick={handleClear}
-          >
-            X
-          </button>
-        </div>
-        <div className="col-7 ">
-          <CSVLink data={filteredUsers} filename="user-data.csv">
-            <button className="btn btn-outline-primary float-end">Download CSV</button>
-          </CSVLink>
-        </div>
-      </div>
+      <main className="main-container adminbody bg-light py-4">
+        <div className="container-fluid">
+          <div className="text-center mb-4">
+            <h2 className="text-dark fw-bold">All Users</h2>
+            <hr className="w-25 mx-auto" />
+          </div>
 
-      <DataTable
-      title="Desserts"
-        columns={columns}
-        data={filteredUsers}
-        progressPending={loading}
-        defaultSortFieldId={3}
-        selectableRows
-        onSelectedRowsChange={handleChange}
-        clearSelectedRows={toggleCleared}
-        expandableRows
-        expandableRowsComponent={ExpandedComponent}
-        pagination
-        fixedHeader
-        customStyles={{
-          header: {
-            style: headerStyle,
-          },
-        }}
-        // fixedHeaderScrollHeight="700px"
-      />
-</div>
+          <div className="row align-items-center mb-4">
+            <div className="col-md-6 d-flex gap-2">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search user..."
+                value={filterText}
+                onChange={(e) => setFilterText(e.target.value)}
+              />
+              <button
+                className="btn btn-outline-danger"
+                type="button"
+                onClick={handleClear}
+              >
+                Clear
+              </button>
+            </div>
+            <div className="col-md-6 text-end">
+              <CSVLink data={filteredUsers} filename="user-data.csv">
+                <button className="btn btn-primary">Download CSV</button>
+              </CSVLink>
+            </div>
+          </div>
+
+          <div className="bg-white shadow-sm rounded p-3">
+            <DataTable
+              title="List of Users"
+              columns={columns}
+              data={filteredUsers}
+              progressPending={loading}
+              striped
+              highlightOnHover
+              pagination
+              selectableRows
+              onSelectedRowsChange={handleChange}
+              clearSelectedRows={toggleCleared}
+              expandableRows
+              expandableRowsComponent={ExpandedComponent}
+              customStyles={{
+                header: {
+                  style: {
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    backgroundColor: "#f8f9fa",
+                    padding: "16px",
+                  },
+                },
+              }}
+            />
+          </div>
+        </div>
+        <ToastContainer />
       </main>
-      {/* </div> */}
-      <ToastContainer />
     </>
   );
 }

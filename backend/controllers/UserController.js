@@ -598,59 +598,51 @@ deleteuser = (req, res) => {
   }
 };
 
-deletecustomer = (req, res) => {
-  var validation = "";
+deletecustomer = async (req, res) => {
+  const { _id } = req.body;
 
-  if (req.body._id == "") {
-    validation += "ID is required \n";
-  }
-
-  if (!!validation) {
-    res.json({
+  if (!_id) {
+    return res.json({
       status: 409,
       success: false,
-      message: validation,
+      message: "Customer ID is required",
     });
-  } else {
-    Customer.findOne({ _id: req.body._id })
-      .then((custdata) => {
-        if (custdata == null) {
-          res.json({
-            status: 409,
-            success: false,
-            message: "Data not found",
-          });
-        } else {
-          //Delete
-          Customer.deleteOne({ _id: req.body._id })
-            .then((data) => {
-              res.json({
-                status: 200,
-                success: true,
-                message: "Record Deleted",
-                data: data,
-              });
-            })
-            .catch((err) => {
-              res.json({
-                status: 500,
-                success: false,
-                message: "Error",
-                error: String(err),
-              });
-            });
-        }
-      })
-      .catch((err) => {
-        res.json({
-          status: 500,
-          success: false,
-          message: "Error",
-          error: String(err),
-        });
+  }
+
+  try {
+    const custdata = await Customer.findOne({ _id });
+
+    if (!custdata) {
+      return res.json({
+        status: 409,
+        success: false,
+        message: "Customer not found",
       });
+    }
+
+    // Delete related User if exists
+    if (custdata.userId) {
+      await User.deleteOne({ _id: custdata.userId });
+    }
+
+    // Delete the customer
+    await Customer.deleteOne({ _id });
+
+    return res.json({
+      status: 200,
+      success: true,
+      message: "Customer and related User deleted",
+    });
+  } catch (error) {
+    return res.json({
+      status: 500,
+      success: false,
+      message: "Error",
+      error: String(error),
+    });
   }
 };
+
 
 getallcustomer = (req, res) => {
   Customer.find(req.body)

@@ -4,6 +4,7 @@ import { CSVLink } from "react-csv";
 import { ToastContainer, toast } from "react-toastify";
 import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
 import { Link } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 function AllUserList() {
   const [toggleCleared, setToggleCleared] = useState(false);
@@ -70,6 +71,21 @@ function AllUserList() {
     // console.log('Selected Rows:', selectedRows);
   };
 
+  const confirmDelete = (id) => {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'Cancel',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      deleteuser(id);
+    }
+  });
+};
+
   const columns = [
     { name: "S.No", selector: (_, index) => index + 1, width: "70px" },
     {
@@ -120,7 +136,7 @@ function AllUserList() {
           </Link>
           <button
             className="btn btn-sm btn-outline-danger"
-            onClick={() => deleteuser(row._id)}
+            onClick={() => confirmDelete(row._id)}
           >
             Delete
           </button>

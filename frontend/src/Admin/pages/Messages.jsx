@@ -4,15 +4,12 @@ import { CSVLink } from "react-csv";
 import { ToastContainer, toast } from "react-toastify";
 import apiServices from "../../ApiServices/ApiServices";
 
-
-function Messages() {
-  const [toggleCleared, setToggleCleared] = React.useState(false);
-  const [allmessage, setMessage] = useState([]);
+export default function Messages() {
+  const [toggleCleared, setToggleCleared] = useState(false);
+  const [allMessage, setMessage] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterText, setFilterText] = useState("");
 
-
-//   ---------get data Api-----------
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
@@ -29,182 +26,175 @@ function Messages() {
         toast.error(response.data.message);
       }
     } catch (error) {
-      // console.error(error);
       toast.error("Something went wrong");
     }
     setLoading(false);
   };
 
-
-
-
-  // -------------change Status api--------
   const changeStatus = (id, status) => {
     setLoading(true);
-    const upstatus = status ? '0' : '1';
+    const upstatus = status ? "0" : "1";
     const data = {
       _id: id,
       status: upstatus,
     };
-    apiServices.changeContactStatus(data).then((response) => {
-      if (response.data.success) {
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
-      setLoading(false);
-      fetchData();
-    }).catch((error) => {
-      // console.error(error);
-      toast.error('Something went wrong!! Try Again Later');
-      setLoading(false);
-    });
+    apiServices
+      .changeContactStatus(data)
+      .then((response) => {
+        if (response.data.success) {
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message);
+        }
+        setLoading(false);
+        fetchData();
+      })
+      .catch(() => {
+        toast.error("Something went wrong!! Try Again Later");
+        setLoading(false);
+      });
   };
 
-
-  // --------toast selection function----
-  const handleChange = ({ selectedRows }) => {
-   
-    // console.log('Selected Rows: ', selectedRows);
-  };
-
-  // -----colom data-----
   const columns = [
-    { name: "Sr No.", selector: (_, index) => index + 1, sortable: true },
-    
     {
-      name: "Name",
-      selector:"name",
+      name: "S.No.",
+      selector: (_, index) => index + 1,
       sortable: true,
+      width: "80px",
     },
-   
-    {
-      name: "Email",
-      width:"200px",
-      selector: "email",
-      sortable: true,
-    },
-    {
-      name: "Subject",
-      width:"200px",
-      selector: (row) => row.subject,
-      sortable: true,
-    },
-    {
-      name: "Phone",
-      selector: (row) => row.contact,
-      sortable: true,
-    },
+    { name: "Name", selector: "name", sortable: true },
+    { name: "Email", selector: "email", sortable: true, width: "200px" },
+    { name: "Subject", selector: "subject", sortable: true, width: "200px" },
+    { name: "Phone", selector: "contact", sortable: true },
     {
       name: "Message",
-      width:"auto",
-      selector: (row) => row.message,
+      selector: "message",
+      sortable: true,
+      wrap: true,
+      grow: 2,
+    },
+    {
+      name: "Status",
+      selector: (row) => (row.status ? "Active" : "Inactive"),
+      cell: (row) => (
+        <span
+          className={`badge ${
+            row.status ? "bg-success" : "bg-secondary"
+          } text-light`}
+        >
+          {row.status ? "Active" : "Inactive"}
+        </span>
+      ),
       sortable: true,
     },
-    { name: 'Status', selector: row => row.status ? 'Active' : 'In-active' , sortable: true,}, 
     {
       name: "Action",
       cell: (row) => (
-        <>
-          <div className="d-flex flex-column">
-            <div>
-            <button
-                className="btn btn-outline-danger mx-1 my-1"
-                  onClick={() => changeStatus(row._id, row.status)}
-                style={{width:"100px",height:"40px"}}
-              >
-                Status
-              </button>
-            </div>
-          </div>
-        </>
+        <button
+          onClick={() => changeStatus(row._id, row.status)}
+          className={`btn btn-xs px-2 py-1 ${
+            row.status ? "btn-outline-danger" : "btn-outline-warning"
+          }`}
+          style={{ fontSize: "12px", width: "70px" }}
+        >
+          {row.status ? "Off" : "On"}
+        </button>
       ),
     },
   ];
 
- 
-
-  //  filter function--
-  const filteredMessages = allmessage.filter(
+  const filteredMessages = allMessage.filter(
     (msg) =>
-    msg.name.toLowerCase().includes(filterText.toLowerCase()) ||
-      (msg.email &&
-        msg.email.toLowerCase().includes(filterText.toLowerCase())) ||
-      (msg.contact &&
-        typeof msg.contact === "string" &&
-        msg.contact.toLowerCase().includes(filterText.toLowerCase())) ||
-      (msg.message &&
-        msg.message.toLowerCase().includes(filterText.toLowerCase())) 
-      
+      msg.name?.toLowerCase().includes(filterText.toLowerCase()) ||
+      msg.email?.toLowerCase().includes(filterText.toLowerCase()) ||
+      msg.contact?.toLowerCase().includes(filterText.toLowerCase()) ||
+      msg.message?.toLowerCase().includes(filterText.toLowerCase())
   );
 
-  // clear filter function
   const handleClear = () => {
     if (filterText) {
       setFilterText("");
     }
   };
 
-
-  const headerStyle = {
-    backgroundColor: '#ffcc00',
-    color: 'white', 
-    fontWeight: 'bold',
-  };
   return (
     <>
-      <main className="main-container adminbody">
-        <div className="container  table-responsive py-5">
-      <div className="row my-3 ">
-        <div className="col-5 d-flex justify-center items-center gap-1 ">
-          <input
-            type="text"
-            className="form-control "
-            placeholder="Search"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-          />
-          <button
-            className="btn btn-danger"
-            type="button"
-            style={{ width: "100px", height: "38px" }}
-            onClick={handleClear}
-          >
-            X
-          </button>
-        </div>
-        <div className="col-7 ">
-          <CSVLink data={filteredMessages} filename="msg-data.csv">
-            <button className="btn btn-outline-primary float-end">Download CSV</button>
-          </CSVLink>
-        </div>
-      </div>
+      <style>{`
+        .main-container {
+          min-height: 100vh;
+        }
+        .btn-outline-danger {
+          border-width: 2px;
+        }
+        .btn-primary {
+          background-color: #0069d9;
+          border: none;
+        }
+        .btn-primary:hover {
+          background-color: #0053b3;
+        }
+      `}</style>
 
-      <DataTable
-      title="Desserts"
-        columns={columns}
-        data={filteredMessages}
-        progressPending={loading}
-        defaultSortFieldId={3}
-        selectableRows
-        onSelectedRowsChange={handleChange}
-        clearSelectedRows={toggleCleared}
-        pagination
-        fixedHeader
-        customStyles={{
-          header: {
-            style: headerStyle,
-          },
-        }}
-        // fixedHeaderScrollHeight="700px"
-      />
-</div>
+      <main className="main-container adminbody bg-light py-4">
+        <div className="container-fluid">
+          <div className="text-center mb-4">
+            <h2 className="text-dark fw-bold">Messages</h2>
+            <hr className="w-25 mx-auto" />
+          </div>
+
+          <div className="row align-items-center mb-4">
+            <div className="col-md-6 d-flex gap-2">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search messages..."
+                value={filterText}
+                onChange={(e) => setFilterText(e.target.value)}
+              />
+              <button
+                className="btn btn-outline-danger"
+                type="button"
+                onClick={handleClear}
+              >
+                Clear
+              </button>
+            </div>
+            <div className="col-md-6 text-end">
+              <CSVLink data={filteredMessages} filename="messages.csv">
+                <button className="btn btn-primary">Download CSV</button>
+              </CSVLink>
+            </div>
+          </div>
+
+          <div className="bg-white shadow-sm rounded p-3">
+            <DataTable
+              title="Contact Messages"
+              columns={columns}
+              data={filteredMessages}
+              selectableRows
+              onSelectedRowsChange={() => {}}
+              progressPending={loading}
+              striped
+              highlightOnHover
+              pagination
+              fixedHeader
+              fixedHeaderScrollHeight="600px"
+              customStyles={{
+                header: {
+                  style: {
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    backgroundColor: "#f8f9fa",
+                    padding: "16px",
+                  },
+                },
+              }}
+            />
+          </div>
+        </div>
+
+        <ToastContainer />
       </main>
-      {/* </div> */}
-      <ToastContainer />
     </>
   );
 }
-
-export default Messages;
-

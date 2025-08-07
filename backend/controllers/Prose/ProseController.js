@@ -3,25 +3,25 @@ const Prose = require("../../models/Prose/ProseModel");
 async function addprose(req, res) {
   let validation = "";
 
-  if (!req.body.title) validation += "title name is required ";
-  if (!req.body.Category_id) validation += "Category_id is required ";
-  if (!req.body.prose) validation += "prose is required ";
-  if (!req.body.language) validation += "language is required ";
-  // if (!req.body.tag) validation += "tags are required ";
-  // if (!req.file) validation += "upload image is required ";
+  if (!req.body.title) validation += "Title is required. ";
+  if (!req.body.Category_id) validation += "Category ID is required. ";
+  if (!req.body.prose) validation += "Prose content is required. ";
+  if (!req.body.language) validation += "Language is required. ";
 
   if (!!validation) {
     return res.json({
       status: 409,
       success: false,
-      message: validation,
+      message: validation.trim(),
     });
   }
 
   try {
     const tagsArray = req.body.tag
-    ? req.body.tag.split(",").map((tag) => tag.trim())
-    : [];
+      ? req.body.tag.split(",").map((tag) => tag.trim())
+      : [];
+
+    const isAdmin = req.decoded && req.decoded.usertype === 1;
 
     const proseObj = new Prose();
     proseObj.title = req.body.title;
@@ -29,12 +29,17 @@ async function addprose(req, res) {
     proseObj.language = req.body.language;
     proseObj.Category_id = req.body.Category_id;
     proseObj.tags = tagsArray;
-    proseObj.userId = req.decoded;
-    proseObj.Image = req.file ? "prose_photo/" + req.file.filename :"";
 
-    const isAdmin = req.decoded && req.decoded.usertype === 1;
+    // Assign userId properly
+    proseObj.userId = req.body.userId || req.decoded._id;
+
+    // Assign image path if file exists
+    proseObj.Image = req.file ? "prose_photo/" + req.file.filename : "";
+
+    // Set approval status
     proseObj.isApproved = isAdmin ? true : false;
 
+    // Save to DB
     await proseObj.save();
 
     return res.json({
@@ -54,6 +59,7 @@ async function addprose(req, res) {
     });
   }
 }
+
 
 
 // --------get all prose start-----------
@@ -276,9 +282,9 @@ deleteprose = (req, res) => {
 };
 
 getFeaturedProse = (req, res) => {
-  Prose.find()
+  Prose.find({ isApproved: true }) // Fetch only approved prose
     .sort({ likes: -1 }) // Sort by likes in descending order
-    .limit(10) // Get the top 20 popular shayari
+    .limit(10) // Limit to top 10
     .populate("Category_id")
     .populate("userId")
     .exec()
@@ -294,6 +300,7 @@ getFeaturedProse = (req, res) => {
       });
     });
 };
+
 
 // -----popular shayari---------
 getPopularProse = (req, res) => {
@@ -617,8 +624,15 @@ userproseDash = async (req, res) => {
     const proseCounts = {};
 
     for (const userId of userIds) {
-      const proseCount = await Prose.countDocuments({ userId });
-      proseCounts[userId] = proseCount;
+      const total = await Prose.countDocuments({ userId });
+      const approved = await Prose.countDocuments({ userId, isApproved: true });
+      const pending = await Prose.countDocuments({ userId, isApproved: false });
+
+      proseCounts[userId] = {
+        total,
+        approved,
+        pending,
+      };
     }
 
     res.json({ proseCounts });
@@ -626,6 +640,7 @@ userproseDash = async (req, res) => {
     res.status(500).json({ error: "An error occurred" });
   }
 };
+
 module.exports = {
   addprose,
   approveProse,

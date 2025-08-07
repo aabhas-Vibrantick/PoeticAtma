@@ -1,10 +1,9 @@
-
 import React, { useEffect, useState } from "react";
 import apiServices from "../../../ApiServices/ApiServices";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import JoditEditor from 'jodit-react';
+import JoditEditor from "jodit-react";
 import { useRef } from "react";
 function AddShayari() {
   const nav = useNavigate();
@@ -16,11 +15,18 @@ function AddShayari() {
   const [image, setImage] = useState(null); // Changed "Image" to "image"
   const [allCategory, setAllCategory] = useState([]);
   const [categoryId, setCategoryId] = useState("");
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState(""); // New
 
   useEffect(() => {
     apiServices.getall_shayari_category().then((data) => {
       if (data.data.success) {
         setAllCategory(data.data.data);
+      }
+    });
+    apiServices.getalluser().then((res) => {
+      if (res.data.success) {
+        setAllUsers(res.data.data);
       }
     });
   }, []);
@@ -35,13 +41,13 @@ function AddShayari() {
 
     const formData = new FormData();
     formData.append("title", title);
-    const cleanShayari = shayari.replace(/^<p>(.*?)<\/p>$/i, '$1').trim();
-formData.append("shayari", cleanShayari);
+    const cleanShayari = shayari.replace(/^<p>(.*?)<\/p>$/i, "$1").trim();
+    formData.append("shayari", cleanShayari);
     formData.append("language", language);
     formData.append("tag", tag);
     formData.append("Category_id", categoryId);
     formData.append("Image", image);
-
+    formData.append("userId", selectedUserId);
     try {
       const response = await apiServices.addshayari(formData);
       if (response.data.success) {
@@ -69,7 +75,12 @@ formData.append("shayari", cleanShayari);
               <form className="mt-5" onSubmit={handleshayariData}>
                 {/* Title input */}
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Title </label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Title{" "}
+                  </label>
                   <input
                     type="text"
                     id="form6Example3"
@@ -82,7 +93,12 @@ formData.append("shayari", cleanShayari);
 
                 {/* Category input */}
                 <div className="form-group fs-5 mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Category </label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Category{" "}
+                  </label>
                   <select
                     className="form-select mb-2"
                     value={categoryId}
@@ -98,9 +114,32 @@ formData.append("shayari", cleanShayari);
                   </select>
                 </div>
 
+                <div className="form-outline mb-4">
+                  <label className="form-label text-dark">
+                    Select Author (User)
+                  </label>
+                  <select
+                    className="form-select"
+                    value={selectedUserId}
+                    onChange={(e) => setSelectedUserId(e.target.value)}
+                  >
+                    <option value="">Select User</option>
+                    {allUsers.map((user) => (
+                      <option key={user._id} value={user._id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 {/* shayari input */}
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Shayari </label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Shayari{" "}
+                  </label>
                   {/* <textarea
                     className="form-control"
                     id="form6Example7"
@@ -113,13 +152,17 @@ formData.append("shayari", cleanShayari);
                     ref={editor}
                     className="text-dark"
                     value={shayari}
-                    onChange={newContent => setShayari(newContent)}
+                    onChange={(newContent) => setShayari(newContent)}
                   />
                 </div>
 
-
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Tag</label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Tag
+                  </label>
                   <input
                     type="text"
                     id="form6Example3"
@@ -130,9 +173,18 @@ formData.append("shayari", cleanShayari);
                   />
                 </div>
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Language</label>
-                  <select className="form-select" aria-label="Default select example" value={language}
-                    onChange={(e) => setlanguage(e.target.value)}>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Language
+                  </label>
+                  <select
+                    className="form-select"
+                    aria-label="Default select example"
+                    value={language}
+                    onChange={(e) => setlanguage(e.target.value)}
+                  >
                     <option selected>Select Language</option>
                     <option value="hindi">Hindi</option>
                     <option value="English">English</option>
@@ -140,7 +192,12 @@ formData.append("shayari", cleanShayari);
                 </div>
                 {/* shayari image */}
                 <div className="mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Upload Image </label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Upload Image{" "}
+                  </label>
                   <input
                     className="form-control"
                     type="file"
@@ -148,6 +205,22 @@ formData.append("shayari", cleanShayari);
                     accept="image/*"
                     onChange={(e) => setImage(e.target.files[0])}
                   />
+                  {/* Preview Section */}
+                      {image && (
+                        <div className="mt-3">
+                          <p className="mb-1 fw-bold">Image Preview:</p>
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt="Preview"
+                            className="img-thumbnail"
+                            style={{
+                              width: "200px",
+                              height: "200px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      )}
                 </div>
                 {/* Submit button */}
                 <button

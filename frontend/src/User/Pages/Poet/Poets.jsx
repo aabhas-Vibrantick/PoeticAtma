@@ -89,57 +89,56 @@ export default function Poets() {
     }
   };
 
-  const renderUserCard = (data) => (
-  <div className="col-sm-6 col-md-4 col-lg-3 poetwraper mb-4" key={data._id}>
-    <Link
-      to={`/poets-profile/${data.userId._id}`}
-      className="text-decoration-none text-dark"
-    >
-      <div className="card poetcard shadow-sm border-0 rounded-4 h-100 card-hover">
-        <div className="card-body text-center px-4 py-3">
-          <div className="poet-img-wrapper mx-auto mb-3">
-            <img
-              src={BASE_URL_IMG + (data.Image || "/assets/images/avtar.png")}
-              onError={(e) => (e.target.src = "/assets/images/avtar.png")}
-              className="rounded-circle img-fluid poet-avatar"
-              alt={data.name}
-            />
-          </div>
-          <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
-            <span className="fw-semibold text-capitalize fs-5">{data.name}</span>
-            {data.bedgeverify && (
+  const renderUserCard = (data) => {
+  const userId = data.userId._id;
+  const userShayari = Totaldashboard?.[userId] || {};
+  const userProse = Totaldashboardtwo?.[userId] || {};
+  const userSher = Totaldashboardthree?.[userId] || {};
+
+  return (
+    <div className="col-sm-6 col-md-4 col-lg-3 poetwraper mb-4" key={data._id}>
+      <Link
+        to={`/poets-profile/${userId}`}
+        className="text-decoration-none text-dark"
+      >
+        <div className="card poetcard shadow-sm border-0 rounded-4 h-100 card-hover">
+          <div className="card-body text-center px-4 py-3">
+            <div className="poet-img-wrapper mx-auto mb-3">
               <img
-                src="/quality.png"
-                alt="Verified"
-                className="badge-icon"
+                src={BASE_URL_IMG + (data.Image || "/assets/images/avtar.png")}
+                onError={(e) => (e.target.src = "/assets/images/avtar.png")}
+                className="rounded-circle img-fluid poet-avatar"
+                alt={data.name}
               />
-            )}
+            </div>
+            <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
+              <span className="fw-semibold text-capitalize fs-5">{data.name}</span>
+              {data.bedgeverify && (
+                <img src="/quality.png" alt="Verified" className="badge-icon" />
+              )}
+            </div>
+          </div>
+
+          <div className="poetcard-footer d-flex justify-content-around bg-light border-top py-2">
+            <div className="text-center">
+              <h6 className="mb-1 fw-semibold text-muted">Sher</h6>
+              <div className="fw-bold">{userSher.total || 0}</div>
+            </div>
+            <div className="text-center">
+              <h6 className="mb-1 fw-semibold text-muted">Ghazal</h6>
+              <div className="fw-bold">{userShayari.total || 0}</div>
+            </div>
+            <div className="text-center">
+              <h6 className="mb-1 fw-semibold text-muted">Nazm</h6>
+              <div className="fw-bold">{userProse.total || 0}</div>
+            </div>
           </div>
         </div>
-        <div className="poetcard-footer d-flex justify-content-around bg-light border-top py-2">
-          <div className="text-center">
-            <h6 className="mb-1 fw-semibold text-muted">Sher</h6>
-            <div className="fw-bold">
-              {Totaldashboardthree?.[data.userId._id] || 0}
-            </div>
-          </div>
-          <div className="text-center">
-            <h6 className="mb-1 fw-semibold text-muted">Ghazal</h6>
-            <div className="fw-bold">
-              {Totaldashboard?.[data.userId._id] || 0}
-            </div>
-          </div>
-          <div className="text-center">
-            <h6 className="mb-1 fw-semibold text-muted">Nazm</h6>
-            <div className="fw-bold">
-              {Totaldashboardtwo?.[data.userId._id] || 0}
-            </div>
-          </div>
-        </div>
-      </div>
-    </Link>
-  </div>
-);
+      </Link>
+    </div>
+  );
+};
+
 
 
   return (

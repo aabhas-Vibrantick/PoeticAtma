@@ -1,7 +1,6 @@
 import React from "react";
 import Clock from "../../../Admin/pages/Clock";
 
-
 import {
   BarChart,
   Bar,
@@ -16,155 +15,93 @@ import {
 function Dashboard({ customerData = {}, totals = {}, setTabview }) {
   const chartData = [
     {
-      name: "Sher",
-      Approved: totals?.approvedSher || 0,
-      Pending: totals?.pendingSher || 0,
-      Total: totals?.sher || 0,
-    },
+  name: "Sher",
+  Approved: totals?.approvedSher || 0,
+  Pending: totals?.pendingSher || 0,
+},
     {
       name: "Shayari",
       Approved: totals?.approvedShayari || 0,
       Pending: totals?.pendingShayari || 0,
-      Total: totals?.shayari || 0,
     },
     {
-      name: "Prose",
-      Approved: totals?.approvedProse || 0,
-      Pending: totals?.pendingProse || 0,
-      Total: totals?.prose || 0,
-    },
-    {
-      name: "Blog",
-      Approved: totals?.approvedBlog || 0,
-      Pending: totals?.pendingBlog || 0,
-      Total: totals?.blog || 0,
-    },
+  name: "Prose",
+  Approved: totals?.approvedProse || 0,
+  Pending: totals?.pendingProse || 0,
+},
   ];
 
   const cardData = [
     { title: "Total Sher", count: totals?.sher || 0, color: "primary", tab: 7 },
-    {
-      title: "Pending Sher",
-      count: totals?.pendingSher || 0,
-      color: "warning",
-      tab: 7,
-    },
-    {
-      title: "Approved Sher",
-      count: totals?.approvedSher || 0,
-      color: "success",
-      tab: 7,
-    },
+    { title: "Pending Sher", count: totals?.pendingSher || 0, color: "warning", tab: 7 },
+    { title: "Approved Sher", count: totals?.approvedSher || 0, color: "success", tab: 7 },
 
-    {
-      title: "Total Shayari",
-      count: totals?.shayari || 0,
-      color: "primary",
-      tab: 8,
-    },
-    {
-      title: "Pending Shayari",
-      count: totals?.pendingShayari || 0,
-      color: "warning",
-      tab: 8,
-    },
-    {
-      title: "Approved Shayari",
-      count: totals?.approvedShayari || 0,
-      color: "success",
-      tab: 8,
-    },
+    { title: "Total Shayari", count: totals?.shayari || 0, color: "primary", tab: 8 },
+    { title: "Pending Shayari", count: totals?.pendingShayari || 0, color: "warning", tab: 8 },
+    { title: "Approved Shayari", count: totals?.approvedShayari || 0, color: "success", tab: 8 },
 
-    {
-      title: "Total Prose",
-      count: totals?.prose || 0,
-      color: "primary",
-      tab: 9,
-    },
-    {
-      title: "Pending Prose",
-      count: totals?.pendingProse || 0,
-      color: "warning",
-      tab: 9,
-    },
-    {
-      title: "Approved Prose",
-      count: totals?.approvedProse || 0,
-      color: "success",
-      tab: 9,
-    },
+    { title: "Total Prose", count: totals?.prose || 0, color: "primary", tab: 9 },
+    { title: "Pending Prose", count: totals?.pendingProse || 0, color: "warning", tab: 9 },
+    { title: "Approved Prose", count: totals?.approvedProse || 0, color: "success", tab: 9 },
 
-    { title: "Total Blog", count: totals?.blog || 0, color: "primary", tab: 6 },
-    {
-      title: "Pending Blog",
-      count: totals?.pendingBlog || 0,
-      color: "warning",
-      tab: 6,
-    },
-    {
-      title: "Approved Blog",
-      count: totals?.approvedBlog || 0,
-      color: "success",
-      tab: 6,
-    },
   ];
 
   return (
     <>
-      <style>{`.summary-card {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-    transition: transform 0.2s ease-in-out;
-  }
+      <style>{`
+        .summary-card {
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+          transition: transform 0.2s ease-in-out;
+        }
 
-  .summary-card:hover {
-    transform: translateY(-5px);
-  }
+        .summary-card:hover {
+          transform: translateY(-5px);
+        }
 
-  .summary-card .top {
-    color: white;
-    padding: 20px;
-    font-size: 18px;
-    text-align: center;
-    font-weight: bold;
-  }
+        .summary-card .top {
+          color: white;
+          padding: 20px;
+          font-size: 18px;
+          text-align: center;
+          font-weight: bold;
+        }
 
-  .summary-card .number {
-    font-size: 30px;
-    margin-bottom: 5px;
-  }
+        .summary-card .number {
+          font-size: 30px;
+          margin-bottom: 5px;
+        }
 
-  .summary-card .bottom {
-    background-color: #f8f9fa;
-    text-align: center;
-    padding: 10px;
-    font-size: 14px;
-    color: #333;
-    cursor: pointer;
-    font-weight: 500;
-  }
+        .summary-card .bottom {
+          background-color: #f8f9fa;
+          text-align: center;
+          padding: 10px;
+          font-size: 14px;
+          color: #333;
+          cursor: pointer;
+          font-weight: 500;
+        }
 
-  .summary-card .bottom:hover {
-    background-color: #e9ecef;
-  }`}</style>
+        .summary-card .bottom:hover {
+          background-color: #e9ecef;
+        }
+      `}</style>
+
       <div className="container-fluid">
-        {/* Header Section */}
+        {/* Header */}
         <div className="row mt-3 align-items-center">
           <div className="col-md-6 col-12">
             <Clock />
           </div>
           <div className="col-md-6 col-12 text-md-end text-center">
             <h2 className="fw-bold">
-              Welcome,{" "}
-              <span className="text-primary">
-                {customerData?.name || "User"}
-              </span>
+              Welcome, <span className="text-primary">{customerData?.name || "User"}</span>
             </h2>
           </div>
         </div>
 
-        {/* Bar Chart Section */}
+        {/* Bar Chart */}
         <div className="row my-4">
           <div className="col-12">
             <div className="card shadow-sm border-0">
@@ -183,9 +120,8 @@ function Dashboard({ customerData = {}, totals = {}, setTabview }) {
                       <YAxis allowDecimals={false} />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey="Approved" fill="#4CAF50" />
-                      <Bar dataKey="Pending" fill="#f44336" />
-                      <Bar dataKey="Total" fill="#2196f3" />
+                      <Bar dataKey="Approved" fill="#4CAF50" stackId="a" />
+                      <Bar dataKey="Pending" fill="#f44336" stackId="a" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -194,7 +130,7 @@ function Dashboard({ customerData = {}, totals = {}, setTabview }) {
           </div>
         </div>
 
-        {/* Count Cards Section */}
+        {/* Summary Cards */}
         <div className="row">
           {cardData.map((item, i) => {
             const bgColorMap = {

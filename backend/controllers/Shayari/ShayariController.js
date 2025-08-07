@@ -5,27 +5,25 @@ const Shayari = require("../../models/Shayari/ShayariModel.js");
 async function addshayari(req, res) {
   let validation = "";
 
-  if (!req.body.title) validation += "title name is required ";
-  if (!req.body.Category_id) validation += "Category_id is required ";
-  if (!req.body.shayari) validation += "shayari is required ";
-  if (!req.body.language) validation += "language is required ";
-  // if (!req.body.tag) validation += "tags are required ";
-  // if (!req.file) validation += "upload image is required ";
+  if (!req.body.title) validation += "Title is required. ";
+  if (!req.body.Category_id) validation += "Category ID is required. ";
+  if (!req.body.shayari) validation += "Shayari is required. ";
+  if (!req.body.language) validation += "Language is required. ";
 
   if (!!validation) {
     return res.json({
       status: 409,
       success: false,
-      message: validation,
+      message: validation.trim(),
     });
   }
 
-
-
   try {
     const tagsArray = req.body.tag
-    ? req.body.tag.split(",").map((tag) => tag.trim())
-    : [];
+      ? req.body.tag.split(",").map((tag) => tag.trim())
+      : [];
+
+    const isAdmin = req.decoded && req.decoded.usertype === 1;
 
     const shayariObj = new Shayari();
     shayariObj.title = req.body.title;
@@ -33,12 +31,17 @@ async function addshayari(req, res) {
     shayariObj.language = req.body.language;
     shayariObj.Category_id = req.body.Category_id;
     shayariObj.tags = tagsArray;
-    shayariObj.userId = req.decoded;
-    shayariObj.Image = req.file ? "shayari_photo/" + req.file.filename:"";
 
-    const isAdmin = req.decoded && req.decoded.usertype === 1;
+    // Properly assign userId
+    shayariObj.userId = req.body.userId || req.decoded._id;
+
+    // Assign image if uploaded
+    shayariObj.Image = req.file ? "shayari_photo/" + req.file.filename : "";
+
+    // Set approval status based on admin check
     shayariObj.isApproved = isAdmin ? true : false;
 
+    // Save to DB
     await shayariObj.save();
 
     return res.json({
@@ -365,7 +368,7 @@ getRandomShayari = (req, res) => {
 };
 
 getFeaturedShayari = (req, res) => {
-  Shayari.find()
+  Shayari.find({ isApproved: true })
     .sort({ likes: -1 }) // Sort by likes in descending order
     .limit(10) // Get the top 20 popular shayari
     .populate("Category_id")
@@ -704,15 +707,21 @@ latestShayari = (req, res) => {
 };
 
 usershayariDash = async (req, res) => {
-  const userIds = req.body.userIds; // Assuming userIds is an array of user IDs
+  const userIds = req.body.userIds; // Expecting an array of user IDs
 
   try {
     const shayariCounts = {};
 
-    // Loop through each user ID and count shayaris for each user
     for (const userId of userIds) {
-      const shayariCount = await Shayari.countDocuments({ userId });
-      shayariCounts[userId] = shayariCount;
+      const total = await Shayari.countDocuments({ userId });
+      const approved = await Shayari.countDocuments({ userId, isApproved: true });
+      const pending = await Shayari.countDocuments({ userId, isApproved: false });
+
+      shayariCounts[userId] = {
+        total,
+        approved,
+        pending,
+      };
     }
 
     res.json({ shayariCounts });
@@ -720,6 +729,7 @@ usershayariDash = async (req, res) => {
     res.status(500).json({ error: "An error occurred" });
   }
 };
+
 
 module.exports = {
   addshayari,

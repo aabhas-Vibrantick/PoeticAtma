@@ -1,11 +1,9 @@
-
-
 import React, { useEffect, useState } from "react";
 import apiServices from "../../../ApiServices/ApiServices";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import JoditEditor from 'jodit-react';
+import JoditEditor from "jodit-react";
 import { useRef } from "react";
 function AddSher() {
   const nav = useNavigate();
@@ -17,10 +15,20 @@ function AddSher() {
   const [categoryId, setCategoryId] = useState("");
   const [language, setlanguage] = useState("");
   const [tag, setTag] = useState("");
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState(""); // New
+
   useEffect(() => {
     apiServices.getall_sher_category().then((data) => {
       if (data.data.success) {
         setAllCategory(data.data.data);
+      }
+    });
+
+    // Fetch all users for the dropdown
+    apiServices.getalluser().then((res) => {
+      if (res.data.success) {
+        setAllUsers(res.data.data);
       }
     });
   }, []);
@@ -36,14 +44,21 @@ function AddSher() {
     const formData = new FormData();
     formData.append("title", title);
 
-    const cleanSher = sher.replace(/^<p>(.*?)<\/p>$/i, '$1').trim();
+    const cleanSher = sher.replace(/^<p>(.*?)<\/p>$/i, "$1").trim();
     formData.append("shayari", cleanSher);
-    
+
     formData.append("sher", sher);
     formData.append("Category_id", categoryId);
     formData.append("Image", image);
     formData.append("language", language);
     formData.append("tag", tag);
+    formData.append("userId", selectedUserId);
+    //     for (let [key, value] of formData.entries()) {
+    //     console.log(`${key}:`, value);
+    // }
+
+    //     return;
+
     try {
       const response = await apiServices.addsher(formData);
       if (response.data.success) {
@@ -71,7 +86,12 @@ function AddSher() {
               <form className="mt-5" onSubmit={handlesherData}>
                 {/* Title input */}
                 <div className="form-outline mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Title </label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Title{" "}
+                  </label>
                   <input
                     type="text"
                     id="form6Example3"
@@ -84,7 +104,12 @@ function AddSher() {
 
                 {/* Category input */}
                 <div className="form-group fs-5 mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Category </label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Category{" "}
+                  </label>
                   <select
                     className="form-select mb-2"
                     value={categoryId}
@@ -100,9 +125,32 @@ function AddSher() {
                   </select>
                 </div>
 
+                <div className="form-outline mb-4">
+                  <label className="form-label text-dark">
+                    Select Author (User)
+                  </label>
+                  <select
+                    className="form-select"
+                    value={selectedUserId}
+                    onChange={(e) => setSelectedUserId(e.target.value)}
+                  >
+                    <option value="">Select User</option>
+                    {allUsers.map((user) => (
+                      <option key={user._id} value={user._id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 {/* sher input */}
                 <div className="form-outline mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Sher </label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Sher{" "}
+                  </label>
                   {/* <textarea
                     className="form-control"
                     id="form6Example7"
@@ -111,15 +159,20 @@ function AddSher() {
                     value={sher}
                     onChange={(e) => setSher(e.target.value)}
                   ></textarea> */}
-                    <JoditEditor
+                  <JoditEditor
                     ref={editor}
                     className="text-dark"
                     value={sher}
-                    onChange={newContent => setSher(newContent)}
+                    onChange={(newContent) => setSher(newContent)}
                   />
                 </div>
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Tag</label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Tag
+                  </label>
                   <input
                     type="text"
                     id="form6Example3"
@@ -130,9 +183,18 @@ function AddSher() {
                   />
                 </div>
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Language</label>
-                  <select className="form-select" aria-label="Default select example" value={language}
-                    onChange={(e) => setlanguage(e.target.value)}>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Language
+                  </label>
+                  <select
+                    className="form-select"
+                    aria-label="Default select example"
+                    value={language}
+                    onChange={(e) => setlanguage(e.target.value)}
+                  >
                     <option selected>Select Language</option>
                     <option value="hindi">Hindi</option>
                     <option value="English">English</option>
@@ -140,7 +202,12 @@ function AddSher() {
                 </div>
                 {/* sher image */}
                 <div className="mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Upload Image </label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Upload Image{" "}
+                  </label>
                   <input
                     className="form-control"
                     type="file"
@@ -148,7 +215,25 @@ function AddSher() {
                     accept="image/*"
                     onChange={(e) => setImage(e.target.files[0])}
                   />
+                  {/* Preview Section */}
+                      {image && (
+                        <div className="mt-3">
+                          <p className="mb-1 fw-bold">Image Preview:</p>
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt="Preview"
+                            className="img-thumbnail"
+                            style={{
+                              width: "200px",
+                              height: "200px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      )}
                 </div>
+
+                
 
                 {/* Submit button */}
                 <button

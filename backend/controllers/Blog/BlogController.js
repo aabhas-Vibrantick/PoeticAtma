@@ -1,73 +1,65 @@
 const Blog = require("../../models/Blog/BlogModel");
 
-function addblog(req, res) {
-  var validation = "";
-  if (req.body.title == "") {
-    validation += "title name is required ";
-  }
-  if (req.body.description == "") {
-    validation += "description name is required ";
-  }
-  if (req.body.Category_id == "") {
-    validation += "Category_id is required ";
-  }
-  if (req.body.blog == "") {
-    validation += "blog is required ";
-  }
-  if (req.body.language == "") {
-    validation += "language is required ";
-  }
+async function addblog(req, res) {
+  let validation = "";
 
-  // if (req.body.Image == "") {
-  //   validation += "upload image";
-  // }
-  // if (req.body.tag == "") {
-  //   validation += "tag is required";
-  // }
+  if (!req.body.title) validation += "Title is required. ";
+  if (!req.body.description) validation += "Description is required. ";
+  if (!req.body.Category_id) validation += "Category ID is required. ";
+  if (!req.body.blog) validation += "Blog content is required. ";
+  
 
   if (!!validation) {
-    res.json({
+    return res.json({
       status: 409,
       success: false,
-      message: validation,
+      message: validation.trim(),
     });
-  } else {
-    let blogobj = new Blog();
-    blogobj.title = req.body.title;
-    blogobj.description = req.body.description;
-    blogobj.blog = req.body.blog;
-    blogobj.language = req.body.language;
-    blogobj.isFeatured = req.body.isFeatured;
-    blogobj.Category_id = req.body.Category_id;
-    // Handling the tag field
+  }
+
+  try {
     const tagsArray = req.body.tag
-    ? req.body.tag.split(",").map((tag) => tag.trim())
-    : [];
-    blogobj.tags = tagsArray;
+      ? req.body.tag.split(",").map((tag) => tag.trim())
+      : [];
 
-    blogobj.userId = req.decoded;
+    const isAdmin = req.decoded && req.decoded.usertype === 1;
 
-    if (req.file) {
-      blogobj.Image = req.file ? "blog_photo/" + req.file.filename:"";
-    }
-    blogobj
-      .save()
-      .then(() => {
-        res.json({
-          status: 200,
-          success: true,
-          message: "blog inserted",
-          data: req.body,
-        });
-      })
-      .catch((err) => {
-        res.json({
-          status: 500,
-          success: false,
-          message: "Error Occurred",
-          error: String(err),
-        });
-      });
+    const blogObj = new Blog();
+    blogObj.title = req.body.title;
+    blogObj.description = req.body.description;
+    blogObj.blog = req.body.blog;
+    blogObj.Category_id = req.body.Category_id;
+    blogObj.isFeatured = req.body.isFeatured;
+    blogObj.tags = tagsArray;
+
+    // Assign userId properly
+    blogObj.userId = req.body.userId || req.decoded._id;
+
+    // Assign image path if file exists
+    blogObj.Image = req.file ? "blog_photo/" + req.file.filename : "";
+
+    // Set approval status
+    // blogObj.isApproved = isAdmin ? true : false;
+
+    // Save blog post
+    await blogObj.save();
+
+    return res.json({
+      status: 200,
+      success: true,
+      message: isAdmin
+        ? "Blog published successfully."
+        : "Blog published successfully.",
+      data: req.body,
+    });
+
+  } catch (error) {
+    return res.json({
+      status: 500,
+      success: false,
+      message: "Server error while saving blog",
+      error: String(error),
+    });
   }
 }
 

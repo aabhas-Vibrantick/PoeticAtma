@@ -48,6 +48,8 @@ export default function SingleSher() {
     }
   };
 
+  
+
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);

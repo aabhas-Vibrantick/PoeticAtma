@@ -2,25 +2,24 @@ const Sher = require("../../models/Sher/SherModel");
 
 function addsher(req, res) {
   let validation = "";
-
   if (!req.body.title) {
-    validation += "title name is required ";
+    validation += "Title is required. ";
   }
   if (!req.body.Category_id) {
-    validation += "Category_id is required ";
+    validation += "Category ID is required. ";
   }
   if (!req.body.sher) {
-    validation += "sher is required ";
+    validation += "Sher is required. ";
   }
   if (!req.body.language) {
-    validation += "language is required ";
+    validation += "Language is required. ";
   }
 
   if (!!validation) {
     return res.json({
       status: 409,
       success: false,
-      message: validation,
+      message: validation.trim(),
     });
   }
 
@@ -28,16 +27,20 @@ function addsher(req, res) {
     ? req.body.tag.split(",").map((tag) => tag.trim())
     : [];
 
+  // Declare isAdmin BEFORE using it
+  const isAdmin = req.decoded && req.decoded.usertype === 1;
+
   let sherobj = new Sher();
   sherobj.title = req.body.title;
   sherobj.sher = req.body.sher;
   sherobj.language = req.body.language;
   sherobj.Category_id = req.body.Category_id;
   sherobj.tags = tagsArray;
-  sherobj.userId = req.decoded;
-  sherobj.Image = req.file ? "sher_photo/" + req.file.filename : "";
 
-  const isAdmin = req.decoded && req.decoded.usertype === 1;
+  // Use isAdmin safely now
+  // sherobj.userId = isAdmin && req.body.userId ? req.body.userId : req.decoded;
+  sherobj.userId = req.body.userId || req.decoded._id;
+  sherobj.Image = req.file ? "sher_photo/" + req.file.filename : "";
   sherobj.isApproved = isAdmin ? true : false;
 
   sherobj.save();
@@ -310,7 +313,7 @@ deletesher = (req, res) => {
 };
 
 getFeaturedSher = async (req, res) => {
-  Sher.find()
+  Sher.find({ isApproved: true })
     .sort({ likes: -1 }) // Sort by likes in descending order
     .limit(10) // Get the top 3 popular shayari
     .populate("Category_id")
@@ -652,15 +655,26 @@ usersherDash = async (req, res) => {
     const sherCounts = {};
 
     for (const userId of userIds) {
-      const sherCount = await Sher.countDocuments({ userId });
-      sherCounts[userId] = sherCount;
+      const [total, approved, pending] = await Promise.all([
+        Sher.countDocuments({ userId }),
+        Sher.countDocuments({ userId, isApproved: true }),
+        Sher.countDocuments({ userId, isApproved: false }),
+      ]);
+
+      sherCounts[userId] = {
+        total,
+        approved,
+        pending,
+      };
     }
 
     res.json({ sherCounts });
   } catch (error) {
+    console.error("Error in usersherDash:", error);
     res.status(500).json({ error: "An error occurred" });
   }
 };
+
 module.exports = {
   addsher,
   getallsher,

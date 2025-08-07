@@ -1,10 +1,9 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import apiServices from "../../../ApiServices/ApiServices";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import JoditEditor from 'jodit-react';
+import JoditEditor from "jodit-react";
 function AddProse() {
   const nav = useNavigate();
   const editor = useRef(null);
@@ -15,10 +14,18 @@ function AddProse() {
   const [categoryId, setCategoryId] = useState("");
   const [language, setlanguage] = useState("");
   const [tag, setTag] = useState("");
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState(""); // New
   useEffect(() => {
     apiServices.getall_prose_category().then((data) => {
       if (data.data.success) {
         setAllCategory(data.data.data);
+      }
+    });
+
+    apiServices.getalluser().then((res) => {
+      if (res.data.success) {
+        setAllUsers(res.data.data);
       }
     });
   }, []);
@@ -34,7 +41,7 @@ function AddProse() {
     const formData = new FormData();
     formData.append("title", title);
 
-    const cleanProse = prose.replace(/^<p>(.*?)<\/p>$/i, '$1').trim();
+    const cleanProse = prose.replace(/^<p>(.*?)<\/p>$/i, "$1").trim();
     formData.append("shayari", cleanProse);
 
     formData.append("prose", prose);
@@ -42,7 +49,7 @@ function AddProse() {
     formData.append("tag", tag);
     formData.append("Category_id", categoryId);
     formData.append("Image", image);
-
+    formData.append("userId", selectedUserId);
     try {
       const response = await apiServices.addprose(formData);
       if (response.data.success) {
@@ -70,7 +77,12 @@ function AddProse() {
               <form className="mt-5" onSubmit={handleproseData}>
                 {/* Title input */}
                 <div className="form-outline mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Title </label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Title{" "}
+                  </label>
                   <input
                     type="text"
                     id="form6Example3"
@@ -83,7 +95,12 @@ function AddProse() {
 
                 {/* Category input */}
                 <div className="form-group fs-5 mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Category </label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Category{" "}
+                  </label>
                   <select
                     className="form-select mb-2"
                     value={categoryId}
@@ -99,9 +116,32 @@ function AddProse() {
                   </select>
                 </div>
 
+                <div className="form-outline mb-4">
+                  <label className="form-label text-dark">
+                    Select Author (User)
+                  </label>
+                  <select
+                    className="form-select"
+                    value={selectedUserId}
+                    onChange={(e) => setSelectedUserId(e.target.value)}
+                  >
+                    <option value="">Select User</option>
+                    {allUsers.map((user) => (
+                      <option key={user._id} value={user._id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 {/* prose input */}
                 <div className="form-outline mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Prose </label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Prose{" "}
+                  </label>
                   {/* <textarea
                     className="form-control"
                     id="form6Example7"
@@ -110,15 +150,20 @@ function AddProse() {
                     value={prose}
                     onChange={(e) => setProse(e.target.value)}
                   ></textarea> */}
-                   <JoditEditor
+                  <JoditEditor
                     ref={editor}
                     className="text-dark"
                     value={prose}
-                    onChange={newContent => setProse(newContent)}
+                    onChange={(newContent) => setProse(newContent)}
                   />
                 </div>
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Tag</label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Tag
+                  </label>
                   <input
                     type="text"
                     id="form6Example3"
@@ -129,9 +174,18 @@ function AddProse() {
                   />
                 </div>
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Language</label>
-                  <select className="form-select" aria-label="Default select example" value={language}
-                    onChange={(e) => setlanguage(e.target.value)}>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Language
+                  </label>
+                  <select
+                    className="form-select"
+                    aria-label="Default select example"
+                    value={language}
+                    onChange={(e) => setlanguage(e.target.value)}
+                  >
                     <option selected>Select Language</option>
                     <option value="hindi">Hindi</option>
                     <option value="English">English</option>
@@ -139,7 +193,12 @@ function AddProse() {
                 </div>
                 {/* prose image */}
                 <div className="mb-4">
-                <label for="exampleFormControlInput1" className="form-label text-dark">Upload Image </label>
+                  <label
+                    for="exampleFormControlInput1"
+                    className="form-label text-dark"
+                  >
+                    Upload Image{" "}
+                  </label>
                   <input
                     className="form-control"
                     type="file"
@@ -147,6 +206,22 @@ function AddProse() {
                     accept="image/*"
                     onChange={(e) => setImage(e.target.files[0])}
                   />
+                  {/* Preview Section */}
+                      {image && (
+                        <div className="mt-3">
+                          <p className="mb-1 fw-bold">Image Preview:</p>
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt="Preview"
+                            className="img-thumbnail"
+                            style={{
+                              width: "200px",
+                              height: "200px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      )}
                 </div>
 
                 {/* Submit button */}

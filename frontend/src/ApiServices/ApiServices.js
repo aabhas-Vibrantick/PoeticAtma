@@ -293,6 +293,15 @@ class apiServices {
     return axios.post(BASE_URL + "getallcustomer", data, { headers: header });
   }
 
+  getalluser(data) {
+    const header = {
+      Accept: "application/json",
+      Authorization: sessionStorage.getItem("token"),
+    };
+
+    return axios.post(BASE_URL + "getalluser", data, { headers: header });
+  }
+
   getTop10Customers(data) {
     const header = {
       Accept: "application/json",

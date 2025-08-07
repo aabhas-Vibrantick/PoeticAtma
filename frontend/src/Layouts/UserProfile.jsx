@@ -55,47 +55,64 @@ export default function UserDashboard() {
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-    setId(sessionStorage.getItem("_id"));
+  window.scrollTo(0, 0);
+  const userId = sessionStorage.getItem("_id");
+  setId(userId);
 
-    const data = { userId: sessionStorage.getItem("_id") };
+  const data = { userId };
 
-    apiServices
-      .getsinglecustomer(data)
-      .then((res) => {
-        if (res.data.success) {
-          setCustomerData(res.data.data);
-        } else {
-          toast.error(res.data.message);
-        }
-      })
-      .catch(() => toast.error("Something went wrong"));
+  // 1. Load Customer Info
+  apiServices
+    .getsinglecustomer(data)
+    .then((res) => {
+      if (res.data.success) {
+        setCustomerData(res.data.data);
+      } else {
+        toast.error(res.data.message);
+      }
+    })
+    .catch(() => toast.error("Something went wrong"));
 
-    apiServices
-      .dashboard(data)
-      .then((res) => {
-        const d = res.data;
-        setTotals({
-          shayari: d.usertotal_shayari || 0,
-          sher: d.usertotal_sher || 0,
-          prose: d.usertotal_prose || 0,
-          blog: d.usertotal_blog || 0,
+  // 2. Load Sher Dashboard Info
+  apiServices
+    .usersherDash({ userIds: [userId] })
+    .then((res) => {
+      const counts = res.data?.sherCounts?.[userId] || {};
 
-          approvedSher: (d.usertotal_sher || 0) - (d.total_penddingsher || 0),
-          pendingSher: d.total_penddingsher || 0,
+     setTotals((prev) => ({
+  ...prev,
+  sher: counts.total || 0,
+  approvedSher: counts.approved || 0,
+  pendingSher: counts.pending || 0,
+}));
 
-          approvedShayari: (d.usertotal_shayari || 0) - (d.total_penddingshayari || 0),
-          pendingShayari: d.total_penddingshayari || 0,
 
-          approvedProse: (d.usertotal_prose || 0) - (d.total_penddingprose || 0),
-          pendingProse: d.total_penddingprose || 0,
+apiServices.usershayariDash({ userIds: [userId] }).then((res) => {
+  const counts = res.data?.shayariCounts?.[userId] || {};
 
-          approvedBlog: (d.usertotal_blog || 0) - (d.total_penddingblog || 0),
-          pendingBlog: d.total_penddingblog || 0,
-        });
-      })
-      .catch(() => toast.error("Something went wrong"));
-  }, []);
+  setTotals((prev) => ({
+    ...prev,
+    shayari: counts.total || 0,
+    approvedShayari: counts.approved || 0,
+    pendingShayari: counts.pending || 0,
+  }));
+});
+
+apiServices.userproseDash({ userIds: [userId] }).then((res) => {
+  const counts = res.data?.proseCounts?.[userId] || {};
+
+  setTotals((prev) => ({
+    ...prev,
+    prose: counts.total || 0,
+    approvedProse: counts.approved || 0,
+    pendingProse: counts.pending || 0,
+  }));
+});
+
+    })
+    .catch(() => toast.error("Something went wrong while loading Sher data"));
+}, []);
+
 
   const renderTab = () => {
     switch (viewtab) {
@@ -132,9 +149,9 @@ export default function UserDashboard() {
     }
   };
 
- return (
-  <>
-    <style>{`
+  return (
+    <>
+      <style>{`
       .admin_main-container {
         font-family: 'Segoe UI', sans-serif;
         background-color: #f4f5f7;
@@ -209,38 +226,35 @@ export default function UserDashboard() {
       }
     `}</style>
 
-    <div className="admin_main-container d-flex">
-      {/* Sidebar */}
-      <div className="admin_sidebar">
-        <div className="admin_top_section">User Panel</div>
-        <ul className="nav flex-column mt-3">
-          {routes.map((item, index) => (
-            <li
-              key={index}
-              className={`nav-item sidebar-item ${
-                viewtab === item.tab ? "active-tab" : ""
-              }`}
-            >
-              <button
-                className="nav-link btn text-white"
-                onClick={() => setTabview(item.tab)}
+      <div className="admin_main-container d-flex">
+        {/* Sidebar */}
+        <div className="admin_sidebar">
+          <div className="admin_top_section">User Panel</div>
+          <ul className="nav flex-column mt-3">
+            {routes.map((item, index) => (
+              <li
+                key={index}
+                className={`nav-item sidebar-item ${
+                  viewtab === item.tab ? "active-tab" : ""
+                }`}
               >
-                <span>{item.icon}</span>
-                <span>{item.name}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
+                <button
+                  className="nav-link btn text-white"
+                  onClick={() => setTabview(item.tab)}
+                >
+                  <span>{item.icon}</span>
+                  <span>{item.name}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-grow-1 p-3 bg-light w-100">{renderTab()}</div>
+
+        <ToastContainer />
       </div>
-
-      {/* Main Content */}
-      <div className="flex-grow-1 p-3 bg-light w-100">
-        {renderTab()}
-      </div>
-
-      <ToastContainer />
-    </div>
-  </>
-);
-
+    </>
+  );
 }

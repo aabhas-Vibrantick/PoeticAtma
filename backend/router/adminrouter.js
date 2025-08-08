@@ -478,7 +478,7 @@ router.post(
 // ------sher---------
 router.post("/addsher", sherupload.single("Image"), sherController.addsher);
 router.post("/getallsherbyUserId", sherController.getallsherbyUserId);
-router.post("/deletesher", sherController.deletesher);
+router.post("/deleteSher", sherController.deleteSher);
 router.post("/getAllsherTags", sherController.getAllsherTags);
 router.post("/getTrendingsherTags", sherController.getTrendingsherTags);
 router.post("/updateSherStatus", sherController.updateSherStatus);
@@ -506,7 +506,7 @@ router.post(
   shayariupload.single("Image"),
   shayariController.addshayari
 );
-router.post("/deleteshayari", shayariController.deleteshayari);
+router.post("/deleteShayari", shayariController.deleteShayari);
 router.post("/getTrendingTags", shayariController.getTrendingTags);
 router.post("/getAllTags", shayariController.getAllTags);
 router.post("/getallshayaribyUserId", shayariController.getallshayaribyUserId);
@@ -541,7 +541,7 @@ router.post(
 // ------prose---------
 router.post("/addprose", proseupload.single("Image"), proseController.addprose);
 router.post("/getallprosebyUserId", proseController.getallprosebyUserId);
-router.post("/deleteprose", proseController.deleteprose);
+router.post("/deleteProse", proseController.deleteProse);
 router.post("/updateProseStatus", proseController.updateProseStatus);
 router.post("/getTrendingproseTags", proseController.getTrendingproseTags);
 router.post("/getAllproseTags", proseController.getAllproseTags);

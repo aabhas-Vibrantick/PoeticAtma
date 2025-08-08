@@ -4,7 +4,7 @@ import { CSVLink } from 'react-csv';
 import apiServices, { BASE_URL_IMG } from '../../../ApiServices/ApiServices';
 import { toast, ToastContainer } from 'react-toastify';
 import { Link } from 'react-router-dom';
-
+import Swal from 'sweetalert2';
 export default function Booklist() {
   const [allBook, setAllBook] = useState([]);
   const [filterText, setFilterText] = useState('');
@@ -23,19 +23,38 @@ export default function Booklist() {
       .catch(() => toast.error("Something went wrong"));
   }, []);
 
-  const deleteBook = (id) => {
-    apiServices.deleteBook({ _id: id })
-      .then(data => {
-        if (data.data.success) {
-          toast.success(data.data.message);
-          apiServices.getallBook().then(updated => {
-            if (updated.data.success) setAllBook(updated.data.data);
-          });
-        } else {
-          toast.error(data.data.message);
-        }
-      });
-  };
+
+
+const deleteBook = (id) => {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'Cancel',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      apiServices.deleteBook({ _id: id })
+        .then(data => {
+          if (data.data.success) {
+            toast.success(data.data.message);
+            apiServices.getallBook().then(updated => {
+              if (updated.data.success) setAllBook(updated.data.data);
+            });
+          } else {
+            toast.error(data.data.message);
+          }
+        })
+        .catch(() => {
+          toast.error("Something went wrong while deleting");
+        });
+    }
+  });
+};
+
 
   const changeStatus = (id, status) => {
     setLoading(true);

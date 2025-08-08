@@ -259,7 +259,7 @@ getallsherbyUserId = (req, res) => {
     });
 };
 // ----------------------------------------------------------------
-deletesher = (req, res) => {
+deleteSher = (req, res) => {
   var validation = "";
   if (req.body._id == "") {
     validation += "ID is required ";
@@ -681,7 +681,7 @@ module.exports = {
   getsinglesher,
   approvesher,
   updatesher,
-  deletesher,
+  deleteSher,
   getPopularSher,
   getBestSher,
   getSherByCategory,

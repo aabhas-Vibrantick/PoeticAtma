@@ -4,140 +4,114 @@ import { CSVLink } from "react-csv";
 import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
 import { toast, ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
+import {
+  FaEdit,
+  FaTrash,
+  FaCheck,
+  FaToggleOn,
+  FaToggleOff,
+} from "react-icons/fa";
+import Swal from "sweetalert2";
+const parse = require("html-react-parser");
 
 export default function SherList() {
   const [allSher, setAllSher] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [loading, setLoading] = useState(true);
-  const parse = require("html-react-parser");
+
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
+    setLoading(true);
     apiServices
       .getallsher()
       .then((data) => {
         if (data.data.success) {
-          const filteredShers = data.data.data.filter(
-            (sher) => sher.status === true
-          );
-          setAllSher(filteredShers);
-          // setAllSher(data.data.data);
+          setAllSher(data.data.data); // Show ALL shers
         } else {
           toast.error(data.data.message);
         }
+        setLoading(false);
       })
-      .catch((err) => {
-        // // console.log(err);
+      .catch(() => {
         toast.error("Something went wrong");
+        setLoading(false);
       });
   }, []);
 
+  // Delete Sher
   const deleteSher = (id) => {
-    let data = {
-      _id: id,
-    };
-    apiServices
-      .deletesher(data)
-      .then((data) => {
-        if (data.data.success) {
-          toast.success(data.data.message);
-          apiServices.getallsher().then((updatedData) => {
-            if (updatedData.data.success) {
-              const filteredShers = updatedData.data.data.filter(
-                (sher) => sher.status === true
-              );
-              setAllSher(filteredShers);
-              // setAllSher(updatedData.data.data);
-            }
-          });
-        } else {
-          toast.error(data.data.message);
-        }
-      })
-      .catch((err) => {
-        // // console.log(err);
-      });
-  };
-
-  const approveSher = (id) => {
-    setLoading(true);
-    const data = {
-      _id: id,
-    };
-
-    console.log("Approving sher with ID:", id); // 🐛 Debug
-
-    apiServices
-      .approveSher(data)
-      .then((response) => {
-        console.log("Approve Sher Response:", response.data); // 🐛 Debug
-
-        if (response.data.success) {
-          toast.success(response.data.message || "Sher approved");
-
-          // Reload all shers
-          apiServices.getallsher().then((res) => {
-            console.log("Fetched all shers:", res.data); // 🐛 Debug
-
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This record will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        apiServices
+          .deleteSher({ _id: id })
+          .then((res) => {
             if (res.data.success) {
-              setAllSher(res.data.data);
+              setAllSher((prev) => prev.filter((sher) => sher._id !== id));
+              Swal.fire("Deleted!", "The record has been deleted.", "success");
             } else {
-              toast.error("Failed to reload shers");
-            }
-          });
-        } else {
-          toast.error(response.data.message || "Approval failed");
-        }
-
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error while approving sher:", error); // 🐛 Debug
-        toast.error("Something went wrong");
-        setLoading(false);
-      });
-  };
-
-  const changeStatus = (id, status) => {
-    setLoading(true);
-    const upstatus = status ? "0" : "1";
-    const data = {
-      _id: id,
-      status: upstatus,
-    };
-    apiServices
-      .updateSherStatus(data)
-      .then((response) => {
-        if (response.data.success) {
-          toast.success(response.data.message);
-          apiServices.getallsher().then((updatedData) => {
-            if (updatedData.data.success) {
-              const filteredShers = updatedData.data.data.filter(
-                (sher) => sher.status === true
+              Swal.fire(
+                "Error!",
+                res.data.message || "Failed to delete",
+                "error"
               );
-              setAllSher(filteredShers);
-              // setAllSher(updatedData.data.data);
             }
+          })
+          .catch((err) => {
+            Swal.fire("Error!", err.message, "error");
           });
+      }
+    });
+  };
+
+  // Approve Sher (local update)
+  const approveSher = (id) => {
+    apiServices
+      .approveSher({ _id: id })
+      .then((res) => {
+        if (res.data.success) {
+          toast.success(res.data.message || "Sher approved");
+          setAllSher((prev) =>
+            prev.map((sher) =>
+              sher._id === id ? { ...sher, isApproved: true } : sher
+            )
+          );
         } else {
-          toast.error(response.data.message);
+          toast.error(res.data.message || "Approval failed");
         }
-        setLoading(false);
       })
-      .catch((error) => {
-        // console.error(error);
-        toast.error("Something went wrong!! Try Again Later");
-        setLoading(false);
-      });
+      .catch(() => toast.error("Something went wrong"));
   };
 
-  const handleClear = () => {
-    if (filterText) {
-      setFilterText("");
-    }
+  // Change Status (local update)
+  const changeStatus = (id, status) => {
+    const upstatus = status ? "0" : "1";
+    apiServices
+      .updateSherStatus({ _id: id, status: upstatus })
+      .then((res) => {
+        if (res.data.success) {
+          toast.success(res.data.message);
+          setAllSher((prev) =>
+            prev.map((sher) =>
+              sher._id === id ? { ...sher, status: !status } : sher
+            )
+          );
+        } else {
+          toast.error(res.data.message);
+        }
+      })
+      .catch(() => toast.error("Something went wrong!! Try Again Later"));
   };
 
+  const handleClear = () => setFilterText("");
+
+  // Table columns
   const columns = [
     { name: "S.No.", selector: (_, index) => index + 1, width: "80px" },
     { name: "Title", selector: "title", sortable: true },
@@ -163,12 +137,7 @@ export default function SherList() {
       selector: (row) => row.Category_id?.Category_name,
       sortable: true,
     },
-    {
-      name: "Sher",
-      selector: (row) => parse(row.sher),
-      wrap: true,
-      grow: 2,
-    },
+    { name: "Sher", selector: (row) => parse(row.sher), wrap: true, grow: 2 },
     {
       name: "Author",
       selector: (row) => row.userId?.name || "Unknown",
@@ -176,111 +145,95 @@ export default function SherList() {
     },
     {
       name: "Approved",
-      selector: (row) => (row.isApproved ? "Approved" : "Pending"),
-      sortable: true,
       cell: (row) => (
         <span
           className={`badge ${
-            row.status ? "bg-success" : "bg-secondary"
+            row.isApproved ? "bg-success" : "bg-secondary"
           } text-light`}
         >
           {row.isApproved ? "Approved" : "Pending"}
         </span>
       ),
+      sortable: true,
     },
     {
-      name: "Tags",
-      selector: "tags",
-      wrap: true,
-      grow: 1,
+      name: "Status",
+      cell: (row) => (
+        <span
+          className={`badge ${
+            row.status ? "bg-primary" : "bg-danger"
+          } text-light`}
+        >
+          {row.status ? "Active" : "Inactive"}
+        </span>
+      ),
+      sortable: true,
     },
+    { name: "Tags", selector: "tags", wrap: true, grow: 1 },
     {
       name: "Actions",
       cell: (row) => (
-        <div className="d-flex flex-wrap gap-1">
-          {/* Edit Button */}
+        <div className="d-flex flex-wrap gap-2">
+          {/* Edit */}
           <Link to={`/admin/update-sher/${row._id}`}>
-            <button className="btn btn-sm btn-outline-primary">Edit</button>
+            <button className="btn btn-sm btn-outline-warning" title="Edit">
+              <FaEdit />
+            </button>
           </Link>
 
-          {/* Delete or Restore based on status */}
+          {/* Status Toggle */}
           <button
             onClick={() => changeStatus(row._id, row.status)}
             className={`btn btn-sm ${
-              row.status ? "btn-outline-danger" : "btn-outline-warning"
+              row.status ? "btn-outline-warning" : "btn-outline-success"
             }`}
+            title={row.status ? "Set Inactive" : "Set Active"}
           >
-            {row.status ? "Delete" : "Restore"}
+            {row.status ? <FaToggleOn /> : <FaToggleOff />}
           </button>
 
-          {/* Show Approve button only if not already approved */}
+          {/* Delete */}
+          <button
+            onClick={() => deleteSher(row._id)}
+            className="btn btn-sm btn-outline-danger"
+            title="Delete"
+          >
+            <FaTrash />
+          </button>
+
+          {/* Approve */}
           {!row.isApproved && (
             <button
               onClick={() => approveSher(row._id)}
               className="btn btn-sm btn-outline-success"
+              title="Approve"
             >
-              Approve
+              <FaCheck />
             </button>
           )}
         </div>
       ),
-      width: "280px",
+      width: "300px",
     },
   ];
 
   const filteredShers = allSher.filter(
-    (shers) =>
-      shers.title.toLowerCase().includes(filterText.toLowerCase()) ||
-      (shers.userId?.name &&
-        shers.userId?.name.toLowerCase().includes(filterText.toLowerCase())) ||
-      (shers.Category_id?.Category_name &&
-        shers.Category_id?.Category_name.toLowerCase().includes(
-          filterText.toLowerCase()
-        )) ||
-      (shers.index &&
-        typeof shers.index === "string" &&
-        shers.contact.toLowerCase().includes(filterText.toLowerCase())) ||
-      (shers.sher &&
-        shers.sher.toLowerCase().includes(filterText.toLowerCase())) ||
-      (shers.status &&
-        shers.status.toLowerCase().includes(filterText.toLowerCase()))
+    (s) =>
+      s.title?.toLowerCase().includes(filterText.toLowerCase()) ||
+      s.userId?.name?.toLowerCase().includes(filterText.toLowerCase()) ||
+      s.Category_id?.Category_name?.toLowerCase().includes(
+        filterText.toLowerCase()
+      ) ||
+      s.sher?.toLowerCase().includes(filterText.toLowerCase()) ||
+      s.tags?.toLowerCase().includes(filterText.toLowerCase())
   );
 
-  // expended function-----
   const ExpandedComponent = ({ data }) => (
     <pre>{JSON.stringify(data, null, 2)}</pre>
   );
 
-  // --------toast selection function----
-  const handleChange = ({ selectedRows }) => {
-    // You can set state or dispatch with something like Redux so we can use the retrieved data
-    // console.log('Selected Rows: ', selectedRows);
-  };
-
-  const headerStyle = {
-    backgroundColor: "#ffcc00",
-    color: "white",
-    fontWeight: "bold",
-  };
   return (
     <>
-      <style>{`.main-container {
-  min-height: 100vh;
-}
-
-.btn-outline-danger {
-  border-width: 2px;
-}
-
-.btn-primary {
-  background-color: #0069d9;
-  border: none;
-}
-
-.btn-primary:hover {
-  background-color: #0053b3;
-}
-`}</style>
       <main className="main-container adminbody bg-light py-4">
         <div className="container-fluid">
           <div className="text-center mb-4">
@@ -318,23 +271,12 @@ export default function SherList() {
               columns={columns}
               data={filteredShers}
               selectableRows
-              onSelectedRowsChange={handleChange}
               progressPending={loading}
               striped
               highlightOnHover
               pagination
               expandableRows
               expandableRowsComponent={ExpandedComponent}
-              customStyles={{
-                header: {
-                  style: {
-                    fontSize: "18px",
-                    fontWeight: "600",
-                    backgroundColor: "#f8f9fa",
-                    padding: "16px",
-                  },
-                },
-              }}
             />
           </div>
         </div>

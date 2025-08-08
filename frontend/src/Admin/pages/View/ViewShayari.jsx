@@ -4,6 +4,14 @@ import { CSVLink } from "react-csv";
 import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
 import { toast, ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
+import {
+  FaEdit,
+  FaTrash,
+  FaCheck,
+  FaToggleOn,
+  FaToggleOff,
+} from "react-icons/fa";
+import Swal from "sweetalert2";
 
 export default function ShayriList() {
   const [allShayari, setAllShayari] = useState([]);
@@ -21,8 +29,7 @@ export default function ShayriList() {
       .getallshayari()
       .then((res) => {
         if (res.data.success) {
-          const filtered = res.data.data.filter((item) => item.status === true);
-          setAllShayari(filtered);
+          setAllShayari(res.data.data);
         } else {
           toast.error(res.data.message);
         }
@@ -34,71 +41,85 @@ export default function ShayriList() {
       });
   };
 
+  // Delete with confirmation
   const deleteShayari = (id) => {
-    apiServices
-      .deleteshayari({ _id: id })
-      .then((res) => {
-        if (res.data.success) {
-          toast.success(res.data.message);
-          fetchShayari();
-        } else {
-          toast.error(res.data.message);
-        }
-      })
-      .catch(() => toast.error("Something went wrong"));
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This record will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        apiServices
+          .deleteShayari({ _id: id })
+          .then((res) => {
+            if (res.data.success) {
+              setAllShayari((prev) =>
+                prev.filter((shayari) => shayari._id !== id)
+              );
+              Swal.fire("Deleted!", "The record has been deleted.", "success");
+            } else {
+              Swal.fire(
+                "Error!",
+                res.data.message || "Failed to delete",
+                "error"
+              );
+            }
+          })
+          .catch((err) => {
+            Swal.fire("Error!", err.message, "error");
+          });
+      }
+    });
   };
 
+  // Status change with confirmation
   const changeStatus = (id, status) => {
-    const updatedStatus = status ? "0" : "1";
+    const upstatus = status ? "0" : "1";
     apiServices
-      .updateShayariStatus({ _id: id, status: updatedStatus })
+      .updateShayariStatus({ _id: id, status: upstatus })
       .then((res) => {
         if (res.data.success) {
           toast.success(res.data.message);
-          fetchShayari();
+          setAllShayari((prev) =>
+            prev.map((shayari) =>
+              shayari._id === id ? { ...shayari, status: !status } : shayari
+            )
+          );
         } else {
           toast.error(res.data.message);
         }
       })
-      .catch(() => toast.error("Something went wrong"));
+      .catch(() => toast.error("Something went wrong!! Try Again Later"));
   };
 
   const approveShayari = (id) => {
-  setLoading(true); // Set loading state
-
-  const data = {
-    _id: id,
+    setLoading(true);
+    apiServices
+      .approveShayari({ _id: id })
+      .then((res) => {
+        if (res.data.success) {
+          toast.success(res.data.message || "Shayari approved");
+          setAllShayari((prev) =>
+            prev.map((shayari) =>
+              shayari._id === id ? { ...shayari, isApproved: true } : shayari
+            )
+          );
+        } else {
+          toast.error(res.data.message || "Approval failed");
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        toast.error("Something went wrong");
+        setLoading(false);
+      });
   };
 
-  console.log("Approving Shayari with ID:", id); // 🐛 Debug
-
-  apiServices
-    .approveShayari(data)
-    .then((response) => {
-      ///console.log("Approve Shayari Response:", response.data); // 🐛 Debug
-
-      if (response.data.success) {
-        toast.success(response.data.message || "Shayari approved successfully");
-
-        // Refresh all Shayari
-        fetchShayari();
-      } else {
-        toast.error(response.data.message || "Approval failed");
-      }
-
-      setLoading(false);
-    })
-    .catch((error) => {
-      //console.error("Error while approving Shayari:", error); // 🐛 Debug
-      toast.error("Something went wrong");
-      setLoading(false);
-    });
-};
-
-
-  const handleClear = () => {
-    setFilterText("");
-  };
+  const handleClear = () => setFilterText("");
 
   const columns = [
     { name: "S.No", selector: (_, index) => index + 1, width: "70px" },
@@ -110,7 +131,12 @@ export default function ShayriList() {
         <img
           src={BASE_URL_IMG + row.Image}
           className="img-thumbnail"
-          style={{ width: "70px", height: "70px", objectFit: "cover", borderRadius: "8px" }}
+          style={{
+            width: "70px",
+            height: "70px",
+            objectFit: "cover",
+            borderRadius: "8px",
+          }}
           alt="Shayari"
         />
       ),
@@ -133,10 +159,19 @@ export default function ShayriList() {
     },
     {
       name: "Approved",
-      selector: (row) => (row.isApproved ? "Approved" : "Pending"),
       cell: (row) => (
-        <span className={`badge ${row.isApproved ? "bg-success" : "bg-secondary"}`}>
+        <span
+          className={`badge ${row.isApproved ? "bg-success" : "bg-secondary"}`}
+        >
           {row.isApproved ? "Approved" : "Pending"}
+        </span>
+      ),
+    },
+    {
+      name: "Status",
+      cell: (row) => (
+        <span className={`badge ${row.status ? "bg-primary" : "bg-danger"}`}>
+          {row.status ? "Active" : "Inactive"}
         </span>
       ),
     },
@@ -148,29 +183,47 @@ export default function ShayriList() {
     {
       name: "Actions",
       cell: (row) => (
-        <div className="d-flex flex-wrap gap-1">
+        <div className="d-flex flex-wrap gap-2">
+          {/* Edit */}
           <Link to={`/admin/update-shayari/${row._id}`}>
-            <button className="btn btn-sm btn-outline-primary">Edit</button>
+            <button className="btn btn-sm btn-outline-primary" title="Edit">
+              <FaEdit />
+            </button>
           </Link>
 
+          {/* Status Toggle */}
           <button
             onClick={() => changeStatus(row._id, row.status)}
-            className={`btn btn-sm ${row.status ? "btn-outline-danger" : "btn-outline-warning"}`}
+            className={`btn btn-sm ${
+              row.status ? "btn-outline-warning" : "btn-outline-success"
+            }`}
+            title={row.status ? "Set Inactive" : "Set Active"}
           >
-            {row.status ? "Delete" : "Restore"}
+            {row.status ? <FaToggleOff /> : <FaToggleOn />}
           </button>
 
+          {/* Delete */}
+          <button
+            onClick={() => deleteShayari(row._id)}
+            className="btn btn-sm btn-outline-danger"
+            title="Delete"
+          >
+            <FaTrash />
+          </button>
+
+          {/* Approve */}
           {!row.isApproved && (
             <button
               onClick={() => approveShayari(row._id)}
               className="btn btn-sm btn-outline-success"
+              title="Approve"
             >
-              Approve
+              <FaCheck />
             </button>
           )}
         </div>
       ),
-      width: "280px",
+      width: "300px",
     },
   ];
 
@@ -224,9 +277,6 @@ export default function ShayriList() {
               columns={columns}
               data={filteredShayari}
               selectableRows
-              onSelectedRowsChange={({ selectedRows }) =>
-                console.log("Selected Rows:", selectedRows)
-              }
               progressPending={loading}
               striped
               highlightOnHover
@@ -235,16 +285,6 @@ export default function ShayriList() {
               expandableRowsComponent={({ data }) => (
                 <pre>{JSON.stringify(data, null, 2)}</pre>
               )}
-              customStyles={{
-                header: {
-                  style: {
-                    fontSize: "18px",
-                    fontWeight: "600",
-                    backgroundColor: "#f8f9fa",
-                    padding: "16px",
-                  },
-                },
-              }}
             />
           </div>
         </div>

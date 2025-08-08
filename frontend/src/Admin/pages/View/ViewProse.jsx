@@ -4,12 +4,20 @@ import { CSVLink } from "react-csv";
 import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
 import { toast, ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import {
+  FaEdit,
+  FaTrash,
+  FaCheck,
+  FaToggleOn,
+  FaToggleOff,
+} from "react-icons/fa";
+const parse = require("html-react-parser");
 
 export default function ProseList() {
   const [allProse, setAllProse] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [loading, setLoading] = useState(true);
-  const parse = require("html-react-parser");
 
   useEffect(() => {
     fetchProse();
@@ -21,8 +29,7 @@ export default function ProseList() {
       .getallprose()
       .then((res) => {
         if (res.data.success) {
-          const filtered = res.data.data.filter((item) => item.status === true);
-          setAllProse(filtered);
+          setAllProse(res.data.data); // keep all records
         } else {
           toast.error(res.data.message);
         }
@@ -34,86 +41,103 @@ export default function ProseList() {
       });
   };
 
+  // Delete Prose
   const deleteProse = (id) => {
-    if (!window.confirm("Are you sure you want to delete this prose?")) return;
-
-    apiServices
-      .deleteprose({ _id: id })
-      .then((res) => {
-        if (res.data.success) {
-          toast.success(res.data.message);
-          fetchProse();
-        } else {
-          toast.error(res.data.message);
-        }
-      })
-      .catch(() => toast.error("Something went wrong"));
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This record will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        apiServices
+          .deleteProse({ _id: id })
+          .then((res) => {
+            if (res.data.success) {
+              setAllProse((prev) => prev.filter((prose) => prose._id !== id));
+              Swal.fire("Deleted!", "The record has been deleted.", "success");
+            } else {
+              Swal.fire("Error!", res.data.message || "Failed to delete", "error");
+            }
+          })
+          .catch((err) => {
+            Swal.fire("Error!", err.message, "error");
+          });
+      }
+    });
   };
 
-  const changeStatus = (id, status) => {
-    const updatedStatus = status ? "0" : "1";
-    apiServices
-      .updateProseStatus({ _id: id, status: updatedStatus })
-      .then((res) => {
-        if (res.data.success) {
-          toast.success(res.data.message);
-          fetchProse();
-        } else {
-          toast.error(res.data.message);
-        }
-      })
-      .catch(() => toast.error("Something went wrong"));
-  };
-
+  // Approve Prose
   const approveProse = (id) => {
-    setLoading(true);
     apiServices
       .approveProse({ _id: id })
       .then((res) => {
         if (res.data.success) {
-          toast.success(res.data.message || "Prose approved successfully");
-          fetchProse();
+          toast.success(res.data.message || "Prose approved");
+          setAllProse((prev) =>
+            prev.map((prose) =>
+              prose._id === id ? { ...prose, isApproved: true } : prose
+            )
+          );
         } else {
           toast.error(res.data.message || "Approval failed");
         }
-        setLoading(false);
       })
-      .catch(() => {
-        toast.error("Something went wrong");
-        setLoading(false);
-      });
+      .catch(() => toast.error("Something went wrong"));
   };
 
-  const handleClear = () => {
-    setFilterText("");
+  // Change Status
+  const changeStatus = (id, status) => {
+    const upstatus = status ? "0" : "1";
+    apiServices
+      .updateProseStatus({ _id: id, status: upstatus })
+      .then((res) => {
+        if (res.data.success) {
+          toast.success(res.data.message);
+          setAllProse((prev) =>
+            prev.map((prose) =>
+              prose._id === id ? { ...prose, status: !status } : prose
+            )
+          );
+        } else {
+          toast.error(res.data.message);
+        }
+      })
+      .catch(() => toast.error("Something went wrong!! Try Again Later"));
   };
 
+  const handleClear = () => setFilterText("");
+
+  // Table Columns
   const columns = [
-    { name: "S.No", selector: (_, index) => index + 1, width: "70px" },
+    { name: "S.No.", selector: (_, index) => index + 1, width: "80px" },
     { name: "Title", selector: "title", sortable: true },
     {
       name: "Image",
-      width: "100px",
       cell: (row) => (
         <img
           src={BASE_URL_IMG + row.Image}
           className="img-thumbnail"
-          style={{ width: "70px", height: "70px", objectFit: "cover", borderRadius: "8px" }}
+          style={{
+            height: "70px",
+            width: "70px",
+            objectFit: "cover",
+            borderRadius: "8px",
+          }}
           alt="Prose"
         />
       ),
+      width: "90px",
     },
     {
       name: "Category",
       selector: (row) => row.Category_id?.Category_name || "N/A",
       sortable: true,
     },
-    {
-      name: "Prose",
-      selector: (row) => parse(row.prose),
-      wrap: true,
-      grow: 2,
-    },
+    { name: "Prose", selector: (row) => parse(row.prose), wrap: true, grow: 2 },
     {
       name: "Author",
       selector: (row) => row.userId?.name || "Unknown",
@@ -121,57 +145,90 @@ export default function ProseList() {
     },
     {
       name: "Approved",
-      selector: (row) => (row.isApproved ? "Approved" : "Pending"),
       cell: (row) => (
-        <span className={`badge ${row.isApproved ? "bg-success" : "bg-secondary"}`}>
+        <span
+          className={`badge ${
+            row.isApproved ? "bg-success" : "bg-secondary"
+          } text-light`}
+        >
           {row.isApproved ? "Approved" : "Pending"}
         </span>
       ),
+      sortable: true,
     },
     {
-      name: "Tags",
-      selector: "tags",
-      wrap: true,
+      name: "Status",
+      cell: (row) => (
+        <span
+          className={`badge ${
+            row.status ? "bg-primary" : "bg-danger"
+          } text-light`}
+        >
+          {row.status ? "Active" : "Inactive"}
+        </span>
+      ),
+      sortable: true,
     },
+    { name: "Tags", selector: "tags", wrap: true, grow: 1 },
     {
       name: "Actions",
       cell: (row) => (
-        <div className="d-flex flex-wrap gap-1">
+        <div className="d-flex flex-wrap gap-2">
+          {/* Edit */}
           <Link to={`/admin/update-prose/${row._id}`}>
-            <button className="btn btn-sm btn-outline-primary">Edit</button>
+            <button className="btn btn-sm btn-outline-warning" title="Edit">
+              <FaEdit />
+            </button>
           </Link>
 
+          {/* Status Toggle */}
           <button
             onClick={() => changeStatus(row._id, row.status)}
-            className={`btn btn-sm ${row.status ? "btn-outline-danger" : "btn-outline-warning"}`}
+            className={`btn btn-sm ${
+              row.status ? "btn-outline-warning" : "btn-outline-success"
+            }`}
+            title={row.status ? "Set Inactive" : "Set Active"}
           >
-            {row.status ? "Delete" : "Restore"}
+            {row.status ? <FaToggleOn /> : <FaToggleOff />}
           </button>
 
+          {/* Delete */}
+          <button
+            onClick={() => deleteProse(row._id)}
+            className="btn btn-sm btn-outline-danger"
+            title="Delete"
+          >
+            <FaTrash />
+          </button>
+
+          {/* Approve */}
           {!row.isApproved && (
             <button
               onClick={() => approveProse(row._id)}
               className="btn btn-sm btn-outline-success"
+              title="Approve"
             >
-              Approve
+              <FaCheck />
             </button>
           )}
         </div>
       ),
-      width: "280px",
+      width: "300px",
     },
   ];
 
-  const filteredProse = allProse.filter((item) => {
-    const search = filterText.toLowerCase();
-    return (
-      item.title?.toLowerCase().includes(search) ||
-      item.prose?.toLowerCase().includes(search) ||
-      item.tags?.toLowerCase().includes(search) ||
-      item.userId?.name?.toLowerCase().includes(search) ||
-      item.Category_id?.Category_name?.toLowerCase().includes(search)
-    );
-  });
+  const filteredProse = allProse.filter(
+    (p) =>
+      p.title?.toLowerCase().includes(filterText.toLowerCase()) ||
+      p.userId?.name?.toLowerCase().includes(filterText.toLowerCase()) ||
+      p.Category_id?.Category_name?.toLowerCase().includes(filterText.toLowerCase()) ||
+      p.prose?.toLowerCase().includes(filterText.toLowerCase()) ||
+      p.tags?.toLowerCase().includes(filterText.toLowerCase())
+  );
+
+  const ExpandedComponent = ({ data }) => (
+    <pre>{JSON.stringify(data, null, 2)}</pre>
+  );
 
   return (
     <>
@@ -212,30 +269,16 @@ export default function ProseList() {
               columns={columns}
               data={filteredProse}
               selectableRows
-              onSelectedRowsChange={({ selectedRows }) =>
-                console.log("Selected Rows:", selectedRows)
-              }
               progressPending={loading}
               striped
               highlightOnHover
               pagination
               expandableRows
-              expandableRowsComponent={({ data }) => (
-                <pre>{JSON.stringify(data, null, 2)}</pre>
-              )}
-              customStyles={{
-                header: {
-                  style: {
-                    fontSize: "18px",
-                    fontWeight: "600",
-                    backgroundColor: "#f8f9fa",
-                    padding: "16px",
-                  },
-                },
-              }}
+              expandableRowsComponent={ExpandedComponent}
             />
           </div>
         </div>
+
         <ToastContainer />
       </main>
     </>

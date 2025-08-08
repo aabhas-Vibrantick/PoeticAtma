@@ -228,7 +228,7 @@ updateprose = (req, res) => {
   }
 };
 // ----------------------------------------------------------------
-deleteprose = (req, res) => {
+deleteProse = (req, res) => {
   var validation = "";
   if (req.body._id == "") {
     validation += "ID is required ";
@@ -647,7 +647,7 @@ module.exports = {
   getallprose,
   getsingleprose,
   updateprose,
-  deleteprose,
+  deleteProse,
   getProseByCategory,
   getBestProse,
   getPopularProse,

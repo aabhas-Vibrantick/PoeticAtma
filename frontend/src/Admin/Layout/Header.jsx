@@ -34,22 +34,52 @@ function Header({ OpenSidebar }) {
 
   return (
     <>
+    <style>{`
+    .header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo {
+      height: 66px;
+    width: 118px;
+  object-fit: contain;
+  border-radius: 8px; /* optional for rounded edges */
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+    `}</style>
       <header className="header">
-      
         <div className="header-left">
-          {/* <BsSearch  className='icon'/> */}
-         <h2 >PoeticAtma</h2>
+          {/* Logo Image */}
+          <img
+            src="/assets/images/Poeticatma_logo.png" // <-- replace with your logo path
+            alt="PoeticAtma Logo"
+            className="logo"
+          />
         </div>
+
         <div className="header-right">
-          
-        <div className="user-profile" data-bs-toggle="dropdown"
-aria-expanded="false">
-    <img className="profile-image" src="/assets/images/avtar.png" alt="User Profile Image" />
-   <i className="fa-solid fa-caret-down dropdown-icon"></i>
-  </div>
-                <li className="nav-item dropdown pe-3">
-                  <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                    {/* <Link to="">
+          <div
+            className="user-profile"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <img
+              className="profile-image"
+              src="/assets/images/avtar.png"
+              alt="User Profile Image"
+            />
+            <i className="fa-solid fa-caret-down dropdown-icon"></i>
+          </div>
+          <li className="nav-item dropdown pe-3">
+            <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+              {/* <Link to="">
                       <li>
                         <a
                           className="dropdown-item d-flex align-items-center"
@@ -75,14 +105,14 @@ aria-expanded="false">
                     <li>
                       <hr className="dropdown-divider" />
                     </li> */}
-                    {/* AttendeeList Dropdown button */}
+              {/* AttendeeList Dropdown button */}
 
-                    {/* AttendeeList Dropdown button */}
+              {/* AttendeeList Dropdown button */}
 
-                    {/* EventList Dropdown button */}
-                    <hr className="dropdown-divider" />
+              {/* EventList Dropdown button */}
+              <hr className="dropdown-divider" />
 
-                    {/* <li>
+              {/* <li>
                       <a
                         className="dropdown-item d-flex align-items-center"
                         href="pages-faq.html"
@@ -95,25 +125,22 @@ aria-expanded="false">
                       <hr className="dropdown-divider" />
                     </li> */}
 
-                    
-                      <li>
-                        <a
-                          className="dropdown-item d-flex align-items-center"
-                          href="#"
-                        >
-                          <i className="bi bi-box-arrow-right"></i>
-                          <span btn
-                            onClick={() => {
-                              logout();
-                            }}
-                          >
-                            Sign Out
-                          </span>
-                        </a>
-                      </li>
-                  </ul>
-                  {/* <!-- End Profile Dropdown Items --> */}
-                </li>
+              <li>
+                <a className="dropdown-item d-flex align-items-center" href="#">
+                  <i className="bi bi-box-arrow-right"></i>
+                  <span
+                    btn
+                    onClick={() => {
+                      logout();
+                    }}
+                  >
+                    Sign Out
+                  </span>
+                </a>
+              </li>
+            </ul>
+            {/* <!-- End Profile Dropdown Items --> */}
+          </li>
         </div>
       </header>
       <ToastContainer />

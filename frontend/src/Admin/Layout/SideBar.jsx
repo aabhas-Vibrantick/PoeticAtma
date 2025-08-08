@@ -86,33 +86,33 @@ const routes = [
     ],
   },
  
-  {
-    path: "/file-manager",
-    name: "Pending",
-    icon: <AiTwotoneFileExclamation />,
-    subRoutes: [
-      {
-        path: "/admin/pendding-viewblog",
-        name: "Blog ",
-        icon: <AiTwotoneFileExclamation />,
-      },
-      {
-        path: "/admin/pendding-viewshayari",
-        name: "Shayari ",
-        icon: <AiTwotoneFileExclamation />,
-      },
-      {
-        path: "/admin/pendding-viewsher",
-        name: "Sher",
-        icon: <AiTwotoneFileExclamation />,
-      },
-      {
-        path: "/admin/pendding-viewprose",
-        name: "prose",
-        icon: <AiTwotoneFileExclamation />,
-      },
-    ],
-  },
+  // {
+  //   path: "/file-manager",
+  //   name: "Pending",
+  //   icon: <AiTwotoneFileExclamation />,
+  //   subRoutes: [
+  //     {
+  //       path: "/admin/pendding-viewblog",
+  //       name: "Blog ",
+  //       icon: <AiTwotoneFileExclamation />,
+  //     },
+  //     {
+  //       path: "/admin/pendding-viewshayari",
+  //       name: "Shayari ",
+  //       icon: <AiTwotoneFileExclamation />,
+  //     },
+  //     {
+  //       path: "/admin/pendding-viewsher",
+  //       name: "Sher",
+  //       icon: <AiTwotoneFileExclamation />,
+  //     },
+  //     {
+  //       path: "/admin/pendding-viewprose",
+  //       name: "prose",
+  //       icon: <AiTwotoneFileExclamation />,
+  //     },
+  //   ],
+  // },
  
   {
     name: "Shayari Image",
@@ -406,7 +406,7 @@ const SideBar = ({ children }) => {
               <FaBars onClick={toggle} />
             </div>
           </div>
-          <div className="admin_search">
+          {/* <div className="admin_search">
             <div className="search_icon">
               <BiSearch />
             </div>
@@ -422,7 +422,7 @@ const SideBar = ({ children }) => {
                 />
               )}
             </AnimatePresence>
-          </div>
+          </div> */}
           <section className="admin_routes">
             {routes.map((route, index) => {
               if (route.subRoutes) {

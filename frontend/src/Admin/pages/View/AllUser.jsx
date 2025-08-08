@@ -134,12 +134,12 @@ function AllUserList() {
           <Link to={`/admin/admin-profile/${row.userId?._id}`}>
             <button className="btn btn-sm btn-outline-primary">Edit</button>
           </Link>
-          <button
+          {/* <button
             className="btn btn-sm btn-outline-danger"
             onClick={() => confirmDelete(row._id)}
           >
             Delete
-          </button>
+          </button> */}
           <button
             className="btn btn-sm btn-outline-warning"
             onClick={() => changeStatus(row.userId?._id, row.userId?.status)}

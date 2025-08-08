@@ -15,10 +15,10 @@ function AdminHome() {
   const [Totalprose, setTotalprose] = useState()
   const [Totalblog, setTotalblog] = useState()
 
-  const [Totalpenddingshayari, setTotalpenddingshayari] = useState()
-  const [Totalpenddingsher, setTotalpenddingsher] = useState()
-  const [Totalpenddingprose, setTotalpenddingprose] = useState()
-  const [Totalpenddingblog, setTotalpenddingblog] = useState()
+  // const [Totalpenddingshayari, setTotalpenddingshayari] = useState()
+  // const [Totalpenddingsher, setTotalpenddingsher] = useState()
+  // const [Totalpenddingprose, setTotalpenddingprose] = useState()
+  // const [Totalpenddingblog, setTotalpenddingblog] = useState()
   useEffect(() => {
 
       let data = {}
@@ -31,10 +31,10 @@ function AdminHome() {
           setTotalauthor(x.data.total_author)
           setTotalblog(x.data.total_blog)
 
-          setTotalpenddingshayari(x.data.total_penddingshayari)
-          setTotalpenddingsher(x.data.total_penddingsher)
-          setTotalpenddingprose(x.data.total_penddingprose)
-          setTotalpenddingblog(x.data.total_penddingblog)
+          // setTotalpenddingshayari(x.data.total_penddingshayari)
+          // setTotalpenddingsher(x.data.total_penddingsher)
+          // setTotalpenddingprose(x.data.total_penddingprose)
+          // setTotalpenddingblog(x.data.total_penddingblog)
       }).catch((error) => {
           // // console.log(error)
       })
@@ -95,7 +95,7 @@ function AdminHome() {
                 </div>
                 <h1>{Totalblog}</h1>
             </div>
-            <div className='acard'>
+            {/* <div className='acard'>
                 <div className='acard-inner'>
                     <h3>Pending Shayari</h3>
                     <BsFillGrid3X3GapFill className='acard_icon'/>
@@ -115,7 +115,7 @@ function AdminHome() {
                     <BsFillGrid3X3GapFill className='acard_icon'/>
                 </div>
                 <h1>{Totalpenddingprose}</h1>
-            </div>
+            </div> */}
 
            
         </div>

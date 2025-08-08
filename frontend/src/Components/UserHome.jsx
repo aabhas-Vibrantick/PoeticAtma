@@ -559,7 +559,7 @@ export default function UserHome() {
             </div>
 
             {/* RIGHT SIDEBAR */}
-            <div className="col-lg-2 col-xxl-3">
+            <div className="col-lg-2 col-xxl-2">
               <Sidebar
                 topSher={topSher}
                 topShayari={topShayari}

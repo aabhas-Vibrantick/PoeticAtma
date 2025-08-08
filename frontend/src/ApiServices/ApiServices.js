@@ -653,13 +653,13 @@ class apiServices {
     return axios.post(BASE_URL + "latestProse", data, { headers: header });
   }
 
-  deleteprose(data) {
+  deleteProse(data) {
     const header = {
       Accept: "application/json",
       Authorization: sessionStorage.getItem("token"),
     };
 
-    return axios.post(BASE_URL + "deleteprose", data, { headers: header });
+    return axios.post(BASE_URL + "deleteProse", data, { headers: header });
   }
 
   getPopularProse(data) {
@@ -926,13 +926,13 @@ class apiServices {
     return axios.post(BASE_URL + "updateshayari", data, { headers: header });
   }
 
-  deleteshayari(data) {
+  deleteShayari(data) {
     const header = {
       Accept: "application/json",
       Authorization: sessionStorage.getItem("token"),
     };
 
-    return axios.post(BASE_URL + "deleteshayari", data, { headers: header });
+    return axios.post(BASE_URL + "deleteShayari", data, { headers: header });
   }
 
   getPopularShayari(data) {
@@ -985,6 +985,16 @@ class apiServices {
       headers: header,
     });
   }
+
+  deleteBook(data) {
+  const header = {
+    Accept: "application/json",
+    Authorization: sessionStorage.getItem("token"),
+  };
+
+  return axios.post(BASE_URL + "deleteBook", data, { headers: header });
+}
+
 
   getByEnglish(data) {
     const header = {
@@ -1191,13 +1201,13 @@ approveProse(data) {
     return axios.post(BASE_URL + "updatesher", data, { headers: header });
   }
 
-  deletesher(data) {
+  deleteSher(data) {
     const header = {
       Accept: "application/json",
       Authorization: sessionStorage.getItem("token"),
     };
 
-    return axios.post(BASE_URL + "deletesher", data, { headers: header });
+    return axios.post(BASE_URL + "deleteSher", data, { headers: header });
   }
 
   getPopularSher(data) {

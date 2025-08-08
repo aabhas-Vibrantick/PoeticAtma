@@ -272,7 +272,7 @@ updateshayari = (req, res) => {
   }
 };
 // ----------------------------------------------------------------
-deleteshayari = (req, res) => {
+deleteShayari = (req, res) => {
   var validation = "";
   if (req.body._id == "") {
     validation += "ID is required ";
@@ -737,7 +737,7 @@ module.exports = {
   getallshayari,
   getsingleshayari,
   updateshayari,
-  deleteshayari,
+  deleteShayari,
   getAllTags,
   getTrendingTags,
   getShayariByCategory,

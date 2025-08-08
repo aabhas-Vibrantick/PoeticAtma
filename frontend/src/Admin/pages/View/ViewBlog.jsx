@@ -1,218 +1,200 @@
-import React, { useEffect, useState } from 'react';
-import DataTable from 'react-data-table-component';
-import { CSVLink } from 'react-csv';
-import apiServices, { BASE_URL_IMG } from '../../../ApiServices/ApiServices';
-import { toast, ToastContainer } from 'react-toastify';
-import { Link } from 'react-router-dom';
-
+import React, { useEffect, useState } from "react";
+import DataTable from "react-data-table-component";
+import { CSVLink } from "react-csv";
+import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
+import { toast, ToastContainer } from "react-toastify";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import {
+  FaEdit,
+  FaTrash,
+  FaToggleOn,
+  FaToggleOff,
+} from "react-icons/fa";
 export default function BlogList() {
-  const parse = require('html-react-parser');
   const [allBlog, setAllBlog] = useState([]);
-  const [filterText, setFilterText] = useState('');
+  const [filterText, setFilterText] = useState("");
   const [loading, setLoading] = useState(true);
+  const parse = require("html-react-parser");
 
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-    apiServices.getallblog().then(data => {
-      if (data.data.success) {
-        const filteredBlogs = data.data.data.filter((blog) => blog.status === true);
-        setAllBlog(filteredBlogs);
-      } else {
-        toast.error(data.data.message);
-      }
-    }).catch(err => {
-      toast.error('Something went wrong');
-    });
+    fetchBlogs();
   }, []);
 
-  const deleteBlog = (id) => {
-    let data = {
-      _id: id
-    };
-    apiServices.deleteblog(data).then(data => {
-      if (data.data.success) {
-        toast.success(data.data.message);
-        apiServices.getallblog().then(updatedData => {
-          if (updatedData.data.success) {
-            const filteredBlogs = updatedData.data.data.filter((blog) => blog.status === true);
-            setAllBlog(filteredBlogs);
-          }
-        });
+  const fetchBlogs = () => {
+  setLoading(true);
+  apiServices
+    .getallblog()
+    .then((res) => {
+      if (res.data.success) {
+        // Show all blogs, not just active ones
+        setAllBlog(res.data.data);
       } else {
-        toast.error(data.data.message);
+        toast.error(res.data.message);
       }
-    }).catch(err => {
-      toast.error('Something went wrong');
+      setLoading(false);
+    })
+    .catch(() => {
+      toast.error("Something went wrong");
+      setLoading(false);
     });
-  };
+};
+
+
+  const deleteBlog = (id) => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "This record will be permanently deleted!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      apiServices
+        .deleteblog({ _id: id })
+        .then((res) => {
+          if (res.data.success) {
+            fetchBlogs(); // Refresh list after deletion
+            Swal.fire("Deleted!", res.data.message || "The record has been deleted.", "success");
+          } else {
+            Swal.fire("Error!", res.data.message || "Failed to delete", "error");
+          }
+        })
+        .catch(() => {
+          Swal.fire("Error!", "Something went wrong", "error");
+        });
+    }
+  });
+};
 
   const changeStatus = (id, status) => {
-    setLoading(true);
-    const upstatus = status ? '0' : '1';
-    const data = {
-      _id: id,
-      status: upstatus,
-    };
-    apiServices.updateBlogStatus(data).then((response) => {
-      if (response.data.success) {
-        toast.success(response.data.message);
-        apiServices.getallblog().then(updatedData => {
-          if (updatedData.data.success) {
-            const filteredBlogs = updatedData.data.data.filter((blog) => blog.status === true);
-            setAllBlog(filteredBlogs);
-          }
-        });
-      } else {
-        toast.error(response.data.message);
-      }
-      setLoading(false);
-    }).catch((error) => {
-      toast.error('Something went wrong!! Try Again Later');
-      setLoading(false);
-    });
+    const updatedStatus = status ? "0" : "1";
+    apiServices
+      .updateBlogStatus({ _id: id, status: updatedStatus })
+      .then((res) => {
+        if (res.data.success) {
+          toast.success(res.data.message);
+          fetchBlogs();
+        } else {
+          toast.error(res.data.message);
+        }
+      })
+      .catch(() => toast.error("Something went wrong"));
   };
 
   const handleClear = () => {
-    if (filterText) {
-      setFilterText('');
-    }
+    setFilterText("");
   };
 
   const columns = [
-    { name: 'S.No.', selector: (_, index) => index + 1, width: '80px' },
-    { name: 'Title', selector: 'title', sortable: true, width: '300px' },
-    { 
-      name: 'Description', 
-      selector: 'description', 
-      sortable: true, 
-      wrap: true, 
-      width: '300px' 
+    { name: "S.No", selector: (_, index) => index + 1, width: "70px" },
+    { name: "Title", selector: "title", sortable: true, wrap: true },
+    {
+      name: "Description",
+      selector: (row) => parse(row.description || ""),
+      wrap: true,
+      grow: 2,
     },
     {
-      name: 'Image',
-      cell: row => (
+      name: "Image",
+      width: "100px",
+      cell: (row) => (
         <img
           src={BASE_URL_IMG + row.Image}
           className="img-thumbnail"
           style={{
-            height: '70px',
-            width: '70px',
-            objectFit: 'cover',
-            borderRadius: '8px',
+            width: "70px",
+            height: "70px",
+            objectFit: "cover",
+            borderRadius: "8px",
           }}
           alt="Blog"
         />
       ),
-      width: '90px',
     },
-    { 
-      name: 'Category', 
-      selector: row => row.Category_id?.Category_name, 
-      sortable: true, 
-      width: '150px' 
-    },
-    { 
-      name: 'Author', 
-      selector: row => row.userId?.name || 'Unknown', 
-      sortable: true, 
-      width: '150px' 
-    },
-    { 
-      name: 'Status', 
-      selector: row => row.status ? 'Active' : 'In-active', 
-      sortable: true,
-      cell: row => (
-        <span
-          className={`badge ${row.status ? 'bg-success' : 'bg-secondary'} text-light`}
-        >
-          {row.status ? 'Active' : 'In-active'}
-        </span>
-      ),
-      width: '120px' 
-    },
-    { 
-      name: 'Is Featured', 
-      selector: row => row.isFeatured ? 'Yes' : 'No', 
-      sortable: true,
-      cell: row => (
-        <span
-          className={`badge ${row.isFeatured ? 'bg-success' : 'bg-secondary'} text-light`}
-        >
-          {row.isFeatured ? 'Yes' : 'No'}
-        </span>
-      ),
-      width: '120px' 
-    },
-    // { 
-    //   name: 'Tags', 
-    //   selector: 'tags', 
-    //   sortable: true, 
-    //   wrap: true, 
-    //   width: '150px' 
-    // },
     {
-      name: 'Actions',
-      cell: row => (
-        <div className="d-flex flex-wrap gap-1">
-          <Link to={`/admin/update-blog/${row._id}`}>
-            <button className="btn btn-sm btn-outline-primary">Edit</button>
-          </Link>
-          <button
-            onClick={() => deleteBlog(row._id)}
-            className="btn btn-sm btn-outline-danger"
-          >
-            Delete
-          </button>
-          <button
-            onClick={() => changeStatus(row._id, row.status)}
-            className={`btn btn-sm ${row.status ? 'btn-outline-danger' : 'btn-outline-warning'}`}
-          >
-            {row.status ? 'Deactivate' : 'Activate'}
-          </button>
-        </div>
+      name: "Category",
+      selector: (row) => row.Category_id?.Category_name || "N/A",
+      sortable: true,
+    },
+    {
+      name: "Author",
+      selector: (row) => row.userId?.name || "Unknown",
+      sortable: true,
+    },
+    {
+      name: "Status",
+      selector: (row) => (row.status ? "Active" : "Inactive"),
+      cell: (row) => (
+        <span
+          className={`badge ${row.status ? "bg-success" : "bg-secondary"}`}
+        >
+          {row.status ? "Active" : "Inactive"}
+        </span>
       ),
-      width: '280px',
-    }
+    },
+    {
+      name: "Featured",
+      selector: (row) => (row.isFeatured ? "Yes" : "No"),
+      cell: (row) => (
+        <span
+          className={`badge ${row.isFeatured ? "bg-success" : "bg-secondary"}`}
+        >
+          {row.isFeatured ? "Yes" : "No"}
+        </span>
+      ),
+    },
+    {
+  name: "Actions",
+  cell: (row) => (
+    <div className="d-flex flex-wrap gap-2">
+      {/* Edit */}
+      <Link to={`/admin/update-blog/${row._id}`}>
+        <button className="btn btn-sm btn-outline-warning" title="Edit">
+          <FaEdit />
+        </button>
+      </Link>
+
+      {/* Status Toggle */}
+      <button
+        onClick={() => changeStatus(row._id, row.status)}
+        className={`btn btn-sm ${
+          row.status ? "btn-outline-warning" : "btn-outline-success"
+        }`}
+        title={row.status ? "Set Inactive" : "Set Active"}
+      >
+        {row.status ? <FaToggleOn /> : <FaToggleOff />}
+      </button>
+
+      {/* Delete */}
+      <button
+        onClick={() => deleteBlog(row._id)}
+        className="btn btn-sm btn-outline-danger"
+        title="Delete"
+      >
+        <FaTrash />
+      </button>
+    </div>
+  ),
+  width: "300px",
+}
+
   ];
 
-  const filteredBlog = allBlog.filter(
-    blog =>
-      blog.title.toLowerCase().includes(filterText.toLowerCase()) ||
-      (blog.userId?.name &&
-        blog.userId?.name.toLowerCase().includes(filterText.toLowerCase())) ||
-      (blog.Category_id?.Category_name &&
-        blog.Category_id.Category_name.toLowerCase().includes(filterText.toLowerCase())) ||
-      (blog.description &&
-        blog.description.toLowerCase().includes(filterText.toLowerCase()))
-  );
-
-  const ExpandedComponent = ({ data }) => (
-    <pre>{JSON.stringify(data, null, 2)}</pre>
-  );
-
-  const handleChange = ({ selectedRows }) => {
-    // console.log('Selected Rows: ', selectedRows);
-  };
+  const filteredBlogs = allBlog.filter((item) => {
+    const search = filterText.toLowerCase();
+    return (
+      item.title?.toLowerCase().includes(search) ||
+      item.description?.toLowerCase().includes(search) ||
+      item.userId?.name?.toLowerCase().includes(search) ||
+      item.Category_id?.Category_name?.toLowerCase().includes(search)
+    );
+  });
 
   return (
     <>
-      <style>{`
-        .main-container {
-          min-height: 100vh;
-        }
-        .btn-outline-danger {
-          border-width: 2px;
-        }
-        .btn-primary {
-          background-color: #0069d9;
-          border: none;
-        }
-        .btn-primary:hover {
-          background-color: #0053b3;
-        }
-      `}</style>
       <main className="main-container adminbody bg-light py-4">
         <div className="container-fluid">
           <div className="text-center mb-4">
@@ -227,7 +209,7 @@ export default function BlogList() {
                 className="form-control"
                 placeholder="Search blog..."
                 value={filterText}
-                onChange={e => setFilterText(e.target.value)}
+                onChange={(e) => setFilterText(e.target.value)}
               />
               <button
                 className="btn btn-outline-danger"
@@ -238,7 +220,7 @@ export default function BlogList() {
               </button>
             </div>
             <div className="col-md-6 text-end">
-              <CSVLink data={filteredBlog} filename="blog-data.csv">
+              <CSVLink data={filteredBlogs} filename="blog-data.csv">
                 <button className="btn btn-primary">Download CSV</button>
               </CSVLink>
             </div>
@@ -248,22 +230,26 @@ export default function BlogList() {
             <DataTable
               title="List of Blogs"
               columns={columns}
-              data={filteredBlog}
+              data={filteredBlogs}
               selectableRows
-              onSelectedRowsChange={handleChange}
+              onSelectedRowsChange={({ selectedRows }) =>
+                console.log("Selected Rows:", selectedRows)
+              }
               progressPending={loading}
               striped
               highlightOnHover
               pagination
               expandableRows
-              expandableRowsComponent={ExpandedComponent}
+              expandableRowsComponent={({ data }) => (
+                <pre>{JSON.stringify(data, null, 2)}</pre>
+              )}
               customStyles={{
                 header: {
                   style: {
-                    fontSize: '18px',
-                    fontWeight: '600',
-                    backgroundColor: '#f8f9fa',
-                    padding: '16px',
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    backgroundColor: "#f8f9fa",
+                    padding: "16px",
                   },
                 },
               }}

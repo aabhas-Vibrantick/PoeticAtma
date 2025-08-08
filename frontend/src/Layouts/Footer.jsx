@@ -3,7 +3,12 @@ import { Link } from "react-router-dom";
 export default function Footer() {
   return (
     <>
-      <footer id="contect" className="text-center text-lg-start foote-bg1 text-muted  bg-secondary">
+    <style>{`
+    .bg-black:{
+    background-color: #000000;
+    }
+    `}</style>
+      <footer id="contect" className="text-center text-lg-start foote-bg1 text-muted  bg-black">
 
         <section className="d-flex justify-content-center justify-content-lg-between p-4 border-bottom bg-muted">
           <div className="me-5 d-none d-lg-block footer-info">

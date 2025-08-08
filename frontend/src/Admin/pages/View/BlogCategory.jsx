@@ -1,170 +1,200 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { CSVLink } from 'react-csv';
-import apiServices from '../../../ApiServices/ApiServices'
-import { toast, ToastContainer } from 'react-toastify'
-import { Link } from 'react-router-dom'
+import apiServices from '../../../ApiServices/ApiServices';
+import { toast, ToastContainer } from 'react-toastify';
+import { Link } from 'react-router-dom';
+import { FaEdit, FaTrash, FaToggleOn, FaToggleOff } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 export default function BlogCategoryList() {
   const [allCategory, setAllCategory] = useState([]);
   const [filterText, setFilterText] = useState('');
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 3500);
-    apiServices.getallcategory().then(data => {
-      if (data.data.success) {
-        setAllCategory(data.data.data);
-      } else {
-        toast.error(data.data.message);
-      }
-    }).catch(err => {
-      // // console.log(err);
-      toast.error("Something went wrong");
-    });
+    setLoading(true);
+    apiServices.getallcategory()
+      .then(data => {
+        if (data.data.success) {
+          setAllCategory(data.data.data);
+        } else {
+          toast.error(data.data.message);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        toast.error("Something went wrong");
+        setLoading(false);
+      });
   }, []);
 
   const deleteCategory = (id) => {
-    let data = {
-      _id: id
-    };
-    apiServices.deletecategory(data).then(data => {
-      if (data.data.success) {
-        toast.success(data.data.message);
-        apiServices.getallcategory().then(updatedData => {
-          if (updatedData.data.success) {
-            setAllCategory(updatedData.data.data);
-          }
-        });
-      } else {
-        toast.error(data.data.message);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This category will be permanently deleted!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        apiServices.deletecategory({ _id: id })
+          .then(data => {
+            if (data.data.success) {
+              toast.success(data.data.message);
+              setAllCategory(prev => prev.filter(cat => cat._id !== id));
+              Swal.fire('Deleted!', 'The category has been deleted.', 'success');
+            } else {
+              Swal.fire('Error!', data.data.message || 'Failed to delete', 'error');
+            }
+          })
+          .catch(() => {
+            Swal.fire('Error!', 'Failed to delete category', 'error');
+          });
       }
-    }).catch(err => {
-      // // console.log(err);
     });
   };
 
   const changeStatus = (id, status) => {
     setLoading(true);
     const upstatus = status ? '0' : '1';
-    const data = {
-      _id: id,
-      status: upstatus,
-    };
-    apiServices.updateBlogCategoryStatus(data).then((response) => {
-      if (response.data.success) {
-        toast.success(response.data.message);
-        apiServices.getallcategory().then(updatedData => {
-          if (updatedData.data.success) {
-            setAllCategory(updatedData.data.data);
-          }
-        });
-      } else {
-        toast.error(response.data.message);
-      }
-      setLoading(false);
-    }).catch((error) => {
-      // console.error(error);
-      toast.error('Something went wrong!! Try Again Later');
-      setLoading(false);
-    });
+    apiServices.updateBlogCategoryStatus({ _id: id, status: upstatus })
+      .then(response => {
+        if (response.data.success) {
+          toast.success(response.data.message);
+          setAllCategory(prev =>
+            prev.map(cat =>
+              cat._id === id ? { ...cat, status: !status } : cat
+            )
+          );
+        } else {
+          toast.error(response.data.message);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        toast.error('Something went wrong!! Try Again Later');
+        setLoading(false);
+      });
   };
-   // --------toast selection function----
-   const handleChange = ({ selectedRows }) => {
-   
-    // console.log('Selected Rows: ', selectedRows);
+
+  const handleClear = () => {
+    if (filterText) setFilterText('');
   };
+
   const columns = [
-    { name: 'SNo.', selector: (_, index) => index + 1 },
-    { name: 'Category Name', selector: 'Category_name',sortable: true },
+    { name: 'S.No.', selector: (_, index) => index + 1, width: '80px' },
+    { name: 'Category Name', selector: 'Category_name', sortable: true, grow: 2 },
+    {
+      name: 'Status',
+      selector: row => row.status,
+      sortable: true,
+      cell: (row) => (
+        <span className={`badge ${row.status ? 'bg-primary' : 'bg-danger'} text-light`}>
+          {row.status ? 'Active' : 'Inactive'}
+        </span>
+      ),
+      width: '100px',
+    },
     {
       name: 'Actions',
-      cell: row => (
-        <div className="d-flex flex-column">
-          <Link to={"/admin/up-blogcategory/" + row._id}>
-            <button className='btn btn-outline-success mx-1 my-1' style={{width:"100px",height:"40px"}}>Edit</button>
+      cell: (row) => (
+        <div className="d-flex flex-wrap gap-2">
+          <Link to={`/admin/up-blogcategory/${row._id}`}>
+            <button
+              className="btn btn-sm btn-outline-warning"
+              title="Edit"
+              style={{ minWidth: '90px' }}
+            >
+              <FaEdit />
+            </button>
           </Link>
-          <button onClick={() => deleteCategory(row._id)} className='btn btn-outline-dark mx-1 my-1' style={{width:"100px",height:"40px"}}>Delete</button>
+
           <button
-                className="btn btn-outline-danger mx-1 my-1"
-                  onClick={() => changeStatus(row._id, row.status)}
-                style={{width:"100px",height:"40px"}}
-              >
-                Status
-              </button>
+            onClick={() => changeStatus(row._id, row.status)}
+            className={`btn btn-sm ${row.status ? 'btn-outline-warning' : 'btn-outline-success'}`}
+            title={row.status ? 'Set Inactive' : 'Set Active'}
+            style={{ minWidth: '90px' }}
+          >
+            {row.status ? <FaToggleOn /> : <FaToggleOff />}
+          </button>
+
+          <button
+            onClick={() => deleteCategory(row._id)}
+            className="btn btn-sm btn-outline-danger"
+            title="Delete"
+            style={{ minWidth: '90px' }}
+          >
+            <FaTrash />
+          </button>
         </div>
-      )
-    }
+      ),
+      width: '400px',
+    },
   ];
 
-  const filteredCategory = allCategory.filter(
-    category => category.Category_name.toLowerCase().includes(filterText.toLowerCase())
+  const filteredCategory = allCategory.filter(category =>
+    category.Category_name.toLowerCase().includes(filterText.toLowerCase())
   );
-
-   // clear filter function
-   const handleClear = () => {
-    if (filterText) {
-      setFilterText("");
-    }
-  };
 
   const headerStyle = {
     backgroundColor: '#ffcc00',
-    color: 'white', 
+    color: 'white',
     fontWeight: 'bold',
   };
+
   return (
     <>
-      <main className="main-container adminbody">
-        <h1>Blog Category List</h1>
-        <div className="container col-10 table-responsive py-5">
-          <div className="row my-3">
-            <div className="col-5 d-flex justify-center items-center gap-1">
+      <main className="main-container adminbody bg-light py-4">
+        <div className="container-fluid col-10">
+          <div className="text-center mb-4">
+            <h2 className="text-dark fw-bold">Blog Category List</h2>
+            <hr className="w-25 mx-auto" />
+          </div>
+
+          <div className="row align-items-center mb-4">
+            <div className="col-md-6 d-flex gap-2">
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search"
+                placeholder="Search categories..."
                 value={filterText}
                 onChange={e => setFilterText(e.target.value)}
               />
-               <button
-            className="btn btn-danger"
-            type="button"
-            style={{ width: "100px", height: "38px" }}
-            onClick={handleClear}
-          >
-            X
-          </button>
+              <button
+                className="btn btn-outline-danger"
+                type="button"
+                onClick={handleClear}
+                style={{ minWidth: '90px' }}
+              >
+                Clear
+              </button>
             </div>
-            <div className="col-7">
-              <CSVLink data={filteredCategory} filename="category-data.csv">
-                <button className="btn btn-outline-primary float-end">
-                  Download CSV
-                </button>
+            <div className="col-md-6 text-end">
+              <CSVLink data={filteredCategory} filename="blog-category-data.csv">
+                <button className="btn btn-primary">Download CSV</button>
               </CSVLink>
             </div>
           </div>
 
-          <DataTable
-            title="Blog Category List"
-            columns={columns}
-            data={filteredCategory}
-            progressPending={loading}
-            striped
-            highlightOnHover
-            pagination
-            selectableRows
-            onSelectedRowsChange={handleChange}
-            customStyles={{
-              header: {
-                style: headerStyle,
-              },
-            }}
-          />
+          <div className="bg-white shadow-sm rounded p-3">
+            <DataTable
+              title="List of Blog Categories"
+              columns={columns}
+              data={filteredCategory}
+              progressPending={loading}
+              striped
+              highlightOnHover
+              pagination
+              selectableRows
+              customStyles={{ header: { style: headerStyle } }}
+            />
+          </div>
         </div>
       </main>
       <ToastContainer />
     </>
-  )
+  );
 }

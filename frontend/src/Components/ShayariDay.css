@@ -1,0 +1,178 @@
+/* Shayari Section Styling */
+.shayari-day-section {
+  background: #ffffff; /* warm off-white */
+  font-family: 'Noto Serif', serif;
+  padding: 80px 0;
+  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+}
+
+.shayari-swiper-container {
+  position: relative;
+  padding-bottom: 50px;
+  max-width: 750px;
+  margin: 0 auto;
+}
+
+.shayari-box {
+  background-color: #fff;
+  /* border: 1px solid #ffeaa7; soft yellow border */
+  position: relative;
+  font-family: 'Noto Serif', serif;
+}
+
+.shayari-title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #f4b400; /* deep yellow */
+  font-family: 'Playfair Display', serif;
+  position: relative;
+}
+
+.shayari-title::after {
+  content: "";
+  width: 60px;
+  height: 3px;
+  background-color: #f4b400;
+  display: block;
+  margin: 10px auto 0;
+  border-radius: 10px;
+}
+
+.shayari-text {
+  font-size: 1.4rem;
+  color: #444;
+  line-height: 2.2;
+  position: relative;
+  padding: 1rem 1.5rem;
+}
+
+.shayari-text::before,
+.shayari-text::after {
+  font-size: 3rem;
+  color: #ffeaa7; /* pale yellow quotes */
+  position: absolute;
+  font-family: Georgia, serif;
+}
+
+.shayari-text::before {
+  content: "“";
+  top: -25px;
+  left: -20px;
+}
+
+.shayari-text::after {
+  content: "”";
+  bottom: -25px;
+  right: -20px;
+}
+
+.shayari-author {
+  color: #f4b400;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Custom Swiper Navigation (Adapted from CarArea) */
+.swiper-navigation-custom {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 10;
+}
+
+.swiper-button-prev-custom,
+.swiper-button-next-custom {
+  cursor: pointer;
+  color: #555;
+  font-size: 24px;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.swiper-button-prev-custom:hover,
+.swiper-button-next-custom:hover {
+  color: #f4b400; /* Match shayari's yellow theme */
+}
+
+/* Responsive Adjustments */
+@media (min-width: 992px) {
+  .shayari-title {
+    font-size: 2.5rem;
+  }
+
+  .shayari-text {
+    font-size: 1.6rem;
+  }
+
+  .shayari-box {
+    padding: 2rem 3rem;
+  }
+}
+
+
+/* Mobile L (max-width: 425px) */
+@media (max-width: 425px) {
+  .shayari-title {
+    font-size: 1.8rem;
+  }
+
+  .shayari-text {
+    font-size: 1rem;
+  }
+
+  .shayari-swiper-container {
+    padding-bottom: 5px;
+  }
+
+  .swiper-navigation-custom {
+    bottom: -31px;
+  }
+}
+
+/* Mobile M (max-width: 375px) */
+@media  (max-width: 375px) {
+  .shayari-title {
+    font-size: 1.6rem;
+  }
+
+  .shayari-text {
+    font-size: 0.95rem;
+  }
+
+  .shayari-swiper-container {
+    padding-bottom: 8px;
+  }
+
+  /* .swiper-navigation-custom {
+    bottom: -9px;
+  } */
+}
+
+/* Mobile S (max-width: 320px) */
+@media (max-width: 320px) {
+  .shayari-title {
+    font-size: 1.4rem;
+  }
+
+  .shayari-text {
+    font-size: 0.9rem;
+  }
+
+  .shayari-swiper-container {
+    padding-bottom: 10px;
+  }
+
+  .swiper-navigation-custom {
+    bottom: -9px;
+  }
+}
+
+@media (min-width:350px)and(max-width:400px){
+
+    .swiper-navigation-custom {
+    bottom: -31px !important;
+  }
+}

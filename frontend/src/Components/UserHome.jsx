@@ -12,7 +12,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import Sidebar from "./Sidebar";
 import LeftSidebar from "./LeftSidebar";
 import ContentCard from "./ContentCard";
-
+import './ShayariDay.css';
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -149,6 +149,21 @@ export default function UserHome() {
   //     .then((data) => setQuoteData(data));
   // }, []);
 
+  const shayariData = [
+    {
+      text: "फ़ोन तो दूर वहाँ ख़त भी नहीं पहुँचेंगे अब के ये लोग तुम्हें ऐसी जगह भेजेंगे",
+      author: "Anonymous",
+    },
+    {
+      text: "Dil ke armānoñ kī manzil ek khwāb ban gayī <br /> har ek ummīd kī rāhein khāmosh ho gayī",
+      author: "Mirza Ghalib",
+    },
+    {
+      text: "Zindagī ek safar hai suhānā <br /> yahāñ har pal hai ek nayā fasānā",
+      author: "Unknown",
+    },
+  ];
+
   return (
     <>
       <style>
@@ -219,82 +234,6 @@ export default function UserHome() {
 }
 
 
-// shayari of the day
-
-.shayari-day-section {
-  background: #fffdf5; /* warm off-white */
-  font-family: 'Noto Serif', serif;
-}
-
-.shayari-box {
-  background-color: #fff;
-  border: 1px solid #ffeaa7; /* soft yellow border */
-  max-width: 750px;
-  margin: 0 auto;
-  position: relative;
-  font-family: 'Noto Serif', serif;
-}
-
-.shayari-title {
-  font-size: 2.2rem;
-  font-weight: bold;
-  color: #f4b400; /* deep yellow */
-  font-family: 'Playfair Display', serif;
-  position: relative;
-}
-
-.shayari-title::after {
-  content: "";
-  width: 60px;
-  height: 3px;
-  background-color: #f4b400;
-  display: block;
-  margin: 10px auto 0;
-  border-radius: 10px;
-}
-
-.shayari-text {
-  font-size: 1.4rem;
-  color: #444;
-  line-height: 2.2;
-  position: relative;
-  padding: 1rem 1.5rem;
-}
-
-.shayari-text::before,
-.shayari-text::after {
-  font-size: 3rem;
-  color: #ffeaa7; /* pale yellow quotes */
-  position: absolute;
-  font-family: Georgia, serif;
-}
-
-.shayari-text::before {
-  content: "“";
-  top: -25px;
-  left: -20px;
-}
-
-.shayari-text::after {
-  content: "”";
-  bottom: -25px;
-  right: -20px;
-}
-
-.shayari-author {
-  color: #f4b400;
-  font-size: 1rem;
-  font-weight: 500;
-}
-  .left-sidebar-ads {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow-y: auto;
-  background: #ffffffff;
-  border-right: 1px solid #ddd;
-  padding: 16px;
-}
 
 
 .heading-wrapper {
@@ -429,21 +368,38 @@ export default function UserHome() {
         </section>
         <section className="shayari-day-section py-5">
           <div className="container text-center">
-            <div className="shayari-box shadow p-5 rounded">
-              <h2 className="shayari-title mb-3">🌼 Shayari Of The Day 🌼</h2>
-              <blockquote className="shayari-text mx-auto">
-                <p className="mb-4">
-                  “
-                  <strong>
-                    DhūñDhne par bhī na miltā thā mujhe apnā vajūd
-                  </strong>{" "}
-                  <br />
-                  maiñ talāsh-e-dost meñ yuuñ be-nishāñ thā dosto”
-                </p>
-                <footer className="shayari-author mt-3 text-end fst-italic">
-                  — Anonymous
-                </footer>
-              </blockquote>
+            <div className="shayari-swiper-container">
+              <h2 className="shayari-title mb-5">🌼 Shayari Of The Day 🌼</h2>
+              <Swiper
+                modules={[Navigation]}
+                spaceBetween={30}
+                slidesPerView={1}
+                navigation={{
+                  nextEl: ".swiper-button-next-custom",
+                  prevEl: ".swiper-button-prev-custom",
+                }}
+              >
+                {shayariData.map((shayari, index) => (
+                  <SwiperSlide key={index}>
+                    <div className="shayari-box shadow p-xl-5 p-lg-5 p-md-5 p-sm-2 rounded">
+                      <blockquote className="shayari-text mx-auto">
+                        <p
+                          className="mb-4"
+                          dangerouslySetInnerHTML={{ __html: shayari.text }}
+                        />
+                        <footer className="shayari-author mt-3 text-end fst-italic">
+                          — {shayari.author}
+                        </footer>
+                      </blockquote>
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+              {/* Custom Navigation Arrows */}
+              <div className="swiper-navigation-custom">
+                <div className="swiper-button-prev-custom">‹</div>
+                <div className="swiper-button-next-custom">›</div>
+              </div>
             </div>
           </div>
         </section>

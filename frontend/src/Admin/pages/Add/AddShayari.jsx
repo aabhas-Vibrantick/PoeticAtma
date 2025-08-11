@@ -34,7 +34,7 @@ function AddShayari() {
   const handleshayariData = async (e) => {
     e.preventDefault();
 
-    if (!title || !shayari || !categoryId || !image || !language || !tag) {
+    if (!title || !shayari || !categoryId || !language) {
       toast.error("Please fill in all fields.");
       return;
     }
@@ -44,10 +44,17 @@ function AddShayari() {
     const cleanShayari = shayari.replace(/^<p>(.*?)<\/p>$/i, "$1").trim();
     formData.append("shayari", cleanShayari);
     formData.append("language", language);
-    formData.append("tag", tag);
     formData.append("Category_id", categoryId);
-    formData.append("Image", image);
     formData.append("userId", selectedUserId);
+
+    if (image) {
+      formData.append("Image", image);
+    }
+
+    if(tag){
+      formData.append("tag", tag);
+    }
+
     try {
       const response = await apiServices.addshayari(formData);
       if (response.data.success) {
@@ -206,21 +213,21 @@ function AddShayari() {
                     onChange={(e) => setImage(e.target.files[0])}
                   />
                   {/* Preview Section */}
-                      {image && (
-                        <div className="mt-3">
-                          <p className="mb-1 fw-bold">Image Preview:</p>
-                          <img
-                            src={URL.createObjectURL(image)}
-                            alt="Preview"
-                            className="img-thumbnail"
-                            style={{
-                              width: "200px",
-                              height: "200px",
-                              objectFit: "cover",
-                            }}
-                          />
-                        </div>
-                      )}
+                  {image && (
+                    <div className="mt-3">
+                      <p className="mb-1 fw-bold">Image Preview:</p>
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt="Preview"
+                        className="img-thumbnail"
+                        style={{
+                          width: "200px",
+                          height: "200px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
                 {/* Submit button */}
                 <button

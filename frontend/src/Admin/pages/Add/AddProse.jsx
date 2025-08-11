@@ -33,7 +33,7 @@ function AddProse() {
   const handleproseData = async (e) => {
     e.preventDefault();
 
-    if (!title || !prose || !categoryId || !image || !language || !tag) {
+    if (!title || !prose || !categoryId || !language) {
       toast.error("Please fill in all fields.");
       return;
     }
@@ -46,10 +46,15 @@ function AddProse() {
 
     formData.append("prose", prose);
     formData.append("language", language);
-    formData.append("tag", tag);
     formData.append("Category_id", categoryId);
-    formData.append("Image", image);
     formData.append("userId", selectedUserId);
+
+    if(image){
+      formData.append("Image", image);
+    }
+    if(tag){
+      formData.append("tag", tag);
+    }
     try {
       const response = await apiServices.addprose(formData);
       if (response.data.success) {

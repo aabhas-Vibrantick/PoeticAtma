@@ -36,7 +36,7 @@ function AddSher() {
   const handlesherData = async (e) => {
     e.preventDefault();
 
-    if (!title || !sher || !categoryId || !image || !language || !tag) {
+    if (!title || !sher || !categoryId || !language) {
       toast.error("Please fill in all fields.");
       return;
     }
@@ -49,15 +49,21 @@ function AddSher() {
 
     formData.append("sher", sher);
     formData.append("Category_id", categoryId);
-    formData.append("Image", image);
     formData.append("language", language);
-    formData.append("tag", tag);
     formData.append("userId", selectedUserId);
     //     for (let [key, value] of formData.entries()) {
     //     console.log(`${key}:`, value);
     // }
 
     //     return;
+
+    if (image) {
+      formData.append("Image", image);
+    }
+
+    if (tag) {
+      formData.append("tag", tag);
+    }
 
     try {
       const response = await apiServices.addsher(formData);
@@ -216,24 +222,22 @@ function AddSher() {
                     onChange={(e) => setImage(e.target.files[0])}
                   />
                   {/* Preview Section */}
-                      {image && (
-                        <div className="mt-3">
-                          <p className="mb-1 fw-bold">Image Preview:</p>
-                          <img
-                            src={URL.createObjectURL(image)}
-                            alt="Preview"
-                            className="img-thumbnail"
-                            style={{
-                              width: "200px",
-                              height: "200px",
-                              objectFit: "cover",
-                            }}
-                          />
-                        </div>
-                      )}
+                  {image && (
+                    <div className="mt-3">
+                      <p className="mb-1 fw-bold">Image Preview:</p>
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt="Preview"
+                        className="img-thumbnail"
+                        style={{
+                          width: "200px",
+                          height: "200px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
-
-                
 
                 {/* Submit button */}
                 <button

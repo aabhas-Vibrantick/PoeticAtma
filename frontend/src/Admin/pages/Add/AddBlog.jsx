@@ -34,7 +34,7 @@ function AddBlog() {
   const handleblogData = async (e) => {
     e.preventDefault();
 
-    if (!title || !blog || !categoryId || !image) {
+    if (!title || !blog || !categoryId ) {
       toast.error("Please fill in all fields.");
       return;
     }
@@ -44,10 +44,16 @@ function AddBlog() {
     formData.append("description", description);
     formData.append("blog", blog);
     formData.append("Category_id", categoryId);
-    formData.append("Image", image);
     formData.append("isFeatured", isFeatured);
-    formData.append("tag", tag);
     formData.append("userId", selectedUserId);
+
+    if(image){
+      formData.append("Image", image);
+    }
+    if(tag){
+      formData.append("tag", tag);
+    }
+
     try {
       const response = await apiServices.addblog(formData);
       if (response.data.success) {

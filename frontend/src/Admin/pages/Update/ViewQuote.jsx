@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import apiServices from "../../../ApiServices/ApiServices";
 import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-
+import Swal from "sweetalert2";
 function ViewQuote() {
   const [quotes, setQuotes] = useState([]);
 
@@ -16,21 +16,34 @@ function ViewQuote() {
     }).catch(() => toast.error("Server error"));
   }, []);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this quote?")) return;
 
+
+const handleDelete = async (id) => {
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "You won’t be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, delete it!",
+  });
+
+  if (result.isConfirmed) {
     try {
       const res = await apiServices.deleteQuote(id);
       if (res.data.success) {
-        toast.success("Deleted successfully");
+        Swal.fire("Deleted!", "Your quote has been deleted.", "success");
         setQuotes(quotes.filter((q) => q._id !== id));
       } else {
-        toast.error(res.data.message || "Delete failed");
+        Swal.fire("Error", res.data.message || "Delete failed", "error");
       }
     } catch (err) {
-      toast.error("Server error");
+      Swal.fire("Error", "Server error", "error");
     }
-  };
+  }
+};
+
 
   return (
     <main className="main-container adminbody">

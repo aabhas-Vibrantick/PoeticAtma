@@ -461,7 +461,7 @@ export default function Porfile() {
                             activeTab === 1 ? "active" : ""
                           }`}
                         >
-                          Shayari{" "}
+                          Ghazal{" "}
                           <span className="tab-count">{allshayari.length}</span>
                         </button>
                       )}
@@ -483,7 +483,7 @@ export default function Porfile() {
                             activeTab === 3 ? "active" : ""
                           }`}
                         >
-                          Prose{" "}
+                          Nazm{" "}
                           <span className="tab-count">{allprose.length}</span>
                         </button>
                       )}
@@ -546,7 +546,7 @@ export default function Porfile() {
                                 "&:hover": { backgroundColor: "#fff3e0" },
                               }}
                             >
-                              <ListItemAvatar>
+                              {/* <ListItemAvatar>
                                 <Avatar
                                   variant="circle"
                                   src={BASE_URL_IMG + data?.Image}
@@ -555,6 +555,18 @@ export default function Porfile() {
                                   onError={(e) => {
                                     e.target.src = "/default_image.jpg";
                                   }}
+                                />
+                              </ListItemAvatar> */}
+                              <ListItemAvatar>
+                                <Avatar
+                                  variant="circle"
+                                  src={
+                                    data?.Image
+                                      ? BASE_URL_IMG + data.Image
+                                      : "/default_image.jpg"
+                                  }
+                                  alt={data?.title}
+                                  sx={{ width: 50, height: 56 }}
                                 />
                               </ListItemAvatar>
                               <ListItemText
@@ -594,12 +606,13 @@ export default function Porfile() {
                               <ListItemAvatar>
                                 <Avatar
                                   variant="circle"
-                                  src={BASE_URL_IMG + data?.Image}
+                                  src={
+                                    data?.Image
+                                      ? BASE_URL_IMG + data.Image
+                                      : "/default_image.jpg"
+                                  }
                                   alt={data?.title}
                                   sx={{ width: 50, height: 56 }}
-                                  onError={(e) => {
-                                    e.target.src = "/default_image.jpg";
-                                  }}
                                 />
                               </ListItemAvatar>
                               <ListItemText
@@ -639,12 +652,13 @@ export default function Porfile() {
                               <ListItemAvatar>
                                 <Avatar
                                   variant="circle"
-                                  src={BASE_URL_IMG + data?.Image}
+                                  src={
+                                    data?.Image
+                                      ? BASE_URL_IMG + data.Image
+                                      : "/default_image.jpg"
+                                  }
                                   alt={data?.title}
                                   sx={{ width: 50, height: 56 }}
-                                  onError={(e) => {
-                                    e.target.src = "/default_image.jpg";
-                                  }}
                                 />
                               </ListItemAvatar>
                               <ListItemText
@@ -688,12 +702,13 @@ export default function Porfile() {
                                   <ListItemAvatar>
                                     <Avatar
                                       variant="circle"
-                                      src={BASE_URL_IMG + data?.Image}
+                                      src={
+                                        data?.Image
+                                          ? BASE_URL_IMG + data.Image
+                                          : "/default_image.jpg"
+                                      }
                                       alt={data?.title}
                                       sx={{ width: 50, height: 56 }}
-                                      onError={(e) => {
-                                        e.target.src = "/default_image.jpg";
-                                      }}
                                     />
                                   </ListItemAvatar>
                                   <ListItemText
@@ -740,12 +755,13 @@ export default function Porfile() {
                                   <ListItemAvatar>
                                     <Avatar
                                       variant="circle"
-                                      src={BASE_URL_IMG + data?.Image}
+                                      src={
+                                        data?.Image
+                                          ? BASE_URL_IMG + data.Image
+                                          : "/default_image.jpg"
+                                      }
                                       alt={data?.title}
                                       sx={{ width: 50, height: 56 }}
-                                      onError={(e) => {
-                                        e.target.src = "/default_image.jpg";
-                                      }}
                                     />
                                   </ListItemAvatar>
                                   <ListItemText
@@ -792,12 +808,13 @@ export default function Porfile() {
                                   <ListItemAvatar>
                                     <Avatar
                                       variant="circle"
-                                      src={BASE_URL_IMG + data?.Image}
+                                      src={
+                                        data?.Image
+                                          ? BASE_URL_IMG + data.Image
+                                          : "/default_image.jpg"
+                                      }
                                       alt={data?.title}
                                       sx={{ width: 50, height: 56 }}
-                                      onError={(e) => {
-                                        e.target.src = "/default_image.jpg";
-                                      }}
                                     />
                                   </ListItemAvatar>
                                   <ListItemText
@@ -848,12 +865,13 @@ export default function Porfile() {
                                   <ListItemAvatar>
                                     <Avatar
                                       variant="circle"
-                                      src={BASE_URL_IMG + data?.Image}
+                                      src={
+                                        data?.Image
+                                          ? BASE_URL_IMG + data.Image
+                                          : "/default_image.jpg"
+                                      }
                                       alt={data?.title}
                                       sx={{ width: 50, height: 56 }}
-                                      onError={(e) => {
-                                        e.target.src = "/default_image.jpg";
-                                      }}
                                     />
                                   </ListItemAvatar>
                                   <ListItemText
@@ -900,12 +918,13 @@ export default function Porfile() {
                                   <ListItemAvatar>
                                     <Avatar
                                       variant="circle"
-                                      src={BASE_URL_IMG + data?.Image}
+                                      src={
+                                        data?.Image
+                                          ? BASE_URL_IMG + data.Image
+                                          : "/default_image.jpg"
+                                      }
                                       alt={data?.title}
                                       sx={{ width: 50, height: 56 }}
-                                      onError={(e) => {
-                                        e.target.src = "/default_image.jpg";
-                                      }}
                                     />
                                   </ListItemAvatar>
                                   <ListItemText
@@ -952,12 +971,13 @@ export default function Porfile() {
                                   <ListItemAvatar>
                                     <Avatar
                                       variant="circle"
-                                      src={BASE_URL_IMG + data?.Image}
+                                      src={
+                                        data?.Image
+                                          ? BASE_URL_IMG + data.Image
+                                          : "/default_image.jpg"
+                                      }
                                       alt={data?.title}
                                       sx={{ width: 50, height: 56 }}
-                                      onError={(e) => {
-                                        e.target.src = "/default_image.jpg";
-                                      }}
                                     />
                                   </ListItemAvatar>
                                   <ListItemText
@@ -1006,17 +1026,14 @@ export default function Porfile() {
                               {/* Blog Thumbnail */}
                               <ListItemAvatar>
                                 <Avatar
-                                  variant="square"
-                                  src={BASE_URL_IMG + data?.Image}
+                                  variant="circle"
+                                  src={
+                                    data?.Image
+                                      ? BASE_URL_IMG + data.Image
+                                      : "/default_image.jpg"
+                                  }
                                   alt={data?.title}
-                                  sx={{
-                                    width: 80,
-                                    height: 80,
-                                    borderRadius: 2,
-                                  }}
-                                  onError={(e) => {
-                                    e.target.src = "/default_image.jpg";
-                                  }}
+                                  sx={{ width: 50, height: 56 }}
                                 />
                               </ListItemAvatar>
 
@@ -1107,49 +1124,46 @@ export default function Porfile() {
                 </div>
                 {/* Right Column: Ads */}
                 <div className="col-lg-3">
-  <div className="ad-section">
-    
-    {/* First Ad Card */}
-    <div className="ad-card shadow-sm">
-      {/* <div className="ad-tools">
+                  <div className="ad-section">
+                    {/* First Ad Card */}
+                    <div className="ad-card shadow-sm">
+                      {/* <div className="ad-tools">
         <span className="ad-circle ad-red"></span>
         <span className="ad-circle ad-yellow"></span>
         <span className="ad-circle ad-green"></span>
       </div> */}
-      <img
-          src="/Add.jpg" // replace with your actual image path
-          alt="Advertisement 1"
-          style={{
-            width: "100%",
-            height: "auto",
-            borderRadius: "4px",
-            display: "block"
-          }}
-        />
-    </div>
+                      <img
+                        src="/Add.jpg" // replace with your actual image path
+                        alt="Advertisement 1"
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          borderRadius: "4px",
+                          display: "block",
+                        }}
+                      />
+                    </div>
 
-    {/* Second Ad Card */}
-    <div className="ad-card shadow-sm">
-      {/* <div className="ad-tools">
+                    {/* Second Ad Card */}
+                    <div className="ad-card shadow-sm">
+                      {/* <div className="ad-tools">
         <span className="ad-circle ad-red"></span>
         <span className="ad-circle ad-yellow"></span>
         <span className="ad-circle ad-green"></span>
       </div> */}
-      <img
-          src="/Add.jpg" // replace with your actual image path
-          alt="Advertisement 2"
-          style={{
-            width: "100%",
-            height: "auto",
-            borderRadius: "4px",
-            display: "block"
-          }}
-        />
-    </div>
-
-  </div>
-</div>
-
+                      <img
+                        src="/Add.jpg" // replace with your actual image path
+                        alt="Advertisement 2"
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          borderRadius: "4px",
+                          display: "block",
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>

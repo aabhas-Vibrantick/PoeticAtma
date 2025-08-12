@@ -1,15 +1,15 @@
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Navigation } from 'swiper/modules';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Navigation } from "swiper/modules";
+import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import apiServices, { BASE_URL_IMG } from '../../../ApiServices/ApiServices'
-import { toast, ToastContainer } from 'react-toastify'
+import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
+import { toast, ToastContainer } from "react-toastify";
 import ScaleLoader from "react-spinners/ScaleLoader";
 
 export default function Sher() {
@@ -33,10 +33,13 @@ export default function Sher() {
     setTimeout(() => {
       setLoading(false);
     }, 3000);
-    apiServices.getPopularSher()
+    apiServices
+      .getPopularSher()
       .then((data) => {
         if (data.data.success) {
-          const filteredShers = data.data.data.filter((sher) => sher.status === true);
+          const filteredShers = data.data.data.filter(
+            (sher) => sher.status === true
+          );
           setAllPopular(filteredShers);
           // setAllPopular(data.data.data);
           // // console.log(data);
@@ -49,10 +52,13 @@ export default function Sher() {
         toast.error("Something went wrong");
       });
 
-    apiServices.getBestSher()
+    apiServices
+      .getBestSher()
       .then((data) => {
         if (data.data.success) {
-          const filteredShers = data.data.data.filter((sher) => sher.status === true);
+          const filteredShers = data.data.data.filter(
+            (sher) => sher.status === true
+          );
           setAllBest(filteredShers);
           // setAllBest(data.data.data);
           // // console.log(data);
@@ -64,10 +70,10 @@ export default function Sher() {
         // // console.log(err);
         toast.error("Something went wrong");
       });
-    apiServices.getallSherImage()
+    apiServices
+      .getallSherImage()
       .then((data) => {
         if (data.data.success) {
-
           setAllSherImg(data.data.data);
           // // console.log(data);
         } else {
@@ -79,25 +85,31 @@ export default function Sher() {
         toast.error("Something went wrong");
       });
 
-    const categoryId = '64ed9cfc6ce8afe231722993';
-    apiServices.getSherByCategory({ Category_id: categoryId })
-      .then(response => {
+    const categoryId = "64ed9cfc6ce8afe231722993";
+    apiServices
+      .getSherByCategory({ Category_id: categoryId })
+      .then((response) => {
         if (response.data.success) {
-          const filteredShers = response.data.data.filter((sher) => sher.status === true);
+          const filteredShers = response.data.data.filter(
+            (sher) => sher.status === true
+          );
           setByCategory(filteredShers);
           // setByCategory(response.data.data);
         } else {
           // console.error(response.data.message);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         // console.error('Error:', error);
       });
 
-    apiServices.getsherByHindi()
-      .then(response => {
+    apiServices
+      .getsherByHindi()
+      .then((response) => {
         if (response.data.success) {
-          const filteredShers = response.data.allhindi.filter((sher) => sher.status === true);
+          const filteredShers = response.data.allhindi.filter(
+            (sher) => sher.status === true
+          );
           setAllHindi(filteredShers);
           // setAllHindi(response.data.allhindi);
         } else {
@@ -105,14 +117,17 @@ export default function Sher() {
           // console.error(response.data.message);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         // console.error('Error:', error);
       });
 
-    apiServices.getsherByEnglish()
-      .then(response => {
+    apiServices
+      .getsherByEnglish()
+      .then((response) => {
         if (response.data.success) {
-          const filteredShers = response.data.allenglish.filter((sher) => sher.status === true);
+          const filteredShers = response.data.allenglish.filter(
+            (sher) => sher.status === true
+          );
           setAllEnglish(filteredShers);
           // setAllEnglish(response.data.allenglish);
           // // console.log("english",response)
@@ -121,30 +136,29 @@ export default function Sher() {
           // console.error(response.data.message);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         // console.error('Error:', error);
       });
   }, [loading]);
 
-
   const pagination = {
     clickable: true,
     renderBullet: function (index, className) {
-      return '<span className="' + className + '">' + (index + 1) + '</span>';
+      return '<span className="' + className + '">' + (index + 1) + "</span>";
     },
   };
 
   const [selectedSher, setSelectedSher] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-  
-    const handleOpenModal = (data) => {
-      setSelectedSher(data);
-      setShowModal(true);
-    };
-  
-    const handleCloseModal = () => {
-      setShowModal(false);
-    };
+  const [showModal, setShowModal] = useState(false);
+
+  const handleOpenModal = (data) => {
+    setSelectedSher(data);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
   return (
     <>
       <ScaleLoader loading={loading} cssOverride={override} size={70} />
@@ -256,9 +270,9 @@ export default function Sher() {
                           className="img-2"
                           src={BASE_URL_IMG + data?.Image}
                           onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
+                            e.target.onerror = null;
+                            e.target.src = "/default_image.jpg";
+                          }}
                         />
                         <p>{data?.title}</p>
                       </div>
@@ -312,9 +326,9 @@ export default function Sher() {
                           className="img-2"
                           src={BASE_URL_IMG + data?.Image}
                           onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
+                            e.target.onerror = null;
+                            e.target.src = "/default_image.jpg";
+                          }}
                         />
                         <p>{data?.title}</p>
                       </div>
@@ -368,9 +382,9 @@ export default function Sher() {
                           className="img-2"
                           src={BASE_URL_IMG + data?.Image}
                           onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
+                            e.target.onerror = null;
+                            e.target.src = "/default_image.jpg";
+                          }}
                         />
                         <p>{data?.title}</p>
                       </div>
@@ -424,9 +438,9 @@ export default function Sher() {
                           className="img-2"
                           src={BASE_URL_IMG + data?.Image}
                           onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
+                            e.target.onerror = null;
+                            e.target.src = "/default_image.jpg";
+                          }}
                         />
                         <p>{data?.title}</p>
                       </div>
@@ -479,10 +493,14 @@ export default function Sher() {
                       onClick={() => handleOpenModal(data)}
                       style={{ cursor: "pointer" }}
                     >
-                      <img className="img-2" src={BASE_URL_IMG + data?.Image} onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }} />
+                      <img
+                        className="img-2"
+                        src={BASE_URL_IMG + data?.Image}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/default_image.jpg";
+                        }}
+                      />
                       <p>{data?.title}</p>
                     </div>
                   </SwiperSlide>
@@ -534,9 +552,9 @@ export default function Sher() {
                           className="img-2"
                           src={BASE_URL_IMG + data?.Image}
                           onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
+                            e.target.onerror = null;
+                            e.target.src = "/default_image.jpg";
+                          }}
                         />
                         <p>{data?.title}</p>
                       </div>
@@ -553,9 +571,9 @@ export default function Sher() {
                   className="modal-image"
                   onClick={(e) => e.stopPropagation()}
                   onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
+                    e.target.onerror = null;
+                    e.target.src = "/default_image.jpg";
+                  }}
                 />
               </div>
             )}

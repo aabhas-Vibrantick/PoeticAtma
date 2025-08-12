@@ -1,21 +1,20 @@
 import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import apiServices, { BASE_URL_IMG } from '../../../ApiServices/ApiServices'
-import { toast, ToastContainer } from 'react-toastify'
+import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
+import { toast, ToastContainer } from "react-toastify";
 import ScaleLoader from "react-spinners/ScaleLoader";
 import { useEffect, useState } from "react";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 export default function Top20prose() {
   const parse = require("html-react-parser");
   const [allPopular, setAllPopular] = useState([]);
   const [loading, setLoading] = useState(true);
-  const authenticate = sessionStorage.getItem('authenticate')
+  const authenticate = sessionStorage.getItem("authenticate");
   const [alllatest, setAlllatest] = useState([]);
 
   const handleReadMoreClick = () => {
-
     if (!authenticate) {
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
   };
   const override = {
@@ -31,10 +30,13 @@ export default function Top20prose() {
       setLoading(false);
     }, 3000);
 
-    apiServices.getPopularProse()
+    apiServices
+      .getPopularProse()
       .then((data) => {
         if (data.data.success) {
-          const filteredProses = data.data.data.filter((prose) => prose.status === true);
+          const filteredProses = data.data.data.filter(
+            (prose) => prose.status === true
+          );
           setAllPopular(filteredProses);
           // setAllPopular(data.data.data);
           // // console.log(data);
@@ -47,10 +49,13 @@ export default function Top20prose() {
         toast.error("Something went wrong");
       });
 
-    apiServices.latestProse()
+    apiServices
+      .latestProse()
       .then((data) => {
         if (data.data.success) {
-          const filteredProses = data.data.data.filter((prose) => prose.status === true);
+          const filteredProses = data.data.data.filter(
+            (prose) => prose.status === true
+          );
           setAlllatest(filteredProses);
           // setAllBest(data.data.data);
           // // console.log(data);
@@ -64,17 +69,18 @@ export default function Top20prose() {
       });
   }, [loading]);
 
-    // ========search========
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
-     //search handle
-   //search handle
-   const handleSearchQueryChange = (e) => {
+  // ========search========
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  //search handle
+  //search handle
+  const handleSearchQueryChange = (e) => {
     setSearchQuery(e.target.value);
   };
   const performSearch = (query) => {
     const filteredResults = allPopular.filter((proses) => {
-      const fullName = proses.title + proses.tags + proses.prose +proses.userId?.name;
+      const fullName =
+        proses.title + proses.tags + proses.prose + proses.userId?.name;
       return fullName.toLowerCase().includes(query.toLowerCase());
     });
 
@@ -83,7 +89,7 @@ export default function Top20prose() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery === '') {
+    if (searchQuery === "") {
       // If search input is empty, show all poets
       setSearchResults(allPopular);
     } else {
@@ -97,188 +103,128 @@ export default function Top20prose() {
         <div className="blog-blogsingle bloggray-bg">
           <div className="container">
             {/* <!-- Blog Ads --> */}
-            <section id="blogads">
-
-            </section>
+            <section id="blogads"></section>
             {/* ---------------------left sidebar start---------------------------*/}
             <div className="row align-items-start">
               <div className="col-lg-8 m-15px-tb">
-                <div className="container mb80">
-                  <div className="page-timeline">
-                  {searchResults.length > 0
-                      ? searchResults.map((data, index) => (
-                        <div className="vtimeline-point">
-                        <div className="vtimeline-icon">
-                          <i className="fa fa-image"></i>
-                        </div>
-                        <div className="vtimeline-block">
-                          <div className="vtimeline-content">
-                            <div className="vtimeline-imgcontent">
-                              <Link to={"/single-prose/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}/></Link>
-                            </div>
+                <div className="container mb-5">
+                  {/* Determine the correct data source first, then map over the result */}
+                  {(searchResults.length > 0 ? searchResults : allPopular).map(
+                    (data, index) => (
+                      <article
+                        key={data._id || index}
+                        className="card shadow-sm border-0 rounded-3 overflow-hidden mb-4"
+                      >
+                        {/* Featured Image */}
+                        {data.Image && (
+                          <div className="position-relative">
+                            <Link to={`/single-prose/${data._id}`}>
+                              <img
+                                src={BASE_URL_IMG + data.Image}
+                                alt={data.title}
+                                className="img-fluid w-100"
+                                style={{ height: "250px", objectFit: "cover" }}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "/default_image.jpg";
+                                }}
+                              />
+                            </Link>
+                          </div>
+                        )}
 
-                            <a href="#"><h3>{data?.title}</h3></a>
-                            <ul className="post-meta list-inline">
-                             
-                                  <li className="list-inline-item">
-                                    <i className="fa fa-user-circle-o"></i>
-                                    <Link to={"/poets-profile/" + `${data?.userId?._id}`}  className="text-capitalize mx-1">{data?.userId?.name || "Admin"}</Link>
-                                  </li>
-                   
-                              {/* <li className="list-inline-item">
-                            <i className="fa fa-calendar-o"></i> <a href="#">{format(new Date(data.created_at), 'MMMM d, yyyy')}</a>
-                        </li> */}
-                              <li className="list-inline-item">
-                                <i className="fa fa-tags"></i> <a href="#" className="fw-bold">{data?.tags}  </a>
-                              </li>
-                              <li className="list-inline-item">
+                        {/* Article Content */}
+                        <div className="card-body p-4">
+                          {/* Title */}
+                          <Link
+                            to={`/single-prose/${data._id}`}
+                            className="text-dark text-decoration-none"
+                          >
+                            <h3 className="fw-bold mb-3">{data.title}</h3>
+                          </Link>
 
-                                <i className="fa-solid fa-share-nodes"></i> <Link >Share Now</Link>
-                              </li>
-                            </ul>
-                            <p>
-                              <Link to={"/single-prose/" + `${data?._id}`}>
-                                {/* <i className="fa fa-quote-left fa-fw pull-left"></i> */}
-                                {authenticate ? (
-                                  <>
-                                    <p className="shayaritext">  {parse(data.prose)}</p>
-                                    {/* <i className="fa fa-quote-right fa-fw pull-right"></i>  */}
-                                  </>
-                                ) : (
-                                  <>      <div className="shayaricontent-container">
-                                    <p className="shayaricontent ">
-                                      {parse(data.prose)}
-                                    </p>
-                                  </div>
-                                    {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                                    <br />
-                                    <button className="readbutton" onClick={handleReadMoreClick}>
-                                      View More
-                                    </button>
-                                  </>
-                                )}
-
+                          {/* Meta Info */}
+                          <div className="d-flex flex-wrap align-items-center mb-3 text-muted small">
+                            <div className="d-flex align-items-center me-4">
+                              <i className="fa fa-user-circle-o me-2"></i>
+                              <Link
+                                to={`/poets-profile/${data?.userId?._id}`}
+                                className="text-capitalize text-decoration-none text-muted"
+                              >
+                                {data?.userId?.name || "Admin"}
                               </Link>
-                            </p>
-                          </div>
-                          <div className="vtimeline-content-btn">
-                                <a
-                                  className="sendbutton"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${(
-                                      data?.sher || ""
-                                    ).replace(
-                                      /<[^>]+>/g,
-                                      ""
-                                    )}\n\nRead more: https://poeticatma.com/single-shayari/${
-                                      data?._id
-                                    }`
-                                  )}`}
-                                >
-                                  Get Prose on WhatsApp
-                                </a>
-                              </div>
-                        </div>
-                      </div>
-                        ))
-                        : allPopular.map((data, index) => (
-                          <div className="vtimeline-point">
-                            <div className="vtimeline-icon">
-                              <i className="fa fa-image"></i>
                             </div>
-                            <div className="vtimeline-block">
-                              <div className="vtimeline-content">
-                                <div className="vtimeline-imgcontent">
-                                  <Link to={"/single-prose/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="img-fluid mb20" onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}/></Link>
-                                </div>
-    
-                                <a href="#"><h3>{data?.title}</h3></a>
-                                <ul className="post-meta list-inline">
-                                 
-                                      <li className="list-inline-item">
-                                        <i className="fa fa-user-circle-o"></i>
-                                        <Link to={"/poets-profile/" + `${data?.userId?._id}`}  className="text-capitalize mx-1">{data?.userId?.name || "Admin"}</Link>
-                                      </li>
-                       
-                                  {/* <li className="list-inline-item">
-                                <i className="fa fa-calendar-o"></i> <a href="#">{format(new Date(data.created_at), 'MMMM d, yyyy')}</a>
-                            </li> */}
-                                  <li className="list-inline-item">
-                                    <i className="fa fa-tags"></i> <a href="#" className="fw-bold">{data?.tags}  </a>
-                                  </li>
-                                  <li className="list-inline-item">
-    
-                                    <i className="fa-solid fa-share-nodes"></i> <Link >Share Now</Link>
-                                  </li>
-                                </ul>
-                                <p>
-                                  <Link to={"/single-prose/" + `${data?._id}`}>
-                                    {/* <i className="fa fa-quote-left fa-fw pull-left"></i> */}
-                                    {authenticate ? (
-                                      <>
-                                        <p className="shayaritext">  {parse(data.prose)}</p>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i>  */}
-                                      </>
-                                    ) : (
-                                      <>      <div className="shayaricontent-container">
-                                        <p className="shayaricontent ">
-                                          {parse(data.prose)}
-                                        </p>
-                                      </div>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                                        <br />
-                                        <button className="readbutton" onClick={handleReadMoreClick}>
-                                          View More
-                                        </button>
-                                      </>
-                                    )}
-    
-                                  </Link>
-                                </p>
-                              </div>
-                              <div className="vtimeline-content-btn">
-                                <a
-                                  className="sendbutton"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${(
-                                      data?.sher || ""
-                                    ).replace(
-                                      /<[^>]+>/g,
-                                      ""
-                                    )}\n\nRead more: https://poeticatma.com/single-shayari/${
-                                      data?._id
-                                    }`
-                                  )}`}
-                                >
-                                  Get Prose on WhatsApp
-                                </a>
-                              </div>
+                            <div className="d-flex align-items-center">
+                              <i className="fa fa-tags me-2"></i>
+                              <span className="fw-bold">{data.tags}</span>
                             </div>
                           </div>
-                        ))}
-                  </div>
-                </div>
 
+                          {/* Content Snippet */}
+                          <p className="card-text">
+                            {/* Safely create a preview snippet from the 'prose' content */}
+                            {data.prose
+                              ? `${data.prose
+                                  .replace(/<[^>]+>/g, "")
+                                  .substring(0, 200)}...`
+                              : "No content preview available."}
+                          </p>
+
+                          {/* Action Buttons */}
+                          <div className="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                            <Link
+                              to={`/single-prose/${data._id}`}
+                              className="btn btn-primary"
+                            >
+                              View More
+                            </Link>
+                            <a
+                              href={`https://wa.me/?text=${encodeURIComponent(
+                                `${data.title}\n\n${(data.prose || "").replace(
+                                  /<[^>]+>/g,
+                                  ""
+                                )}\n\nRead more: https://poeticatma.com/single-prose/${
+                                  data._id
+                                }`
+                              )}`}
+                              className="btn btn-success"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <i className="fab fa-whatsapp me-2"></i>Share on
+                              WhatsApp
+                            </a>
+                          </div>
+                        </div>
+                      </article>
+                    )
+                  )}
+
+                  {/* Fallback message if no items are found */}
+                  {searchResults.length === 0 && allPopular.length === 0 && (
+                    <div className="text-center p-5 card shadow-sm border-0 rounded-3">
+                      <h4>No Items Found</h4>
+                      <p className="text-muted">
+                        There are no items matching your criteria.
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="col-lg-4 m-15px-tb blog-aside">
                 {/* <!-- Author --> */}
                 <div className="widget widget-author">
                   <div className="search-1  ">
-                  <form onSubmit={handleSearch}>
-                  <input type="search" placeholder="Search" value={searchQuery}
-      onChange={handleSearchQueryChange} required="" />
-                  <input type="submit" value="." />
-                </form>
+                    <form onSubmit={handleSearch}>
+                      <input
+                        type="search"
+                        placeholder="Search"
+                        value={searchQuery}
+                        onChange={handleSearchQueryChange}
+                        required=""
+                      />
+                      <input type="submit" value="." />
+                    </form>
                   </div>
                 </div>
                 {/* <!-- End Author --> */}
@@ -291,17 +237,17 @@ export default function Top20prose() {
                     <ul className="list-unstyled">
                       <li>
                         <Link to="/hindi-prose">
-                        <i className="fa-solid fa-heart"></i>Hindi
-                        </Link> 
+                          <i className="fa-solid fa-heart"></i>Hindi
+                        </Link>
                       </li>
                       <li>
                         <Link to="/english-prose">
-                        <i className="fa-solid fa-heart"></i>English
-                        </Link> 
+                          <i className="fa-solid fa-heart"></i>English
+                        </Link>
                       </li>
                       <li>
                         <Link to="/prose-Image">
-                        <i className="fa-solid fa-heart"></i>Prose Images
+                          <i className="fa-solid fa-heart"></i>Prose Images
                         </Link>
                       </li>
                     </ul>
@@ -348,14 +294,26 @@ export default function Top20prose() {
                       <div className="latest-post-aside media">
                         <div className="lpa-left media-body">
                           <div className="lpa-title">
-                            <h5 className="shayaricontent-container2 "> <Link className="shayaricontent2 " to={"/single-prose/" + `${data?._id}`}>{data?.prose}</Link></h5>
-
+                            <h5 className="shayaricontent-container2 ">
+                              {" "}
+                              <Link
+                                className="shayaricontent2 "
+                                to={"/single-prose/" + `${data?._id}`}
+                              >
+                                {data?.prose}
+                              </Link>
+                            </h5>
                           </div>
                           <div className="lpa-meta">
                             {/* <a  href="#">
                               Rachel Roth
                             </a> */}
-                            <Link className="name" to={"/poets-profile/" + `${data?.userId?._id}`}>{data?.userId?.name}</Link>
+                            <Link
+                              className="name"
+                              to={"/poets-profile/" + `${data?.userId?._id}`}
+                            >
+                              {data?.userId?.name}
+                            </Link>
                             {/* <a className="date" href="#">
                             {format(new Date(data.created_at), 'MMMM d, yyyy')}
                             </a> */}
@@ -363,10 +321,17 @@ export default function Top20prose() {
                         </div>
                         <div className="lpa-right">
                           {/* <a href="#"> */}
-                          <Link to={"/single-prose/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="" onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}/></Link>
+                          <Link to={"/single-prose/" + `${data?._id}`}>
+                            <img
+                              src={BASE_URL_IMG + data?.Image}
+                              alt=""
+                              className=""
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "/default_image.jpg";
+                              }}
+                            />
+                          </Link>
                           {/* <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt="" /> */}
                           {/* </a> */}
                         </div>
@@ -400,5 +365,5 @@ export default function Top20prose() {
       </div>
       <ToastContainer />
     </>
-  )
+  );
 }

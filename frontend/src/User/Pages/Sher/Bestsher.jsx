@@ -1,21 +1,19 @@
-
 import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import apiServices, { BASE_URL_IMG } from '../../../ApiServices/ApiServices'
-import { toast, ToastContainer } from 'react-toastify'
+import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
+import { toast, ToastContainer } from "react-toastify";
 import ScaleLoader from "react-spinners/ScaleLoader";
 import { useEffect, useState } from "react";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 export default function Bestsher() {
   const [allBest, setAllBest] = useState([]);
   const [loading, setLoading] = useState(true);
-  const authenticate = sessionStorage.getItem('authenticate')
+  const authenticate = sessionStorage.getItem("authenticate");
   const [alllatest, setAlllatest] = useState([]);
   const parse = require("html-react-parser");
   const handleReadMoreClick = () => {
-
     if (!authenticate) {
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
   };
   const override = {
@@ -31,11 +29,13 @@ export default function Bestsher() {
       setLoading(false);
     }, 3000);
 
-
-    apiServices.getBestSher()
+    apiServices
+      .getBestSher()
       .then((data) => {
         if (data.data.success) {
-          const filteredShers = data.data.data.filter((sher) => sher.status === true);
+          const filteredShers = data.data.data.filter(
+            (sher) => sher.status === true
+          );
           setAllBest(filteredShers);
           // setAllBest(data.data.data);
           // // console.log(data);
@@ -48,10 +48,13 @@ export default function Bestsher() {
         toast.error("Something went wrong");
       });
 
-    apiServices.latestSher()
+    apiServices
+      .latestSher()
       .then((data) => {
         if (data.data.success) {
-          const filteredShers = data.data.data.filter((sher) => sher.status === true);
+          const filteredShers = data.data.data.filter(
+            (sher) => sher.status === true
+          );
           setAlllatest(filteredShers);
           // setAllBest(data.data.data);
           // // console.log(data);
@@ -65,32 +68,32 @@ export default function Bestsher() {
       });
   }, [loading]);
 
+  // ========search========
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  //search handle
+  const handleSearchQueryChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+  const performSearch = (query) => {
+    const filteredResults = allBest.filter((proses) => {
+      const fullName =
+        proses.title + proses.tags + proses.sher + proses.userId.name;
+      return fullName.toLowerCase().includes(query.toLowerCase());
+    });
 
-     // ========search========
-     const [searchQuery, setSearchQuery] = useState('');
-     const [searchResults, setSearchResults] = useState([]);
-      //search handle
-      const handleSearchQueryChange = (e) => {
-       setSearchQuery(e.target.value);
-     };
-     const performSearch = (query) => {
-       const filteredResults = allBest.filter((proses) => {
-         const fullName = proses.title + proses.tags + proses.sher +proses.userId.name;
-         return fullName.toLowerCase().includes(query.toLowerCase());
-       });
-   
-       setSearchResults(filteredResults);
-     };
-   
-     const handleSearch = (e) => {
-       e.preventDefault();
-       if (searchQuery === '') {
-         // If search input is empty, show all poets
-         setSearchResults(allBest);
-       } else {
-         performSearch(searchQuery);
-       }
-     };
+    setSearchResults(filteredResults);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery === "") {
+      // If search input is empty, show all poets
+      setSearchResults(allBest);
+    } else {
+      performSearch(searchQuery);
+    }
+  };
   return (
     <>
       <ScaleLoader loading={loading} cssOverride={override} size={70} />
@@ -103,239 +106,190 @@ export default function Bestsher() {
             <div className="row align-items-start">
               <div className="col-lg-8 m-15px-tb">
                 <div className="container mb80">
-                  <div className="page-timeline">
-                    {searchResults.length > 0
-                      ? searchResults.map((data, index) => (
-                          <div className="vtimeline-point">
-                            <div className="vtimeline-icon">
-                              <i className="fa fa-image"></i>
-                            </div>
-                            <div className="vtimeline-block">
-                              <div className="vtimeline-content">
-                                <div className="vtimeline-imgcontent">
-                                  <Link to={"/single-sher/" + `${data?._id}`}>
-                                    <img
-                                      src={BASE_URL_IMG + data?.Image}
-                                      alt=""
-                                      className="img-fluid mb20"
-                                      onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
-                                    />
-                                  </Link>
-                                </div>
+                  {searchResults.length > 0
+                    ? searchResults.map((data, index) => (
+                        <div className="card mb-4" key={index}>
+                          <Link to={`/single-sher/${data?._id}`}>
+                            <img
+                              src={BASE_URL_IMG + data?.Image}
+                              alt={data?.title}
+                              className="card-img-top"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "/default_image.jpg";
+                              }}
+                            />
+                          </Link>
 
-                                <a href="#">
-                                  <h3>{data?.title}</h3>
-                                </a>
-                                <ul className="post-meta list-inline">
-                                  <li className="list-inline-item">
-                                    <i className="fa fa-user-circle-o"></i>{" "}
-                                    <Link
-                                      to={
-                                        "/poets-profile/" +
-                                        `${data?.userId?._id}`
-                                      }
-                                      className="text-capitalize mx-1"
-                                    >
-                                      {data?.userId?.name || "Admin"}
-                                    </Link>
-                                  </li>
+                          <div className="card-body">
+                            <h3 className="card-title">
+                              <Link to={`/single-sher/${data?._id}`}>
+                                {data?.title}
+                              </Link>
+                            </h3>
 
-                                  {/* <li className="list-inline-item">
-                            <i className="fa fa-calendar-o"></i> <a href="#">{format(new Date(data.created_at), 'MMMM d, yyyy')}</a>
-                        </li> */}
-                                  <li className="list-inline-item">
-                                    {data.tags.map((tag, tagIndex) => (
-                                      <span key={tagIndex}>
-                                        <i className="fa fa-tags"></i>{" "}
-                                        <Link
-                                          to={`/tags/${tag}`}
-                                          className="fw-bold"
-                                        >
-                                          {tag}
-                                        </Link>
-                                        {tagIndex !== data.tags.length - 1 &&
-                                          ", "}
-                                      </span>
-                                    ))}
-                                  </li>
-                                  <li className="list-inline-item">
-                                    <i className="fa-solid fa-share-nodes"></i>{" "}
-                                    <Link>Share Now</Link>
-                                  </li>
-                                </ul>
-                                <p>
-                                  <Link to={"/single-sher/" + `${data?._id}`}>
-                                    {/* <i className="fa fa-quote-left fa-fw pull-left"></i> */}
-
-                                    {authenticate ? (
-                                      <>
-                                        <p className="shayaritext">
-                                          {" "}
-                                          {parse(data.sher)}
-                                        </p>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                                      </>
-                                    ) : (
-                                      <>
-                                        {" "}
-                                        <div className="shayaricontent-container">
-                                          <p className="shayaricontent ">
-                                            {parse(data.sher)}
-                                          </p>
-                                        </div>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                                        <br />
-                                        <button
-                                          className="readbutton"
-                                          onClick={handleReadMoreClick}
-                                        >
-                                          View More
-                                        </button>
-                                      </>
-                                    )}
-                                  </Link>
-                                </p>
-                              </div>
-                              <div className="vtimeline-content-btn">
-                                <a
-                                  className="sendbutton"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${data?.sher.replace(
-                                      /<[^>]+>/g,
-                                      ""
-                                    )}\n\nRead more: https://poeticatma.com/single-sher/${
-                                      data?._id
-                                    }`
-                                  )}`}
+                            <ul className="post-meta list-inline mb-3">
+                              <li className="list-inline-item">
+                                <i className="fa fa-user-circle-o"></i>{" "}
+                                <Link
+                                  to={`/poets-profile/${data?.userId?._id}`}
+                                  className="text-capitalize mx-1"
                                 >
-                                  Get Sher on WhatsApp
-                                </a>
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                      : allBest.map((data, index) => (
-                          <div className="vtimeline-point">
-                            <div className="vtimeline-icon">
-                              <i className="fa fa-image"></i>
-                            </div>
-                            <div className="vtimeline-block">
-                              <div className="vtimeline-content">
-                                <div className="vtimeline-imgcontent">
-                                  <Link to={"/single-sher/" + `${data?._id}`}>
-                                    <img
-                                      src={BASE_URL_IMG + data?.Image}
-                                      alt=""
-                                      className="img-fluid mb20"
-                                      onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
-                                    />
-                                  </Link>
-                                </div>
-
-                                <a href="#">
-                                  <h3>{data?.title}</h3>
-                                </a>
-                                <ul className="post-meta list-inline">
-                                  <li className="list-inline-item">
-                                    <i className="fa fa-user-circle-o"></i>{" "}
+                                  {data?.userId?.name || "Admin"}
+                                </Link>
+                              </li>
+                              <li className="list-inline-item">
+                                {data.tags.map((tag, tagIndex) => (
+                                  <span key={tagIndex}>
+                                    <i className="fa fa-tags"></i>{" "}
                                     <Link
-                                      to={
-                                        "/poets-profile/" +
-                                        `${data?.userId?._id}`
-                                      }
-                                      className="text-capitalize mx-1"
+                                      to={`/tags/${tag}`}
+                                      className="fw-bold"
                                     >
-                                      {data?.userId?.name || "Admin"}
+                                      {tag}
                                     </Link>
-                                  </li>
+                                    {tagIndex !== data.tags.length - 1 && ", "}
+                                  </span>
+                                ))}
+                              </li>
+                              <li className="list-inline-item">
+                                <i className="fa-solid fa-share-nodes"></i>{" "}
+                                <Link>Share Now</Link>
+                              </li>
+                            </ul>
 
-                                  {/* <li className="list-inline-item">
-                                <i className="fa fa-calendar-o"></i> <a href="#">{format(new Date(data.created_at), 'MMMM d, yyyy')}</a>
-                            </li> */}
-                                  <li className="list-inline-item">
-                                    {data.tags.map((tag, tagIndex) => (
-                                      <span key={tagIndex}>
-                                        <i className="fa fa-tags"></i>{" "}
-                                        <Link
-                                          to={`/tags/${tag}`}
-                                          className="fw-bold"
-                                        >
-                                          {tag}
-                                        </Link>
-                                        {tagIndex !== data.tags.length - 1 &&
-                                          ", "}
-                                      </span>
-                                    ))}
-                                  </li>
-                                  <li className="list-inline-item">
-                                    <i className="fa-solid fa-share-nodes"></i>{" "}
-                                    <Link>Share Now</Link>
-                                  </li>
-                                </ul>
-                                <p>
-                                  <Link to={"/single-sher/" + `${data?._id}`}>
-                                    {/* <i className="fa fa-quote-left fa-fw pull-left"></i> */}
-
-                                    {authenticate ? (
-                                      <>
-                                        <p className="shayaritext">
-                                          {" "}
-                                          {parse(data.sher)}
-                                        </p>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                                      </>
-                                    ) : (
-                                      <>
-                                        {" "}
-                                        <div className="shayaricontent-container">
-                                          <p className="shayaricontent ">
-                                            {parse(data.sher)}
-                                          </p>
-                                        </div>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                                        <br />
-                                        <button
-                                          className="readbutton"
-                                          onClick={handleReadMoreClick}
-                                        >
-                                          View More
-                                        </button>
-                                      </>
-                                    )}
-                                  </Link>
-                                </p>
-                              </div>
-                              <div className="vtimeline-content-btn">
-                                <a
-                                  className="sendbutton"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${data?.sher.replace(
-                                      /<[^>]+>/g,
-                                      ""
-                                    )}\n\nRead more: https://poeticatma.com/single-sher/${
-                                      data?._id
-                                    }`
-                                  )}`}
+                            {authenticate ? (
+                              <p className="shayaritext">{parse(data.sher)}</p>
+                            ) : (
+                              <>
+                                <div className="shayaricontent-container">
+                                  <p className="shayaricontent">
+                                    {parse(data.sher)}
+                                  </p>
+                                </div>
+                                <br />
+                                <button
+                                  className="readbutton"
+                                  onClick={handleReadMoreClick}
                                 >
-                                  Get Sher on WhatsApp
-                                </a>
-                              </div>
-                            </div>
+                                  View More
+                                </button>
+                              </>
+                            )}
                           </div>
-                        ))}
-                  </div>
+
+                          <div className="card-footer text-end">
+                            <a
+                              className="sendbutton"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              href={`https://wa.me/?text=${encodeURIComponent(
+                                `${data?.title}\n\n${data?.sher.replace(
+                                  /<[^>]+>/g,
+                                  ""
+                                )}\n\nRead more: https://poeticatma.com/single-sher/${
+                                  data?._id
+                                }`
+                              )}`}
+                            >
+                              Get Sher on WhatsApp
+                            </a>
+                          </div>
+                        </div>
+                      ))
+                    : allBest.map((data, index) => (
+                        <div className="card mb-4" key={index}>
+                          <Link to={`/single-sher/${data?._id}`}>
+                            <img
+                              src={BASE_URL_IMG + data?.Image}
+                              alt={data?.title}
+                              className="card-img-top"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "/default_image.jpg";
+                              }}
+                            />
+                          </Link>
+
+                          <div className="card-body">
+                            <h3 className="card-title">
+                              <Link to={`/single-sher/${data?._id}`}>
+                                {data?.title}
+                              </Link>
+                            </h3>
+
+                            <ul className="post-meta list-inline mb-3">
+                              <li className="list-inline-item">
+                                <i className="fa fa-user-circle-o"></i>{" "}
+                                <Link
+                                  to={`/poets-profile/${data?.userId?._id}`}
+                                  className="text-capitalize mx-1"
+                                >
+                                  {data?.userId?.name || "Admin"}
+                                </Link>
+                              </li>
+                              <li className="list-inline-item">
+                                {data.tags.map((tag, tagIndex) => (
+                                  <span key={tagIndex}>
+                                    <i className="fa fa-tags"></i>{" "}
+                                    <Link
+                                      to={`/tags/${tag}`}
+                                      className="fw-bold"
+                                    >
+                                      {tag}
+                                    </Link>
+                                    {tagIndex !== data.tags.length - 1 && ", "}
+                                  </span>
+                                ))}
+                              </li>
+                              <li className="list-inline-item">
+                                <i className="fa-solid fa-share-nodes"></i>{" "}
+                                <Link>Share Now</Link>
+                              </li>
+                            </ul>
+
+                            {authenticate ? (
+                              <p className="shayaritext">{parse(data.sher)}</p>
+                            ) : (
+                              <>
+                                <div className="shayaricontent-container">
+                                  <p className="shayaricontent">
+                                    {parse(data.sher)}
+                                  </p>
+                                </div>
+                                <br />
+                                <button
+                                  className="readbutton"
+                                  onClick={handleReadMoreClick}
+                                >
+                                  View More
+                                </button>
+                              </>
+                            )}
+                          </div>
+
+                          <div className="card-footer text-end">
+                            <a
+                              className="sendbutton"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              href={`https://wa.me/?text=${encodeURIComponent(
+                                `${data?.title}\n\n${data?.sher.replace(
+                                  /<[^>]+>/g,
+                                  ""
+                                )}\n\nRead more: https://poeticatma.com/single-sher/${
+                                  data?._id
+                                }`
+                              )}`}
+                            >
+                              Get Sher on WhatsApp
+                            </a>
+                          </div>
+                        </div>
+                      ))}
                 </div>
               </div>
+
               <div className="col-lg-4 m-15px-tb blog-aside">
                 {/* <!-- Author --> */}
                 <div className="widget widget-author">
@@ -360,27 +314,27 @@ export default function Bestsher() {
                   </div>
                   <div className="blogbox categories">
                     <ul className="list-unstyled">
-                       <li>
-                        <Link to="/english-sher" >
-                        <i className="fa-solid fa-heart"></i>English
+                      <li>
+                        <Link to="/english-sher">
+                          <i className="fa-solid fa-heart"></i>English
                         </Link>
                       </li>
                       <li>
-                        <Link to="/hindi-sher" >
-                        <i className="fa-solid fa-heart"></i>Hindi
+                        <Link to="/hindi-sher">
+                          <i className="fa-solid fa-heart"></i>Hindi
                         </Link>
                       </li>
                       <li>
-                        <Link to="/top20-sher" >
-                        <i className="fa-solid fa-heart"></i>Top-20 Sher
+                        <Link to="/top20-sher">
+                          <i className="fa-solid fa-heart"></i>Top-20 Sher
                         </Link>
                         <li>
-                        <Link to="/sher-Image">
-                        <i className="fa-solid fa-heart"></i>Sher Images
-                        </Link>
+                          <Link to="/sher-Image">
+                            <i className="fa-solid fa-heart"></i>Sher Images
+                          </Link>
+                        </li>
                       </li>
-                      </li>
-                        {/* <a href="#">
+                      {/* <a href="#">
                           <i className="fa-brands fa-canadian-maple-leaf"></i>
                           Nature
                         </a>
@@ -437,9 +391,9 @@ export default function Bestsher() {
                               alt=""
                               className=""
                               onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
+                                e.target.onerror = null;
+                                e.target.src = "/default_image.jpg";
+                              }}
                             />
                           </Link>
                           {/* <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt="" /> */}

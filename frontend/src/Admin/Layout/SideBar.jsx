@@ -302,6 +302,18 @@ const routes = [
       },
     ],
   },
+   {
+    name: "Captcha",
+    icon: <AiTwotoneFileExclamation />,
+    subRoutes: [
+     
+      {
+        path: "/admin/captcha",
+        name: "ON/OFF",
+        icon: <FaMoneyBill />,
+      },
+    ],
+  },
  
   {
     path: "/admin/all-message",

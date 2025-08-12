@@ -103,7 +103,7 @@ import FAQs from "./Pages/FAQs";
 import TermsAndConditions from './Pages/TermsAndConditions';
 import AddQuote from "./Admin/pages/Add/AddQuote";
 import ViewQuote from "./Admin/pages/Update/ViewQuote";
-
+import CaptchaSettingsPage from './Admin/pages/CaptchaSettingsPage';
 
 function App() {
   return (
@@ -293,6 +293,7 @@ function App() {
 
             <Route path="/admin/all-users" element={<AllUserList />} />
             <Route path="/admin/admin-profile/:_id" element={<UserSetting />} />
+             <Route path="/admin/captcha" element={<CaptchaSettingsPage />} />
           </Route>
         </Routes>
       </Router>

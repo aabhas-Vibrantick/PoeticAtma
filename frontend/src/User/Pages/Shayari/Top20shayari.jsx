@@ -105,253 +105,112 @@ export default function Top20shayari() {
             {/* ---------------------left sidebar start---------------------------*/}
             <div className="row align-items-start">
               <div className="col-lg-8 m-15px-tb">
-                <div className="container mb80">
-                  <div className="page-timeline">
-                    {searchResults.length > 0
-                      ? searchResults.map((data, index) => (
-                          <div className="vtimeline-point">
-                            <div className="vtimeline-icon">
-                              <i className="fa fa-image"></i>
+                <div className="container mb-5">
+                  {/* Determine the correct data source first, then map over the result */}
+                  {(searchResults.length > 0 ? searchResults : allPopular).map(
+                    (data, index) => (
+                      <article
+                        key={data._id || index}
+                        className="card shadow-sm border-0 rounded-3 overflow-hidden mb-4"
+                      >
+                        {/* Featured Image */}
+                        {data.Image && (
+                          <div className="position-relative">
+                            <Link to={`/single-shayari/${data._id}`}>
+                              <img
+                                src={BASE_URL_IMG + data.Image}
+                                alt={data.title}
+                                className="img-fluid w-100"
+                                style={{ height: "250px", objectFit: "cover" }}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "/default_image.jpg";
+                                }}
+                              />
+                            </Link>
+                          </div>
+                        )}
+
+                        {/* Article Content */}
+                        <div className="card-body p-4">
+                          {/* Title */}
+                          <Link
+                            to={`/single-shayari/${data._id}`}
+                            className="text-dark text-decoration-none"
+                          >
+                            <h3 className="fw-bold mb-3">{data.title}</h3>
+                          </Link>
+
+                          {/* Meta Info */}
+                          <div className="d-flex flex-wrap align-items-center mb-3 text-muted small">
+                            <div className="d-flex align-items-center me-4">
+                              <i className="fa fa-user-circle-o me-2"></i>
+                              <Link
+                                to={`/poets-profile/${data?.userId?._id}`}
+                                className="text-capitalize text-decoration-none text-muted"
+                              >
+                                {data?.userId?.name || "Admin"}
+                              </Link>
                             </div>
-                            <div className="vtimeline-block">
-                              <div className="vtimeline-content">
-                                <div className="vtimeline-imgcontent">
-                                  <Link
-                                    to={"/single-shayari/" + `${data?._id}`}
-                                  >
-                                    <img
-                                      src={BASE_URL_IMG + data?.Image}
-                                      alt=""
-                                      className="img-fluid mb20"
-                                      onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
-                                    />
-                                  </Link>
-                                </div>
-
-                                <a href="#">
-                                  <h3>{data?.title}</h3>
-                                </a>
-                                <ul className="post-meta list-inline">
-                                  <li className="list-inline-item">
-                                    <i className="fa fa-user-circle-o"></i>
-                                    <Link
-                                      to={
-                                        "/poets-profile/" +
-                                        `${data?.userId?._id}`
-                                      }
-                                      className="text-capitalize mx-1"
-                                    >
-                                      {data?.userId?.name || "Admin"}
-                                    </Link>
-                                  </li>
-
-                                  {/* <li className="list-inline-item">
-                            <i className="fa fa-calendar-o"></i> <a href="#"> {format(new Date(data.created_at), 'MMMM d, yyyy')}</a>
-                        </li> */}
-                                  <li className="list-inline-item">
-                                    <i className="fa fa-tags"></i>{" "}
-                                    <a href="#" className="fw-bold">
-                                      {data?.tags}{" "}
-                                    </a>
-                                  </li>
-                                  <li className="list-inline-item">
-                                    <i className="fa-solid fa-share-nodes"></i>{" "}
-                                    <Link>Share Now</Link>
-                                  </li>
-                                </ul>
-                                <p>
-                                  <Link
-                                    to={"/single-shayari/" + `${data?._id}`}
-                                  >
-                                    {/* <i className="fa fa-quote-left fa-fw pull-left"></i> */}
-                                    {authenticate ? (
-                                      <>
-                                        <p>{parse(data.shayari)}</p>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                                      </>
-                                    ) : (
-                                      <>
-                                        {" "}
-                                        <div className="shayaricontent-container">
-                                          <p className="shayaricontent ">
-                                            {parse(data.shayari)}
-                                          </p>
-                                        </div>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                                        <br />
-                                        <button
-                                          className="readbutton"
-                                          onClick={handleReadMoreClick}
-                                        >
-                                          View More
-                                        </button>
-                                      </>
-                                    )}
-                                  </Link>
-                                </p>
-                              </div>
-                              <div className="vtimeline-content-btn">
-                                <a
-                                  className="sendbutton"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${(
-                                      data?.sher || ""
-                                    ).replace(
-                                      /<[^>]+>/g,
-                                      ""
-                                    )}\n\nRead more: https://poeticatma.com/single-shayari/${
-                                      data?._id
-                                    }`
-                                  )}`}
-                                >
-                                  Get Shayari on WhatsApp
-                                </a>
-                              </div>
+                            <div className="d-flex align-items-center">
+                              <i className="fa fa-tags me-2"></i>
+                              <span className="fw-bold">{data.tags}</span>
                             </div>
                           </div>
-                        ))
-                      : allPopular.map((data, index) => (
-                          <div className="vtimeline-point">
-                            <div className="vtimeline-icon">
-                              <i className="fa fa-image"></i>
-                            </div>
-                            <div className="vtimeline-block">
-                              <div className="vtimeline-content">
-                                <div className="vtimeline-imgcontent">
-                                  <Link
-                                    to={"/single-shayari/" + `${data?._id}`}
-                                  >
-                                    <img
-                                      src={BASE_URL_IMG + data?.Image}
-                                      alt=""
-                                      className="img-fluid mb20"
-                                      onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
-                                    />
-                                  </Link>
-                                </div>
 
-                                <a href="#">
-                                  <h3>{data?.title}</h3>
-                                </a>
-                                <ul className="post-meta list-inline">
-                                  <li className="list-inline-item">
-                                    <i className="fa fa-user-circle-o"></i>
-                                    <Link
-                                      to={
-                                        "/poets-profile/" +
-                                        `${data?.userId?._id}`
-                                      }
-                                      className="text-capitalize mx-1"
-                                    >
-                                      {data?.userId?.name || "Admin"}
-                                    </Link>
-                                  </li>
+                          {/* Content Snippet */}
+                          <p className="card-text">
+                            {/* Safely create a preview snippet, checking for 'shayari' or 'sher' */}
+                            {data.shayari || data.sher
+                              ? `${(data.shayari || data.sher)
+                                  .replace(/<[^>]+>/g, "")
+                                  .substring(0, 200)}...`
+                              : "No content preview available."}
+                          </p>
 
-                                  {/* <li className="list-inline-item">
-                                <i className="fa fa-calendar-o"></i> <a href="#"> {format(new Date(data.created_at), 'MMMM d, yyyy')}</a>
-                            </li> */}
-                                  <li className="list-inline-item">
-                                    <i className="fa fa-tags"></i>{" "}
-                                    <a href="#" className="fw-bold">
-                                      {data?.tags}{" "}
-                                    </a>
-                                  </li>
-                                  <li className="list-inline-item">
-                                    <i className="fa-solid fa-share-nodes"></i>{" "}
-                                    <Link>Share Now</Link>
-                                  </li>
-                                </ul>
-                                <p>
-                                  <Link
-                                    to={"/single-shayari/" + `${data?._id}`}
-                                  >
-                                    {/* <i className="fa fa-quote-left fa-fw pull-left"></i> */}
-                                    {authenticate ? (
-                                      <>
-                                        <p>{parse(data.shayari)}</p>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                                      </>
-                                    ) : (
-                                      <>
-                                        {" "}
-                                        <div className="shayaricontent-container">
-                                          <p className="shayaricontent ">
-                                            {parse(data.shayari)}
-                                          </p>
-                                        </div>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                                        <br />
-                                        <button
-                                          className="readbutton"
-                                          onClick={handleReadMoreClick}
-                                        >
-                                          View More
-                                        </button>
-                                      </>
-                                    )}
-                                  </Link>
-                                </p>
-                              </div>
-                              <div className="vtimeline-content-btn">
-                                <a
-                                  className="sendbutton"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${(
-                                      data?.sher || ""
-                                    ).replace(
-                                      /<[^>]+>/g,
-                                      ""
-                                    )}\n\nRead more: https://poeticatma.com/single-shayari/${
-                                      data?._id
-                                    }`
-                                  )}`}
-                                >
-                                  Get Shayari on WhatsApp
-                                </a>
-                              </div>
-                            </div>
+                          {/* Action Buttons */}
+                          <div className="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                            <Link
+                              to={`/single-shayari/${data._id}`}
+                              className="btn btn-primary"
+                            >
+                              View More
+                            </Link>
+                            <a
+                              href={`https://wa.me/?text=${encodeURIComponent(
+                                `${data.title}\n\n${(
+                                  data.shayari ||
+                                  data.sher ||
+                                  ""
+                                ).replace(
+                                  /<[^>]+>/g,
+                                  ""
+                                )}\n\nRead more: https://poeticatma.com/single-shayari/${
+                                  data._id
+                                }`
+                              )}`}
+                              className="btn btn-success"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <i className="fab fa-whatsapp me-2"></i>Share on
+                              WhatsApp
+                            </a>
                           </div>
-                        ))}
+                        </div>
+                      </article>
+                    )
+                  )}
 
-                    {/* <div className="vtimeline-point">
-            <div className="vtimeline-icon">
-                <i className="fa fa-image"></i>
-            </div>
-            <div className="vtimeline-block">
-                <span className="vtimeline-date">June 25, 2017</span><div className="vtimeline-content">
-                     <div className="embed-responsive embed-responsive-21by9 mb20">
-                   <iframe src="https://www.youtube.com/embed/htPYk6QxacQ?ecver=2" style={{position:"absolute",width:"100%",height:"100%",left:"0"}} width="640" height="360" frameborder="0" allowfullscreen=""></iframe>
-                </div>
-                    <a href="#"><h3>Standard post title</h3></a>
-                    <ul className="post-meta list-inline">
-                        <li className="list-inline-item">
-                            <i className="fa fa-user-circle-o"></i> <a href="#">John Doe</a>
-                        </li>
-                        <li className="list-inline-item">
-                            <i className="fa fa-calendar-o"></i> <a href="#">29 June 2017</a>
-                        </li>
-                        <li className="list-inline-item">
-                            <i className="fa fa-tags"></i> <a href="#">Bootstrap4</a>
-                        </li>
-                    </ul>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur in iaculis ex. Etiam volutpat laoreet urna. Morbi ut tortor nec nulla commodo malesuada sit amet vel lacus. Fusce eget efficitur libero. Morbi dapibus porta quam laoreet placerat.
-                    </p><br/>
-                    <a href="#" className="btn btn-outline-secondary btn-sm">View More</a>
-                </div>
-            </div>
-        </div> */}
-                  </div>
+                  {/* Message to display if no items are available */}
+                  {searchResults.length === 0 && allPopular.length === 0 && (
+                    <div className="text-center p-5 card shadow-sm border-0 rounded-3">
+                      <h4>No Items Found</h4>
+                      <p className="text-muted">
+                        There are no items matching your criteria.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="col-lg-4 m-15px-tb blog-aside">

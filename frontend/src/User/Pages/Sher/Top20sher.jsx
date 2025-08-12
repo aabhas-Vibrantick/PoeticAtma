@@ -1,20 +1,19 @@
 import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import apiServices, { BASE_URL_IMG } from '../../../ApiServices/ApiServices'
-import { toast, ToastContainer } from 'react-toastify'
+import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
+import { toast, ToastContainer } from "react-toastify";
 import ScaleLoader from "react-spinners/ScaleLoader";
 import { useEffect, useState } from "react";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 export default function Top20sher() {
   const [allPopular, setAllPopular] = useState([]);
   const [loading, setLoading] = useState(true);
-  const authenticate = sessionStorage.getItem('authenticate')
+  const authenticate = sessionStorage.getItem("authenticate");
   const [alllatest, setAlllatest] = useState([]);
   const parse = require("html-react-parser");
   const handleReadMoreClick = () => {
-
     if (!authenticate) {
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
   };
   const override = {
@@ -30,10 +29,13 @@ export default function Top20sher() {
       setLoading(false);
     }, 3000);
 
-    apiServices.getPopularSher()
+    apiServices
+      .getPopularSher()
       .then((data) => {
         if (data.data.success) {
-          const filteredShers = data.data.data.filter((sher) => sher.status === true);
+          const filteredShers = data.data.data.filter(
+            (sher) => sher.status === true
+          );
           setAllPopular(filteredShers);
           // setAllPopular(data.data.data);
           // // console.log(data);
@@ -46,10 +48,13 @@ export default function Top20sher() {
         toast.error("Something went wrong");
       });
 
-    apiServices.latestSher()
+    apiServices
+      .latestSher()
       .then((data) => {
         if (data.data.success) {
-          const filteredShers = data.data.data.filter((sher) => sher.status === true);
+          const filteredShers = data.data.data.filter(
+            (sher) => sher.status === true
+          );
           setAlllatest(filteredShers);
           // setAllBest(data.data.data);
           // // console.log(data);
@@ -63,32 +68,32 @@ export default function Top20sher() {
       });
   }, [loading]);
 
+  // ========search========
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  //search handle
+  const handleSearchQueryChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+  const performSearch = (query) => {
+    const filteredResults = allPopular.filter((proses) => {
+      const fullName =
+        proses.title + proses.tags + proses.sher + proses.userId.name;
+      return fullName.toLowerCase().includes(query.toLowerCase());
+    });
 
-     // ========search========
-     const [searchQuery, setSearchQuery] = useState('');
-     const [searchResults, setSearchResults] = useState([]);
-      //search handle
-      const handleSearchQueryChange = (e) => {
-       setSearchQuery(e.target.value);
-     };
-     const performSearch = (query) => {
-       const filteredResults = allPopular.filter((proses) => {
-         const fullName = proses.title + proses.tags + proses.sher +proses.userId.name;
-         return fullName.toLowerCase().includes(query.toLowerCase());
-       });
-   
-       setSearchResults(filteredResults);
-     };
-   
-     const handleSearch = (e) => {
-       e.preventDefault();
-       if (searchQuery === '') {
-         // If search input is empty, show all poets
-         setSearchResults(allPopular);
-       } else {
-         performSearch(searchQuery);
-       }
-     };
+    setSearchResults(filteredResults);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery === "") {
+      // If search input is empty, show all poets
+      setSearchResults(allPopular);
+    } else {
+      performSearch(searchQuery);
+    }
+  };
   return (
     <>
       <ScaleLoader loading={loading} cssOverride={override} size={70} />
@@ -100,220 +105,107 @@ export default function Top20sher() {
             {/* ---------------------left sidebar start---------------------------*/}
             <div className="row align-items-start">
               <div className="col-lg-8 m-15px-tb">
-                <div className="container mb80">
-                  <div className="page-timeline">
-                    {searchResults.length > 0
-                      ? searchResults.map((data, index) => (
-                          <div className="vtimeline-point">
-                            <div className="vtimeline-icon">
-                              <i className="fa fa-image"></i>
-                            </div>
-                            <div className="vtimeline-block">
-                              <div className="vtimeline-content">
-                                <div className="vtimeline-imgcontent">
-                                  <Link to={"/single-sher/" + `${data?._id}`}>
-                                    <img
-                                      src={BASE_URL_IMG + data?.Image}
-                                      alt=""
-                                      className="img-fluid mb20"
-                                      onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
-                                    />
-                                  </Link>
+                {(searchResults.length > 0 ? searchResults : allPopular).map(
+                  (data) => (
+                    <div
+                      className="card shadow-sm border-0 rounded-3 overflow-hidden mb-4"
+                      key={data?._id}
+                    >
+                      {/* Image */}
+                      <div className="position-relative">
+                        <Link to={`/single-sher/${data?._id}`}>
+                          <img
+                            src={BASE_URL_IMG + data?.Image}
+                            alt={data?.title}
+                            className="img-fluid w-100"
+                            style={{ height: "300px", objectFit: "cover" }}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "/default_image.jpg";
+                            }}
+                          />
+                        </Link>
+                      </div>
+
+                      {/* Card Body */}
+                      <div className="card-body p-4 d-flex flex-column justify-content-between h-100">
+                        <div>
+                          {/* Title */}
+                          <h5 className="fw-bold mb-2">
+                            <Link
+                              to={`/single-sher/${data?._id}`}
+                              className="text-decoration-none text-primary"
+                            >
+                              {data?.title}
+                            </Link>
+                          </h5>
+
+                          {/* Meta Info */}
+                          <ul className="list-inline small text-muted mb-3">
+                            <li className="list-inline-item me-3">
+                              <i className="fa fa-user-circle-o me-1"></i>
+                              <Link
+                                to={`/poets-profile/${data?.userId?._id}`}
+                                className="text-dark fw-semibold text-capitalize"
+                              >
+                                {data?.userId?.name || "Admin"}
+                              </Link>
+                            </li>
+                            <li className="list-inline-item">
+                              <i className="fa fa-tags me-1"></i>
+                              <span className="fw-bold">{data?.tags}</span>
+                            </li>
+                          </ul>
+
+                          {/* Sher Content */}
+                          <div
+                            className="text-secondary small"
+                            style={{ lineHeight: "1.7" }}
+                          >
+                            {authenticate ? (
+                              <p className="mb-0">{parse(data?.sher)}</p>
+                            ) : (
+                              <>
+                                <div className="shayaricontent-container">
+                                  <p className="shayaricontent mb-0">
+                                    {parse(data?.sher)}
+                                  </p>
                                 </div>
-
-                                <a href="#">
-                                  <h3>{data?.title}</h3>
-                                </a>
-                                <ul className="post-meta list-inline">
-                                  <li className="list-inline-item">
-                                    <i className="fa fa-user-circle-o"></i>{" "}
-                                    <Link
-                                      to={
-                                        "/poets-profile/" +
-                                        `${data?.userId?._id}`
-                                      }
-                                      className="text-capitalize mx-1"
-                                    >
-                                      {data?.userId?.name || "Admin"}
-                                    </Link>
-                                  </li>
-
-                                  {/* <li className="list-inline-item">
-                            <i className="fa fa-calendar-o"></i> <a href="#">{format(new Date(data.created_at), 'MMMM d, yyyy')}</a>
-                        </li> */}
-                                  <li className="list-inline-item">
-                                    <i className="fa fa-tags"></i>{" "}
-                                    <a href="#" className="fw-bold">
-                                      {data?.tags}{" "}
-                                    </a>
-                                  </li>
-                                  <li className="list-inline-item">
-                                    <i className="fa-solid fa-share-nodes"></i>{" "}
-                                    <Link>Share Now</Link>
-                                  </li>
-                                </ul>
-                                <p>
-                                  <Link to={"/single-sher/" + `${data?._id}`}>
-                                    {/* <i className="fa fa-quote-left fa-fw pull-left"></i> */}
-                                    {authenticate ? (
-                                      <>
-                                        <p className="shayaritext">
-                                          {" "}
-                                          {parse(data.sher)}{" "}
-                                        </p>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i>  */}
-                                      </>
-                                    ) : (
-                                      <>
-                                        {" "}
-                                        <div className="shayaricontent-container">
-                                          <p className="shayaricontent ">
-                                            {parse(data.sher)}
-                                          </p>
-                                        </div>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                                        <br />
-                                        <button
-                                          className="readbutton"
-                                          onClick={handleReadMoreClick}
-                                        >
-                                          View More
-                                        </button>
-                                      </>
-                                    )}
-                                  </Link>
-                                </p>
-                              </div>
-                              <div className="vtimeline-content-btn">
-                                <a
-                                  className="sendbutton"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${data?.sher.replace(
-                                      /<[^>]+>/g,
-                                      ""
-                                    )}\n\nRead more: https://poeticatma.com/single-sher/${
-                                      data?._id
-                                    }`
-                                  )}`}
+                                <button
+                                  className="btn btn-outline-primary btn-sm mt-3"
+                                  onClick={handleReadMoreClick}
                                 >
-                                  Get Sher on WhatsApp
-                                </a>
-                              </div>
-                            </div>
+                                  View More
+                                </button>
+                              </>
+                            )}
                           </div>
-                        ))
-                      : allPopular.map((data, index) => (
-                          <div className="vtimeline-point">
-                            <div className="vtimeline-icon">
-                              <i className="fa fa-image"></i>
-                            </div>
-                            <div className="vtimeline-block">
-                              <div className="vtimeline-content">
-                                <div className="vtimeline-imgcontent">
-                                  <Link to={"/single-sher/" + `${data?._id}`}>
-                                    <img
-                                      src={BASE_URL_IMG + data?.Image}
-                                      alt=""
-                                      className="img-fluid mb20"
-                                      onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
-                                    />
-                                  </Link>
-                                </div>
+                        </div>
 
-                                <a href="#">
-                                  <h3>{data?.title}</h3>
-                                </a>
-                                <ul className="post-meta list-inline">
-                                  <li className="list-inline-item">
-                                    <i className="fa fa-user-circle-o"></i>{" "}
-                                    <Link
-                                      to={
-                                        "/poets-profile/" +
-                                        `${data?.userId?._id}`
-                                      }
-                                      className="text-capitalize mx-1"
-                                    >
-                                      {data?.userId?.name || "Admin"}
-                                    </Link>
-                                  </li>
-
-                                  {/* <li className="list-inline-item">
-                                <i className="fa fa-calendar-o"></i> <a href="#">{format(new Date(data.created_at), 'MMMM d, yyyy')}</a>
-                            </li> */}
-                                  <li className="list-inline-item">
-                                    <i className="fa fa-tags"></i>{" "}
-                                    <a href="#" className="fw-bold">
-                                      {data?.tags}{" "}
-                                    </a>
-                                  </li>
-                                  <li className="list-inline-item">
-                                    <i className="fa-solid fa-share-nodes"></i>{" "}
-                                    <Link>Share Now</Link>
-                                  </li>
-                                </ul>
-                                <p>
-                                  <Link to={"/single-sher/" + `${data?._id}`}>
-                                    {/* <i className="fa fa-quote-left fa-fw pull-left"></i> */}
-                                    {authenticate ? (
-                                      <>
-                                        <p className="shayaritext">
-                                          {" "}
-                                          {parse(data.sher)}{" "}
-                                        </p>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i>  */}
-                                      </>
-                                    ) : (
-                                      <>
-                                        {" "}
-                                        <div className="shayaricontent-container">
-                                          <p className="shayaricontent ">
-                                            {parse(data.sher)}
-                                          </p>
-                                        </div>
-                                        {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                                        <br />
-                                        <button
-                                          className="readbutton"
-                                          onClick={handleReadMoreClick}
-                                        >
-                                          View More
-                                        </button>
-                                      </>
-                                    )}
-                                  </Link>
-                                </p>
-                              </div>
-                              <div className="vtimeline-content-btn">
-                                <a
-                                  className="sendbutton"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  href={`https://wa.me/?text=${encodeURIComponent(
-                                    `${data?.title}\n\n${data?.sher.replace(
-                                      /<[^>]+>/g,
-                                      ""
-                                    )}\n\nRead more: https://poeticatma.com/single-sher/${
-                                      data?._id
-                                    }`
-                                  )}`}
-                                >
-                                  Get Sher on WhatsApp
-                                </a>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                  </div>
-                </div>
+                        {/* WhatsApp Share Button */}
+                        <div className="mt-4">
+                          <a
+                            className="btn btn-success btn-sm w-100"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={`https://wa.me/?text=${encodeURIComponent(
+                              `${data?.title}\n\n${data?.sher.replace(
+                                /<[^>]+>/g,
+                                ""
+                              )}\n\nRead more: https://poeticatma.com/single-sher/${
+                                data?._id
+                              }`
+                            )}`}
+                          >
+                            Get Sher on WhatsApp
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
               </div>
+
               <div className="col-lg-4 m-15px-tb blog-aside">
                 {/* <!-- Author --> */}
                 <div className="widget widget-author">
@@ -339,18 +231,18 @@ export default function Top20sher() {
                   <div className="blogbox categories">
                     <ul className="list-unstyled">
                       <li>
-                        <Link to="/hindi-sher" >
-                        <i className="fa-solid fa-heart"></i>Hindi
+                        <Link to="/hindi-sher">
+                          <i className="fa-solid fa-heart"></i>Hindi
                         </Link>
                       </li>
                       <li>
-                        <Link to="/english-sher" >
-                        <i className="fa-solid fa-heart"></i>English
+                        <Link to="/english-sher">
+                          <i className="fa-solid fa-heart"></i>English
                         </Link>
                       </li>
                       <li>
                         <Link to="/sher-Image">
-                        <i className="fa-solid fa-heart"></i>Sher Images
+                          <i className="fa-solid fa-heart"></i>Sher Images
                         </Link>
                       </li>
                       {/* <li>
@@ -447,9 +339,9 @@ export default function Top20sher() {
                               alt=""
                               className=""
                               onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
+                                e.target.onerror = null;
+                                e.target.src = "/default_image.jpg";
+                              }}
                             />
                           </Link>
                           {/* <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt="" /> */}

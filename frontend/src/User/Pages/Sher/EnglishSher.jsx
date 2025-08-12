@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import apiServices, { BASE_URL_IMG } from '../../../ApiServices/ApiServices';
-import { toast, ToastContainer } from 'react-toastify';
+import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
+import { toast, ToastContainer } from "react-toastify";
 import ScaleLoader from "react-spinners/ScaleLoader";
 import { useEffect, useState } from "react";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 
 export default function Englishsher() {
   const [allEnglish, setAllEnglish] = useState([]);
   const [loading, setLoading] = useState(true);
-  const authenticate = sessionStorage.getItem('authenticate');
+  const authenticate = sessionStorage.getItem("authenticate");
   const [alllatest, setAlllatest] = useState([]);
   const parse = require("html-react-parser");
 
@@ -26,10 +26,13 @@ export default function Englishsher() {
       setLoading(false);
     }, 3000);
 
-    apiServices.getsherByEnglish()
-      .then(response => {
+    apiServices
+      .getsherByEnglish()
+      .then((response) => {
         if (response.data.success) {
-          const filteredShers = response.data.allenglish.filter((sher) => sher.status === true);
+          const filteredShers = response.data.allenglish.filter(
+            (sher) => sher.status === true
+          );
           setAllEnglish(filteredShers);
         }
       })
@@ -37,10 +40,13 @@ export default function Englishsher() {
         toast.error("Error loading English shers");
       });
 
-    apiServices.latestSher()
+    apiServices
+      .latestSher()
       .then((data) => {
         if (data.data.success) {
-          const filteredShers = data.data.data.filter((sher) => sher.status === true);
+          const filteredShers = data.data.data.filter(
+            (sher) => sher.status === true
+          );
           setAlllatest(filteredShers);
         } else {
           toast.error(data.data.message);
@@ -53,12 +59,12 @@ export default function Englishsher() {
 
   const handleReadMoreClick = () => {
     if (!authenticate) {
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
   };
 
   // ======== Search ========
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
   const handleSearchQueryChange = (e) => {
@@ -67,7 +73,8 @@ export default function Englishsher() {
 
   const performSearch = (query) => {
     const filteredResults = allEnglish.filter((proses) => {
-      const fullName = proses.title + proses.tags + proses.sher + proses.userId.name;
+      const fullName =
+        proses.title + proses.tags + proses.sher + proses.userId.name;
       return fullName.toLowerCase().includes(query.toLowerCase());
     });
 
@@ -76,7 +83,7 @@ export default function Englishsher() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery === '') {
+    if (searchQuery === "") {
       setSearchResults(allEnglish);
     } else {
       performSearch(searchQuery);
@@ -137,74 +144,112 @@ export default function Englishsher() {
             <div className="row gx-5">
               {/* Left Column */}
               <div className="col-lg-8">
-                <div className="page-timeline">
-                  {(searchResults.length > 0 ? searchResults : allEnglish).map((data, index) => (
-                    <div className="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden" key={index}>
-                      <Link to={`/single-sher/${data?._id}`}>
-                        <img
-                          src={BASE_URL_IMG + data?.Image}
-                          alt=""
-                          className="img-fluid w-100 object-fit-cover"
-                          style={{ height: "320px" }}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "/default_image.jpg";
-                          }}
-                        />
-                      </Link>
-                      <div className="card-body bg-white p-4 d-flex flex-column justify-content-between h-100">
-                        <div>
-                          <h5 className="card-title mb-2 text-primary fw-bold">
-                            <Link to={`/single-sher/${data?._id}`} className="text-decoration-none text-primary">
-                              {data?.title}
-                            </Link>
-                          </h5>
-                          <ul className="list-inline small text-muted mb-3">
-                            <li className="list-inline-item me-3">
-                              <i className="fa fa-user-circle-o me-1"></i>
-                              <Link to={`/poets-profile/${data?.userId?._id}`} className="text-dark fw-semibold">
-                                {data?.userId?.name || "Admin"}
-                              </Link>
-                            </li>
-                            <li className="list-inline-item">
-                              <i className="fa fa-tags me-1"></i>
-                              <span className="fw-bold">{data?.tags}</span>
-                            </li>
-                          </ul>
+                {(searchResults.length > 0 ? searchResults : allEnglish).map(
+                  (data) => (
+                    <div
+                      className="card shadow-sm border-0 rounded-3 overflow-hidden mb-4"
+                      key={data?._id}
+                    >
+                      {/* Featured Image */}
+                      <div className="position-relative">
+                        <Link to={`/single-sher/${data?._id}`}>
+                          <img
+                            src={BASE_URL_IMG + data?.Image}
+                            alt={data?.title}
+                            className="img-fluid w-100"
+                            style={{ height: "300px", objectFit: "cover" }}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "/default_image.jpg";
+                            }}
+                          />
+                        </Link>
 
-                          <div className="text-secondary small" style={{ lineHeight: "1.7" }}>
-                            {authenticate ? (
-                              <p className="shayaritext mb-0">{parse(data?.sher)}</p>
-                            ) : (
-                              <>
-                                <div className="shayaricontent-container">
-                                  <p className="shayaricontent mb-0">{parse(data?.sher)}</p>
-                                </div>
-                                <button
-                                  className="btn btn-outline-primary btn-sm mt-3"
-                                  onClick={handleReadMoreClick}
-                                >
-                                  View More
-                                </button>
-                              </>
-                            )}
+                        {/* Category badge if available */}
+                        {data?.Category_id?.Category_name && (
+                          <div className="position-absolute top-0 start-0 m-3">
+                            <span className="badge bg-primary text-white px-3 py-2 rounded-pill">
+                              {data?.Category_id?.Category_name}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Card Body */}
+                      <div className="card-body p-4">
+                        {/* Title */}
+                        <h5 className="fw-bold mb-2">
+                          <Link
+                            to={`/single-sher/${data?._id}`}
+                            className="text-decoration-none text-primary"
+                          >
+                            {data?.title}
+                          </Link>
+                        </h5>
+
+                        {/* Meta Info */}
+                        <div className="d-flex flex-wrap align-items-center mb-3 text-muted small">
+                          <div className="me-4 d-flex align-items-center">
+                            <i className="fa fa-user-circle-o me-2"></i>
+                            <Link
+                              to={`/poets-profile/${data?.userId?._id}`}
+                              className="text-dark text-capitalize"
+                            >
+                              {data?.userId?.name || "Admin"}
+                            </Link>
+                          </div>
+                          <div className="d-flex align-items-center">
+                            <i className="fa fa-tags me-2"></i>
+                            <span className="fw-bold">{data?.tags}</span>
                           </div>
                         </div>
 
+                        {/* Sher Content */}
+                        <div
+                          className="text-secondary small"
+                          style={{ lineHeight: "1.7" }}
+                        >
+                          {authenticate ? (
+                            <p className="mb-0">{parse(data?.sher)}</p>
+                          ) : (
+                            <>
+                              <div className="shayaricontent-container">
+                                <p className="shayaricontent mb-0">
+                                  {parse(data?.sher)}
+                                </p>
+                              </div>
+                              <button
+                                className="btn btn-outline-primary btn-sm mt-3"
+                                onClick={handleReadMoreClick}
+                              >
+                                View More
+                              </button>
+                            </>
+                          )}
+                        </div>
+
+                        {/* WhatsApp Share Button */}
                         <div className="mt-4">
                           <a
                             className="btn btn-success btn-sm w-100"
                             target="_blank"
                             rel="noopener noreferrer"
-                            href={`https://wa.me/?text=${encodeURIComponent(`${data?.title}\n\n${data?.sher.replace(/<[^>]+>/g, '')}\n\nRead more: https://poeticatma.com/single-sher/${data?._id}`)}`}
+                            href={`https://wa.me/?text=${encodeURIComponent(
+                              `${data?.title}\n\n${data?.sher.replace(
+                                /<[^>]+>/g,
+                                ""
+                              )}\n\nRead more: https://poeticatma.com/single-sher/${
+                                data?._id
+                              }`
+                            )}`}
                           >
                             Get Sher on WhatsApp
                           </a>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  )
+                )}
               </div>
 
               {/* Sidebar */}
@@ -235,17 +280,20 @@ export default function Englishsher() {
                     <ul className="list-group list-group-flush">
                       <li className="list-group-item">
                         <Link to="/hindi-sher" className="text-decoration-none">
-                          <i className="fa-solid fa-heart me-2 text-danger"></i> Hindi
+                          <i className="fa-solid fa-heart me-2 text-danger"></i>{" "}
+                          Hindi
                         </Link>
                       </li>
                       <li className="list-group-item">
                         <Link to="/top20-sher" className="text-decoration-none">
-                          <i className="fa-solid fa-heart me-2 text-danger"></i> Top-20 Sher
+                          <i className="fa-solid fa-heart me-2 text-danger"></i>{" "}
+                          Top-20 Sher
                         </Link>
                       </li>
                       <li className="list-group-item">
                         <Link to="/sher-Image" className="text-decoration-none">
-                          <i className="fa-solid fa-heart me-2 text-danger"></i> Sher Images
+                          <i className="fa-solid fa-heart me-2 text-danger"></i>{" "}
+                          Sher Images
                         </Link>
                       </li>
                     </ul>
@@ -265,7 +313,11 @@ export default function Englishsher() {
                                 src={BASE_URL_IMG + data?.Image}
                                 alt=""
                                 className="img-thumbnail"
-                                style={{ width: "60px", height: "60px", objectFit: "cover" }}
+                                style={{
+                                  width: "60px",
+                                  height: "60px",
+                                  objectFit: "cover",
+                                }}
                                 onError={(e) => {
                                   e.target.onerror = null;
                                   e.target.src = "/default_image.jpg";
@@ -275,12 +327,20 @@ export default function Englishsher() {
                           </div>
                           <div className="flex-grow-1">
                             <h6 className="mb-1">
-                              <Link to={`/single-sher/${data?._id}`} className="text-dark text-decoration-none">
-                                {data?.sher?.length > 60 ? data.sher.substring(0, 60) + "..." : data.sher}
+                              <Link
+                                to={`/single-sher/${data?._id}`}
+                                className="text-dark text-decoration-none"
+                              >
+                                {data?.sher?.length > 60
+                                  ? data.sher.substring(0, 60) + "..."
+                                  : data.sher}
                               </Link>
                             </h6>
                             <small className="text-muted">
-                              <Link to={`/poets-profile/${data?.userId?._id}`} className="text-muted">
+                              <Link
+                                to={`/poets-profile/${data?.userId?._id}`}
+                                className="text-muted"
+                              >
                                 {data?.userId?.name || "Admin"}
                               </Link>
                             </small>

@@ -7,12 +7,14 @@ const ContentCard = ({ type, item, baseUrl }) => {
     sher: `/single-sher/${item._id}`,
     shayari: `/single-shayari/${item._id}`,
     prose: `/single-prose/${item._id}`,
+    blog:`/single-blog/${item._id}`,
   };
 
   const textMap = {
     sher: item?.sher,
     shayari: item?.shayari,
     prose: item?.prose,
+    blog: item?.blog,
   };
 
   function trimToWords(text, limit = 20) {

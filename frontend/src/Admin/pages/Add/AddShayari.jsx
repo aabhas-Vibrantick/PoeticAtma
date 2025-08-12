@@ -41,8 +41,8 @@ function AddShayari() {
 
     const formData = new FormData();
     formData.append("title", title);
-    const cleanShayari = shayari.replace(/^<p>(.*?)<\/p>$/i, "$1").trim();
-    formData.append("shayari", cleanShayari);
+    // const cleanShayari = shayari.replace(/^<p>(.*?)<\/p>$/i, "$1").trim();
+    formData.append("shayari", shayari);
     formData.append("language", language);
     formData.append("Category_id", categoryId);
     formData.append("userId", selectedUserId);
@@ -51,7 +51,7 @@ function AddShayari() {
       formData.append("Image", image);
     }
 
-    if(tag){
+    if (tag) {
       formData.append("tag", tag);
     }
 
@@ -71,8 +71,28 @@ function AddShayari() {
     }
   };
 
+  const config = {
+  askBeforePasteFromWord: false,
+  askBeforePasteHTML: false,
+  defaultActionOnPaste: "insert_clear_html",
+  preserveWhiteSpace: true,
+  cleanHTML: {
+    removeTags: ["script", "style", "img", "video", "audio"],
+    removeAttrs: ["style", "class", "width", "height"],
+  },
+  style: {
+    color: "#000000",
+    backgroundColor: "#ffffff",
+  },
+};
+
+
+
   return (
     <>
+    <style>{`.jodit-wysiwyg {
+    white-space: pre-wrap !important; /* preserve all spaces and line breaks */
+  }`}</style>
       <main className="main-container adminbody">
         <div className="container">
           <div className="row">
@@ -156,11 +176,17 @@ function AddShayari() {
                     onChange={(e) => setShayari(e.target.value)}
                   ></textarea> */}
                   <JoditEditor
-                    ref={editor}
-                    className="text-dark"
-                    value={shayari}
-                    onChange={(newContent) => setShayari(newContent)}
-                  />
+  ref={editor}
+  value={shayari}
+  config={config}
+  onChange={(newContent) => setShayari(newContent)}
+  onPaste={(event) => {
+    event.preventDefault();
+    const text = (event.clipboardData || window.clipboardData).getData("text/plain");
+    document.execCommand("insertText", false, text);
+  }}
+/>
+
                 </div>
 
                 <div className="form-outline mb-4">

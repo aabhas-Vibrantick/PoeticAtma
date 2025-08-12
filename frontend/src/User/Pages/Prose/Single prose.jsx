@@ -6,6 +6,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import ScaleLoader from "react-spinners/ScaleLoader";
 import { useEffect, useState } from "react";
 import { format } from 'date-fns';
+import parse from "html-react-parser";
 export default function Singleprose() {
   const parse = require("html-react-parser");
   const { _id } = useParams();
@@ -245,6 +246,15 @@ export default function Singleprose() {
 
   return (
     <>
+    <style>{`.prose-content p {
+  margin-bottom: 1em;  /* Add spacing between paragraphs */
+}
+
+.prose-content {
+  white-space: pre-wrap; /* preserve spaces and line breaks */
+  word-wrap: break-word; /* break long words */
+}
+`}</style>
       <ScaleLoader loading={loading} cssOverride={override} size={70} />
       <div className={loading ? "disable-full-screen" : ""}>
         <div className="blog-blogsingle bloggray-bg">
@@ -256,460 +266,208 @@ export default function Singleprose() {
             {/* ---------------------left sidebar start---------------------------*/}
             <div className="row align-items-start">
               <div className="col-lg-8 m-15px-tb">
-                <div className="container mb80">
-                  <div className="page-timeline">
+  <div className="container mb-5">
+    <article className="card shadow-sm border-0 rounded-3 overflow-hidden">
+      {/* Featured Image */}
+      <div className="position-relative">
+        <img
+          src={BASE_URL_IMG + prose?.Image}
+          alt={prose?.title}
+          className="img-fluid w-100"
+          style={{ height: '300px', objectFit: 'cover' }}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = '/default_image.jpg';
+          }}
+        />
+        <div className="position-absolute top-0 start-0 m-3">
+          <span className="badge bg-primary text-white px-3 py-2 rounded-pill">
+            {prose?.Category_id?.Category_name}
+          </span>
+        </div>
+      </div>
 
-                    <div className="vtimeline-point">
-                      <div className="vtimeline-icon">
-                        <i className="fa fa-image"></i>
-                      </div>
-                      <div className="vtimeline-block">
-                        <div className="vtimeline-content">
-                          <div className="vtimeline-imgcontent">
-                            <img src={BASE_URL_IMG + prose?.Image} alt="" className="img-fluid mb20" onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}/>
-                          </div>
-                          <h6 className="catlitile">
-                            <a href="#"><span className="px-2">Category:</span>{prose?.Category_id?.Category_name} </a>
-                          </h6>
+      {/* Article Content */}
+      <div className="card-body p-4 p-md-5">
+        <h1 className="display-5 fw-bold mb-3">{prose?.title}</h1>
 
-                          <a href="#"><h3>{prose?.title}</h3></a>
-                          <ul className="post-meta list-inline">
-                            
-                                <li className="list-inline-item">
+        {/* Meta Info */}
+        <div className="d-flex flex-wrap align-items-center mb-4 text-muted">
+          <div className="d-flex align-items-center me-4">
+            <i className="fa fa-user-circle-o me-2"></i>
+            <Link
+              to={`/poets-profile/${prose?.userId?._id}`}
+              className="text-capitalize text-decoration-none"
+            >
+              {prose?.userId?.name || 'Admin'}
+            </Link>
+          </div>
+          <div className="d-flex align-items-center">
+            <i className="fa fa-tags me-2"></i>
+            <span className="fw-bold">{prose?.tags}</span>
+          </div>
+        </div>
 
-                                  <i className="fa fa-user-circle-o"></i> <Link to={"/poets-profile/" + `${prose?.userId?._id}`}  className="text-capitalize mx-1">{prose?.userId?.name || "Admin"}</Link>
-                                </li>
-                      
+        {/* Prose Content */}
+        <div className="lead mb-4">
+          <div className="prose-content">
+            {prose?.prose && typeof prose.prose === 'string' ? parse(prose.prose) : <p>Invalid or missing content.</p>}
+          </div>
+        </div>
 
-                            {/* <li className="list-inline-item">
-                            <i className="fa fa-calendar-o"></i> <a href="#"> {isValidDate(prose?.created_at)
-    ? format(new Date(prose?.created_at), 'MMMM d, yyyy')
-    : 'Invalid Date'}</a>
-          
-                        </li> */}
-                            <li className="list-inline-item">
+        {/* Article Footer: Likes, Views */}
+        <div className="d-flex flex-wrap align-items-center justify-content-start border-top pt-3">
+          <div className="like-button me-4">
+            <label className="d-flex align-items-center mb-0">
+              <input
+                type="checkbox"
+                className="d-none"
+                onClick={handleLikeUnlike}
+              />
+              <svg
+                className="me-2 text-primary"
+                width="24"
+                height="24"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+                style={{ cursor: 'pointer' }}
+              >
+                <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2H464c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48H294.5c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3V320 272 247.1c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192H96c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32z" />
+              </svg>
+              <span className={`fw-bold ${liked ? 'text-primary' : ''}`}>
+                {likeCount !== null ? likeCount : 'Loading...'}
+              </span>
+            </label>
+          </div>
+          <div className="d-flex align-items-center">
+            <i className="fa-solid fa-eye me-2"></i>
+            {viewCount} Views
+          </div>
+        </div>
+      </div>
+    </article>
 
-                              <span >
-                                <i className="fa fa-tags"></i>{" "}
-                                <Link  className="fw-bold">{prose.tags}</Link>
+    {/* Comments Section */}
+    <section className="mt-5">
+      <h2 className="h4 mb-4">Comments</h2>
+      <div className="card shadow-sm border-0 rounded-3">
+        <div className="card-body p-4">
+          {/* Add Comment */}
+          <div className="d-flex mb-4">
+            <textarea
+              className="form-control me-2"
+              placeholder="Write a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+            <button className="btn btn-primary" onClick={createComment}>
+              Send
+            </button>
+          </div>
 
-                              </span>
-
-                            </li>
-                          </ul>
-                          <p>
-
-                            {/* <i className="fa fa-quote-left fa-fw pull-left"></i> */}
-
-
-                            {authenticate ? (
-                              <>
-                                <p className="shayaritext"> {prose?.prose && typeof prose.prose === 'string' ? (
-                                  <>
-                                    {parse(prose.prose)}
-                                  </>
-                                ) : (
-                                  <p>Invalid or missing blog content.</p>
-                                )}</p>
-
-                                {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                              </>
-                            ) : (
-                              <>      <div className="shayaricontent-container">
-                                {/* <p className="shayaricontent ">
-        {prose?.prose}
-        </p> */}
-                                <p className="shayaricontent "> {prose?.prose && typeof prose.prose === 'string' ? (
-                                  <>
-                                    {parse(prose.prose)}
-                                  </>
-                                ) : (
-                                  <p>Invalid or missing blog content.</p>
-                                )}</p>
-                              </div>
-                                {/* <i className="fa fa-quote-right fa-fw pull-right"></i> */}
-                                <br />
-                                <button className="readbutton" onClick={handleReadMoreClick}>
-                                  View More
-                                </button>
-                              </>
-                            )}
-
-
-                          </p>
-                          <div className="articlefooter">
-                            <ul className="articlestats">
-                              <div className="like-button">
-                                {authenticate ? (
-                                  <>
-                                    <li> <a className="m-r-15 text-inverse-lighter mx-2 ">
-                                      <label className="">
-                                        <input
-                                          type="checkbox"
-                                          className="likeinput"
-                                          onClick={handleLikeUnlike}
-                                        />
-                                        <svg
-                                          className="likesvg "
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          viewBox="0 0 512 512"
-                                        >
-                                          <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2H464c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48H294.5c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3V320 272 247.1c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192H96c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32z" />
-                                        </svg>
-                                        <span className={`like-count px-2 ${liked ? "liked" : ""}`}>
-                                          {likeCount !== null ? likeCount : 'Loading...'}
-                                        </span>
-                                      </label>
-                                    </a>
-                                    </li>
-                                  </>
-                                ) : (
-                                  <>
-                                    <li> <a className="m-r-15 text-inverse-lighter mx-2 ">
-                                      <label className="">
-                                        <input
-                                          type="checkbox"
-                                          className="likeinput"
-                                          onClick={handleReadMoreClick}
-                                        />
-                                        <svg
-                                          className="likesvg "
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          viewBox="0 0 512 512"
-                                        >
-                                          <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2H464c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48H294.5c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3V320 272 247.1c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192H96c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32z" />
-                                        </svg>
-                                        <span className={`like-count px-2 ${liked ? "liked" : ""}`}>
-                                          {likeCount !== null ? likeCount : 'Loading...'}
-                                        </span>
-                                      </label>
-                                    </a>
-                                    </li>
-
-                                  </>
-                                )}
-                                {/* <a className="m-r-15 text-inverse-lighter px-4">
-                                  <i className="fa fa-comments fa-fw fa-lg m-r-3 mx-2"></i>
-                                  Comment
-                                </a> */}
-
-                                <a className="m-r-15 text-inverse-lighter ">
-                                  <i className="fa-solid fa-eye mx-2"></i>
-                                  {viewCount} Views
-                                </a>
-                                {/* <a className="m-r-15 text-inverse-lighter px-4">
-                                  <i className="fa-solid fa-share-nodes mx-2"></i>
-                                  <span className=" text-muted"> Share</span>
-                                </a> */}
-                              </div>
-
-                            </ul>
-                          </div>
-                        </div>
-
-                      </div>
-
+          {/* Comments List */}
+          {comments && comments.length > 0 ? (
+            comments.map((comment) => (
+              <div className="mb-4" key={comment._id}>
+                <div className="d-flex">
+                  <img
+                    className="rounded-circle me-3"
+                    src={comment?.userId?.Image ? BASE_URL_IMG + comment.userId.Image : '/assets/images/avtar.png'}
+                    alt="avatar"
+                    width="50"
+                    height="50"
+                    onError={(e) => {
+                      e.target.src = '/assets/images/avtar.png';
+                    }}
+                  />
+                  <div className="flex-grow-1">
+                    <div className="d-flex justify-content-between align-items-baseline">
+                      <h6 className="mb-1">
+                        <Link
+                          to={`/poets-profile/${comment.userId?._id}`}
+                          className="text-decoration-none text-capitalize"
+                        >
+                          {comment.userId.name}
+                        </Link>
+                        <small className="text-muted ms-2">
+                          {format(new Date(comment.created_at), 'MMMM d, yyyy')}
+                        </small>
+                      </h6>
+                      <a
+                        href="#!"
+                        className="text-primary text-decoration-none small"
+                        onClick={() => toggleReply(comment._id)}
+                      >
+                        <i className="fas fa-reply me-1"></i>
+                        {showReply[comment._id] ? 'Hide Reply' : 'Reply'}
+                      </a>
                     </div>
+                    <p className="mb-2">{comment.text}</p>
 
+                    {/* Reply Form */}
+                    {showReply[comment._id] && (
+                      <div className="d-flex mt-3">
+                        <textarea
+                          className="form-control me-2"
+                          placeholder="Write a reply..."
+                          value={newReply}
+                          onChange={(e) => setNewReply(e.target.value)}
+                          required
+                        />
+                        <button
+                          className="btn btn-outline-primary"
+                          onClick={() => createReply(comment._id)}
+                        >
+                          Send
+                        </button>
+                      </div>
+                    )}
 
+                    {/* Replies */}
+                    {comment.replies && comment.replies.length > 0 && (
+                      <div className="mt-3">
+                        {comment.replies.map((reply) => (
+                          <div className="d-flex mb-3" key={reply._id}>
+                            <img
+                              className="rounded-circle me-3"
+                              src={reply?.userId?.Image ? BASE_URL_IMG + reply.userId.Image : '/assets/images/avtar.png'}
+                              alt="avatar"
+                              width="40"
+                              height="40"
+                              onError={(e) => {
+                                e.target.src = '/assets/images/avtar.png';
+                              }}
+                            />
+                            <div className="flex-grow-1">
+                              <h6 className="mb-1 small">
+                                <Link
+                                  to={`/poets-profile/${reply.userId?._id}`}
+                                  className="text-decoration-none text-capitalize"
+                                >
+                                  {reply.userId.name}
+                                </Link>
+                                <small className="text-muted ms-2">
+                                  {format(new Date(reply.created_at), 'MMMM d, yyyy')}
+                                </small>
+                              </h6>
+                              <p className="mb-0 small">{reply.text}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  {authenticate ? (
-                    <>
-                      <section className="">
-                        <div className="container my-5 py-5">
-                          <h2 className="comments-title text-start"> <i className="fa fa-comments fa-fw fa-lg m-r-3 mx-3"></i>Comments</h2>
-
-
-                          <div className="card">
-                            <div className="card-body p-4">
-                              <div className=" my-3 d-flex flex-row gap-2">
-                                <textarea
-                                  className=" form-control col-9"
-                                  placeholder="Write a comment..."
-                                  value={newComment}
-                                  onChange={(e) => setNewComment(e.target.value)}
-                                />
-                                <button className="replybutton "
-                                  onClick={createComment}>
-                                  <div className="svg-wrapper-1">
-                                    <div className="svg-wrapper">
-                                      <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z" fill="currentColor"></path>
-                                      </svg>
-                                    </div>
-                                  </div>
-                                  <span>Send</span>
-                                </button>
-
-                              </div>
-                              {/* ==================start comment main map================ */}
-                              {comments && comments.length > 0 ? (
-                                comments.map((comment) => (
-
-                                  <div className="row mt-5" key={comment._id}>
-                                    <div className="col">
-                                      {/* ==================start comment content================ */}
-                                      <div className="d-flex flex-start">
-                                        <img className="rounded-circle shadow-1-strong me-3"
-                                          src={BASE_URL_IMG + comment?.userId?.Image || "/assets/images/avtar.png"} alt="avatar" width="65"
-                                          height="65" 
-                                          onError={(e) => {
-                                            e.target.src = "/assets/images/avtar.png";
-                                          }}
-                                          />
-                                        <div className="flex-grow-1 flex-shrink-1">
-                                          <div>
-                                            <div className="d-flex justify-content-between align-items-center">
-                                              <p className="mb-1 text-capitalize">
-                                              <Link to={"/poets-profile/" + `${comment?.userId?._id}`}>{comment.userId.name}</Link>   
-                                              <span className="small">{format(new Date(comment?.created_at), 'MMMM d, yyyy')}</span>
-                                              </p>
-                                              {/* ==================end comment content================ */}
-                                              <a href="#!" className={`px-3 ${showReply[comment._id]
-                                                  ? "active-reply-button"
-                                                  : ""
-                                                }`}
-                                                onClick={() => {
-                                                  toggleReply(comment._id);
-
-                                                }}><i className="fas fa-reply fa-xs"></i><span className="small"> {showReply[comment._id] ? "Hide Reply" : "show Reply"}</span>
-                                              </a>
-                                              {showReply[comment._id] && (
-                                                <div className="d-flex flex-start mt-4">
-                                                  <textarea
-                                                    className=" repinput  gap-2 "
-                                                    placeholder="   Reply..."
-                                                    value={newReply}
-                                                    onChange={(e) => setNewReply(e.target.value)}
-                                                    required
-                                                  />
-                                                  <button className="replybutton "
-                                                    onClick={() => createReply(comment._id)}>
-                                                    <div className="svg-wrapper-1">
-                                                      <div className="svg-wrapper">
-                                                        <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                          <path d="M0 0h24v24H0z" fill="none"></path>
-                                                          <path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z" fill="currentColor"></path>
-                                                        </svg>
-                                                      </div>
-                                                    </div>
-                                                    <span>Send</span>
-                                                  </button>
-                                                </div>)}
-                                            </div>
-                                            <p className="small mb-0">
-                                              {comment.text}
-                                            </p>
-                                          </div>
-
-                                          {comment.replies &&
-                                            comment.replies.length > 0 && (
-                                              <div className="" key={`replies-${comment._id}`}>
-                                                {comment.replies.map((reply) => (
-                                                  <div className="d-flex flex-start mt-4" key={reply._id}>
-                                                    <a className="me-3" href="#">
-                                                      <img className="rounded-circle shadow-1-strong"
-                                                        src={BASE_URL_IMG + reply?.userId?.Image || "/assets/images/avtar.png"} alt="avatar"
-                                                        width="65" height="65" 
-                                                        onError={(e) => {
-                                                          e.target.src = "/assets/images/avtar.png";
-                                                        }}
-                                                        />
-                                                    </a>
-                                                    <div className="flex-grow-1 flex-shrink-1">
-                                                      <div>
-                                                        <div className="d-flex justify-content-between align-items-center">
-                                                          <p className="mb-1 text-capitalize">
-                                                          <Link to={"/poets-profile/" + `${reply?.userId?._id}`}>{reply.userId.name} </Link>
-                            <span className="small">-{format(new Date(reply?.created_at), 'MMMM d, yyyy')}</span>
-                            </p>
-                                                        </div>
-                                                        <p className="small mb-0">
-                                                          {reply.text}
-                                                        </p>
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                ))
-
-                                                }
-                                              </div>
-                                            )}
-
-                                          {/* </div>
-             )} */}
-                                          {/* ==================end togel for show hide  replies================ */}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))
-
-                              ) : (
-
-                                <p>No comments available</p>
-                              )}
-                              {/* ==================end comment main map================ */}
-                            </div>
-                          </div>
-                        </div>
-
-                      </section>
-                    </>
-                  ) : (
-                    <>
-                      <section className="">
-                        <div className="container my-5 py-5">
-                          <h2 className="comments-title text-start"> <i className="fa fa-comments fa-fw fa-lg m-r-3"></i>Comments</h2>
-
-
-                          <div className="card">
-                            <div className="card-body p-4">
-                              <div className=" my-3 d-flex flex-row gap-2">
-                                <textarea
-                                  className=" form-control col-9"
-                                  placeholder="Write a comment..."
-                                  value={newComment}
-                                  onChange={(e) => setNewComment(e.target.value)}
-                                />
-                                <button className="replybutton "
-                                  onClick={handleReadMoreClick}>
-                                  <div className="svg-wrapper-1">
-                                    <div className="svg-wrapper">
-                                      <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z" fill="currentColor"></path>
-                                      </svg>
-                                    </div>
-                                  </div>
-                                  <span>Send</span>
-                                </button>
-
-                              </div>
-                              {/* ==================start comment main map================ */}
-                              {comments && comments.length > 0 ? (
-                                comments.map((comment) => (
-
-                                  <div className="row mt-5" key={comment._id}>
-                                    <div className="col">
-                                      {/* ==================start comment content================ */}
-                                      <div className="d-flex flex-start">
-                                        <img className="rounded-circle shadow-1-strong me-3"
-                                          src={BASE_URL_IMG + comment?.userId?.Image || "/assets/images/avtar.png"} alt="avatar" width="65"
-                                          height="65" 
-                                          onError={(e) => {
-                                            e.target.src = "/assets/images/avtar.png";
-                                          }}
-                                          />
-                                        <div className="flex-grow-1 flex-shrink-1">
-                                          <div>
-                                            <div className="d-flex justify-content-between align-items-center">
-                                              <p className="mb-1 text-capitalize">
-                                              <Link to={"/poets-profile/" + `${comment?.userId?._id}`}> {comment.userId.name}</Link>
-                                                <span className="small">{format(new Date(comment?.created_at), 'MMMM d, yyyy')}</span>
-                                              </p>
-                                              {/* ==================end comment content================ */}
-                                              <a href="#!" className={`px-3 ${showReply[comment._id]
-                                                  ? "active-reply-button"
-                                                  : ""
-                                                }`}
-                                                onClick={() => {
-                                                  toggleReply(comment._id);
-
-                                                }}><i className="fas fa-reply fa-xs"></i><span className="small"> {showReply[comment._id] ? "Hide Reply" : "show Reply"}</span>
-                                              </a>
-                                              {showReply[comment._id] && (
-                                                <div className="d-flex flex-start mt-4">
-                                                  <textarea
-                                                    className=" repinput  gap-2 "
-                                                    placeholder="Reply to this comment..."
-                                                    value={newReply}
-                                                    onChange={(e) => setNewReply(e.target.value)}
-                                                    required
-                                                  />
-                                                  <button className="replybutton "
-                                                    onClick={handleReadMoreClick}>
-                                                    <div className="svg-wrapper-1">
-                                                      <div className="svg-wrapper">
-                                                        <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                          <path d="M0 0h24v24H0z" fill="none"></path>
-                                                          <path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z" fill="currentColor"></path>
-                                                        </svg>
-                                                      </div>
-                                                    </div>
-                                                    <span>Send</span>
-                                                  </button>
-                                                </div>)}
-                                            </div>
-                                            <p className="small mb-0">
-                                              {comment.text}
-                                            </p>
-                                          </div>
-
-                                          {comment.replies &&
-                                            comment.replies.length > 0 && (
-                                              <div className="" key={`replies-${comment._id}`}>
-                                                {comment.replies.map((reply) => (
-                                                  <div className="d-flex flex-start mt-4" key={reply._id}>
-                                                    <a className="me-3" href="#">
-                                                      <img className="rounded-circle shadow-1-strong"
-                                                        src={BASE_URL_IMG + reply?.userId?.Image ||"/assets/images/avtar.png"} alt="avatar"
-                                                        width="65" height="65" 
-                                                        onError={(e) => {
-                                                          e.target.src = "/assets/images/avtar.png";
-                                                        }}
-                                                        />
-                                                    
-                                                    </a>
-                                                    <div className="flex-grow-1 flex-shrink-1">
-                                                      <div>
-                                                        <div className="d-flex justify-content-between align-items-center">
-                                                          <p className="mb-1 text-capitalize">
-                                                          <Link to={"/poets-profile/" + `${reply?.userId?._id}`}>{reply.userId.name}</Link> 
-                                                            <span className="small">-  {format(new Date(reply?.created_at), 'MMMM d, yyyy')}</span>
-                                                          </p>
-                                                        </div>
-                                                        <p className="small mb-0">
-                                                          {reply.text}
-                                                        </p>
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                ))
-
-                                                }
-                                              </div>
-                                            )}
-
-                                          {/* </div>
-             )} */}
-                                          {/* ==================end togel for show hide  replies================ */}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))
-
-                              ) : (
-
-                                <p>No comments available</p>
-                              )}
-                              {/* ==================end comment main map================ */}
-                            </div>
-                          </div>
-                        </div>
-
-                      </section>
-
-                    </>
-                  )}
                 </div>
-
               </div>
+            ))
+          ) : (
+            <p className="text-muted">No comments yet. Be the first to comment!</p>
+          )}
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
               <div className="col-lg-4 m-15px-tb blog-aside">
                 {/* <!-- Author --> */}
                 <div className="widget widget-author">

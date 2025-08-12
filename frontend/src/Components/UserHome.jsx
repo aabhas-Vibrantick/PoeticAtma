@@ -12,7 +12,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import Sidebar from "./Sidebar";
 import LeftSidebar from "./LeftSidebar";
 import ContentCard from "./ContentCard";
-import './ShayariDay.css';
+import "./ShayariDay.css";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -582,47 +582,19 @@ export default function UserHome() {
             <hr className="headinghr" />
           </div>
         </section>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <div className="d-flex justify-content-center align-items-center">
           <div className="CardRatingwrapNew">
             <section>
-              <div className="d-flex flex-wrap">
-                {featuredBlogs.map((blog) => (
-                  <div className="col-lg-4 blog-card" key={blog._id}>
-                    <div className="homeblog-card">
-                      <div
-                        style={{
-                          justifyContent: "center",
-                          alignContent: "center",
-                        }}
-                      >
-                        <img
-                          src={BASE_URL_IMG + blog?.Image}
-                          alt="Blog Image"
-                          onError={(e) => {
-                            e.target.onerror = null; // Prevent infinite loop
-                            e.target.src = "/default_image.jpg";
-                          }}
-                        />
-                      </div>
-                      <div className="homeblog-info">
-                        <div className="blogtitlecontent-container">
-                          <h2 className="text-start blogtitlecontent">
-                            {blog?.title}
-                          </h2>
-                        </div>
-                        <div className="blogcontent-container">
-                          <p className="blogcontent ">{blog?.description}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              <div className="row mx-auto">
+                {Array.isArray(featuredBlogs) &&
+                  featuredBlogs.map((blog) => (
+                    <ContentCard
+                      key={blog._id}
+                      type="blog"
+                      item={blog}
+                      baseUrl={BASE_URL_IMG}
+                    />
+                  ))}
               </div>
               <div className="col-12 d-flex justify-content-center mt-3">
                 <Link to="/blogs" className="btn custom-yellow-btn">
@@ -632,6 +604,7 @@ export default function UserHome() {
             </section>
           </div>
         </div>
+
         <div className="testimonialApp shadow-lg text-center">
           {/* <h1 className="fs-1 fw-bold text-testi">
             What People Talking About Poetic Atma?

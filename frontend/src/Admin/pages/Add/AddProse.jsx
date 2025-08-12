@@ -41,9 +41,7 @@ function AddProse() {
     const formData = new FormData();
     formData.append("title", title);
 
-    const cleanProse = prose.replace(/^<p>(.*?)<\/p>$/i, "$1").trim();
-    formData.append("shayari", cleanProse);
-
+    // const cleanProse = prose.replace(/^<p>(.*?)<\/p>$/i, "$1").trim();
     formData.append("prose", prose);
     formData.append("language", language);
     formData.append("Category_id", categoryId);
@@ -70,6 +68,21 @@ function AddProse() {
       toast.error("Something went wrong");
     }
   };
+
+  const config = {
+  askBeforePasteFromWord: false,
+  askBeforePasteHTML: false,
+  defaultActionOnPaste: "insert_clear_html",
+  preserveWhiteSpace: true,
+  cleanHTML: {
+    removeTags: ["script", "style", "img", "video", "audio"],
+    removeAttrs: ["style", "class", "width", "height"],
+  },
+  style: {
+    color: "#000000",
+    backgroundColor: "#ffffff",
+  },
+};
 
   return (
     <>
@@ -155,11 +168,22 @@ function AddProse() {
                     value={prose}
                     onChange={(e) => setProse(e.target.value)}
                   ></textarea> */}
-                  <JoditEditor
+                  {/* <JoditEditor
                     ref={editor}
                     className="text-dark"
                     value={prose}
                     onChange={(newContent) => setProse(newContent)}
+                  /> */}
+                  <JoditEditor
+                    ref={editor}
+                    value={prose}
+                    config={config}
+                    onChange={(newContent) => setProse(newContent)}
+                    onPaste={(event) => {
+                      event.preventDefault();
+                      const text = (event.clipboardData || window.clipboardData).getData("text/plain");
+                      document.execCommand("insertText", false, text);
+                    }}
                   />
                 </div>
                 <div className="form-outline mb-4">

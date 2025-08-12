@@ -17,13 +17,23 @@ const sherschema = new mongoose.Schema({
   created_at: { type: Date, default: Date.now() },
 });
 
+// sherschema.pre("save", function (next) {
+//   if (this.sher && typeof this.sher === "string") {
+//     this.sher = this.sher
+//       .replace(/<\/?p>/gi, "")         // remove <p> and </p>
+//       .replace(/<br\s*\/?>/gi, "")     // remove <br> and <br/>
+//       .trim();                         // optional: clean whitespace
+//   }
+//   next();
+// });
+
 sherschema.pre("save", function (next) {
   if (this.sher && typeof this.sher === "string") {
-    this.sher = this.sher
-      .replace(/<\/?p>/gi, "")         // remove <p> and </p>
-      .replace(/<br\s*\/?>/gi, "")     // remove <br> and <br/>
-      .trim();                         // optional: clean whitespace
+    this.sher = this.sher.replace(/<\/?p>/g, "\n");
+    this.sher = this.sher.replace(/<br\s*\/?>/gi, "\n");
+    // Don't trim or remove empty lines to preserve formatting
   }
   next();
 });
+
 module.exports = new mongoose.model("sher", sherschema);

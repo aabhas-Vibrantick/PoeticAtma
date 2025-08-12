@@ -19,10 +19,14 @@ const shayarischema = new mongoose.Schema({
 
 shayarischema.pre("save", function (next) {
   if (this.shayari && typeof this.shayari === "string") {
-    this.shayari = this.shayari.replace(/<\/?p>/g, ""); // remove all <p> and </p> tags
+    this.shayari = this.shayari.replace(/<\/?p>/g, "\n");
+    this.shayari = this.shayari.replace(/<br\s*\/?>/gi, "\n");
+    // Don't trim or remove empty lines to preserve formatting
   }
   next();
 });
+
+
 
 
 module.exports = new mongoose.model("shayari", shayarischema);

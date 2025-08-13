@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import swal from 'sweetalert2'; // Import SweetAlert
+import Swal from 'sweetalert2'; // Correct import for SweetAlert2
 import apiServices from '../../ApiServices/ApiServices';
 import "./CaptchaSettingsForm.css";
 
@@ -23,7 +23,6 @@ const CaptchaSettingsForm = () => {
 
   const handleChange = (index, field, value) => {
     const newSettings = [...settings];
-    // Correctly handle boolean conversion for status
     newSettings[index][field] = field === "status" ? (value === "true") : value;
     setSettings(newSettings);
   };
@@ -33,21 +32,20 @@ const CaptchaSettingsForm = () => {
       for (const s of settings) {
         await apiServices.updateCaptchaSettings(s);
       }
-      // Use swal for success message
-      new swal({
+      
+      Swal.fire({
         title: "Success!",
         text: "Captcha settings have been saved successfully.",
         icon: "success",
-        button: "OK",
+        confirmButtonText: "OK",
       });
     } catch (err) {
       console.error(err);
-      // Use swal for error message
-      swal({
+      Swal.fire({
         title: "Error!",
         text: "Failed to save settings. Please try again.",
         icon: "error",
-        button: "OK",
+        confirmButtonText: "OK",
       });
     }
   };
@@ -83,13 +81,8 @@ const CaptchaSettingsForm = () => {
             <option value={false}>Inactive</option>
           </select>
 
-          <label>Allowed Domain</label>
-          <input
-            type="text"
-            value={s.allowedDomain || ""}
-            onChange={(e) => handleChange(index, "allowedDomain", e.target.value)}
-            placeholder="example.com or localhost"
-          />
+          
+          
         </div>
       ))}
 

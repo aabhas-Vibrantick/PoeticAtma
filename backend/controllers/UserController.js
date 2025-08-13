@@ -1,6 +1,6 @@
 //mongodb customer model
 const Customer = require("../models/CustomerModel");
-
+const CaptchaSettings = require("../models/Setting"); // adjust path to your model
 const mongoose = require("mongoose");
 
 //mongodb user model
@@ -166,108 +166,207 @@ adduser = (req, res) => {
   }
 };
 
-register = (req, res) => {
-  var validator = "";
+// register = (req, res) => {
+//   var validator = "";
 
-  const recaptchaResponse = req.body.recaptchaValue;
+//   const recaptchaResponse = req.body.recaptchaValue;
 
-  axios({
-    url: `https://www.google.com/recaptcha/api/siteverify?secret=${SECRETKEY}&response=${recaptchaResponse}`,
-    method: "post",
-  })
-    .then((recaptchaResponse) => {
-      if (recaptchaResponse.data.success) {
-        if (req.body.name == "") validator += "Name is required";
-        if (req.body.email == "") validator += "Email is required";
-        if (req.body.password == "") validator += "Password is required";
-        if (req.body.contact == "") validator += "Contact is required";
-        if (req.body.address == "") validator += "Address is required";
+//   axios({
+//     url: `https://www.google.com/recaptcha/api/siteverify?secret=${SECRETKEY}&response=${recaptchaResponse}`,
+//     method: "post",
+//   })
+//     .then((recaptchaResponse) => {
+//       if (recaptchaResponse.data.success) {
+//         if (req.body.name == "") validator += "Name is required";
+//         if (req.body.email == "") validator += "Email is required";
+//         if (req.body.password == "") validator += "Password is required";
+//         if (req.body.contact == "") validator += "Contact is required";
+//         if (req.body.address == "") validator += "Address is required";
 
-        if (!!validator) {
-          res.json({
-            status: 409,
-            success: false,
-            message: validator,
-          });
-        } else {
-          User.findOne({ email: req.body.email }).then((udata) => {
-            if (udata == null) {
-              const { token, expirationTime } = generateVerificationToken();
+//         if (!!validator) {
+//           res.json({
+//             status: 409,
+//             success: false,
+//             message: validator,
+//           });
+//         } else {
+//           User.findOne({ email: req.body.email }).then((udata) => {
+//             if (udata == null) {
+//               const { token, expirationTime } = generateVerificationToken();
 
-              const userobj = new User();
+//               const userobj = new User();
 
-              userobj.name = req.body.name;
-              userobj.email = req.body.email;
-              userobj.password = bcrypt.hashSync(req.body.password, saltround);
-              userobj.verificationToken = token;
-              userobj.tokenExpirationTime = expirationTime;
+//               userobj.name = req.body.name;
+//               userobj.email = req.body.email;
+//               userobj.password = bcrypt.hashSync(req.body.password, saltround);
+//               userobj.verificationToken = token;
+//               userobj.tokenExpirationTime = expirationTime;
 
-              if (req.file) {
-                userobj.Image = "customer_photo/" + req.file.filename;
-              }
+//               if (req.file) {
+//                 userobj.Image = "customer_photo/" + req.file.filename;
+//               }
 
-              userobj.save().then((userdata) => {
-                const customerobj = new Customer();
+//               userobj.save().then((userdata) => {
+//                 const customerobj = new Customer();
 
-                customerobj.name = req.body.name;
-                customerobj.penname = req.body.penname;
-                customerobj.email = req.body.email;
-                customerobj.password = bcrypt.hashSync(
-                  req.body.password,
-                  saltround
-                );
-                customerobj.contact = req.body.contact;
-                customerobj.address = req.body.address;
-                customerobj.userId = userdata._id;
+//                 customerobj.name = req.body.name;
+//                 customerobj.penname = req.body.penname;
+//                 customerobj.email = req.body.email;
+//                 customerobj.password = bcrypt.hashSync(
+//                   req.body.password,
+//                   saltround
+//                 );
+//                 customerobj.contact = req.body.contact;
+//                 customerobj.address = req.body.address;
+//                 customerobj.userId = userdata._id;
 
-                if (req.file) {
-                  customerobj.Image = "customer_photo/" + req.file.filename;
-                }
+//                 if (req.file) {
+//                   customerobj.Image = "customer_photo/" + req.file.filename;
+//                 }
 
-                customerobj
-                  .save()
-                  .then((user) => {
-                    sendVerifyMail({
-                      name: req.body.name,
-                      email: req.body.email,
-                      token: token,
-                      expirationTime: expirationTime,
-                    });
+//                 customerobj
+//                   .save()
+//                   .then((user) => {
+//                     sendVerifyMail({
+//                       name: req.body.name,
+//                       email: req.body.email,
+//                       token: token,
+//                       expirationTime: expirationTime,
+//                     });
 
-                    res.status(200).json({
-                      message: "User registered, Verification Email Sent.",
-                    });
-                  })
-                  .catch((error) => {
-                    res.status(500).json({ message: "Internal server error" });
-                  });
-              });
-            } else {
-              res.json({
-                status: 409,
-                success: false,
-                message: "User already exists",
-              });
-            }
-          });
-        }
-      } else {
-        res.json({
+//                     res.status(200).json({
+//                       message: "User registered, Verification Email Sent.",
+//                     });
+//                   })
+//                   .catch((error) => {
+//                     res.status(500).json({ message: "Internal server error" });
+//                   });
+//               });
+//             } else {
+//               res.json({
+//                 status: 409,
+//                 success: false,
+//                 message: "User already exists",
+//               });
+//             }
+//           });
+//         }
+//       } else {
+//         res.json({
+//           status: 400,
+//           success: false,
+//           message: "reCAPTCHA verification failed",
+//         });
+//       }
+//     })
+//     .catch((error) => {
+//       console.log("Recaptcha error:", error);
+//       res.status(500).json({
+//         status: 500,
+//         success: false,
+//         message: "Internal server error",
+//       });
+//     });
+// };
+
+register = async (req, res) => {
+  try {
+    let validator = "";
+
+    // 1. Fetch captcha settings from DB
+    const captchaSettings = await CaptchaSettings.findOne({ type: "google" });
+    const captchaEnabled = captchaSettings?.status ?? false;
+
+    // 2. If captcha is enabled, validate with Google
+    if (captchaEnabled) {
+      const recaptchaResponse = req.body.recaptchaValue;
+
+      const googleRes = await axios.post(
+        `https://www.google.com/recaptcha/api/siteverify?secret=${SECRETKEY}&response=${recaptchaResponse}`
+      );
+
+      if (!googleRes.data.success) {
+        return res.status(400).json({
           status: 400,
           success: false,
           message: "reCAPTCHA verification failed",
         });
       }
-    })
-    .catch((error) => {
-      console.log("Recaptcha error:", error);
-      res.status(500).json({
-        status: 500,
+    }
+    // 3. Continue registration logic (this part is common whether captcha is on or off)
+    if (req.body.name == "") validator += "Name is required";
+    if (req.body.email == "") validator += "Email is required";
+    if (req.body.password == "") validator += "Password is required";
+    if (req.body.contact == "") validator += "Contact is required";
+    if (req.body.address == "") validator += "Address is required";
+
+    if (!!validator) {
+      return res.json({
+        status: 409,
         success: false,
-        message: "Internal server error",
+        message: validator,
       });
+    }
+
+    const udata = await User.findOne({ email: req.body.email });
+    if (udata) {
+      return res.json({
+        status: 409,
+        success: false,
+        message: "User already exists",
+      });
+    }
+
+    const { token, expirationTime } = generateVerificationToken();
+
+    const userobj = new User();
+    userobj.name = req.body.name;
+    userobj.email = req.body.email;
+    userobj.password = bcrypt.hashSync(req.body.password, saltround);
+    userobj.verificationToken = token;
+    userobj.tokenExpirationTime = expirationTime;
+
+    if (req.file) {
+      userobj.Image = "customer_photo/" + req.file.filename;
+    }
+
+    const userdata = await userobj.save();
+
+    const customerobj = new Customer();
+    customerobj.name = req.body.name;
+    customerobj.penname = req.body.penname;
+    customerobj.email = req.body.email;
+    customerobj.password = bcrypt.hashSync(req.body.password, saltround);
+    customerobj.contact = req.body.contact;
+    customerobj.address = req.body.address;
+    customerobj.userId = userdata._id;
+
+    if (req.file) {
+      customerobj.Image = "customer_photo/" + req.file.filename;
+    }
+
+    await customerobj.save();
+
+    sendVerifyMail({
+      name: req.body.name,
+      email: req.body.email,
+      token: token,
+      expirationTime: expirationTime,
     });
+
+    return res.status(200).json({
+      message: "User registered, Verification Email Sent.",
+    });
+  } catch (error) {
+    console.log("Register error:", error);
+    return res.status(500).json({
+      status: 500,
+      success: false,
+      message: "Internal server error",
+    });
+  }
 };
+
 
 updateuser = (req, res) => {
   var validator = "";
@@ -403,94 +502,194 @@ changepassword = (req, res) => {
   }
 };
 
-login = (req, res) => {
+// login = (req, res) => {
+//   let validator = "";
+
+//   const recaptchaResponse = req.body.recaptchaValue;
+
+//   axios({
+//     url: `https://www.google.com/recaptcha/api/siteverify?secret=${SECRETKEY}&response=${recaptchaResponse}`,
+//     method: "post",
+//   })
+//     .then((recaptchaResponse) => {
+//       if (recaptchaResponse.data.success) {
+//         if (req.body.email === "" && req.body.contact === "") {
+//           validator += "Email Address/Phone Number is required";
+//         }
+
+//         if (req.body.password === "") validator += "Password is required";
+
+//         if (!!validator) {
+//           res.json({
+//             status: 409,
+//             success: false,
+//             message: validator,
+//           });
+//         } else {
+//           const query = req.body.email
+//             ? { email: req.body.email }
+//             : { contact: req.body.contact };
+
+//           User.findOne(query).then((userdata) => {
+//             if (userdata === null) {
+//               res.json({
+//                 status: 404,
+//                 success: false,
+//                 message:
+//                   "User with this Email Address/Phone Number not Exists!",
+//               });
+//             } else {
+//               bcrypt.compare(
+//                 req.body.password,
+//                 userdata.password,
+//                 (err, data) => {
+//                   if (!data) {
+//                     res.json({
+//                       status: 409,
+//                       success: false,
+//                       message: "Invalid Password!",
+//                     });
+//                   } else {
+//                     const payload = {
+//                       _id: userdata._id,
+//                       name: userdata.name,
+//                       email: userdata.email,
+//                       userType: userdata.userType,
+//                     };
+
+//                     const token = jwt.sign(payload, secretkey, {
+//                       expiresIn: "24h",
+//                     });
+
+//                     res.json({
+//                       status: 200,
+//                       success: true,
+//                       message: "Login Successful",
+//                       data: userdata,
+//                       token: token,
+//                     });
+//                   }
+//                 }
+//               );
+//             }
+//           });
+//         }
+//       } else {
+//         res.json({
+//           status: 400,
+//           success: false,
+//           message: "reCAPTCHA Verification Failed!",
+//         });
+//       }
+//     })
+//     .catch((error) => {
+//       res.status(500).json({
+//         status: 500,
+//         success: false,
+//         message: "Server Error",
+//       });
+//     });
+// };
+
+
+
+login = async (req, res) => {
   let validator = "";
 
-  const recaptchaResponse = req.body.recaptchaValue;
+  try {
+    // 1️⃣ Get captcha settings from DB
+    const captchaConfig = await CaptchaSettings.findOne({ type: "google" });
 
-  axios({
-    url: `https://www.google.com/recaptcha/api/siteverify?secret=${SECRETKEY}&response=${recaptchaResponse}`,
-    method: "post",
-  })
-    .then((recaptchaResponse) => {
-      if (recaptchaResponse.data.success) {
-        if (req.body.email === "" && req.body.contact === "") {
-          validator += "Email Address/Phone Number is required";
-        }
+    // If no config found, default to disabled
+    const captchaEnabled = captchaConfig ? captchaConfig.status : false;
 
-        if (req.body.password === "") validator += "Password is required";
+    // 2️⃣ If captcha is enabled, verify with Google
+    if (captchaEnabled) {
+      const recaptchaResponse = req.body.recaptchaValue;
 
-        if (!!validator) {
-          res.json({
-            status: 409,
-            success: false,
-            message: validator,
-          });
-        } else {
-          const query = req.body.email
-            ? { email: req.body.email }
-            : { contact: req.body.contact };
+      const verifyRes = await axios.post(
+        `https://www.google.com/recaptcha/api/siteverify?secret=${captchaConfig.secretkey}&response=${recaptchaResponse}`
+      );
 
-          User.findOne(query).then((userdata) => {
-            if (userdata === null) {
-              res.json({
-                status: 404,
-                success: false,
-                message:
-                  "User with this Email Address/Phone Number not Exists!",
-              });
-            } else {
-              bcrypt.compare(
-                req.body.password,
-                userdata.password,
-                (err, data) => {
-                  if (!data) {
-                    res.json({
-                      status: 409,
-                      success: false,
-                      message: "Invalid Password!",
-                    });
-                  } else {
-                    const payload = {
-                      _id: userdata._id,
-                      name: userdata.name,
-                      email: userdata.email,
-                      userType: userdata.userType,
-                    };
-
-                    const token = jwt.sign(payload, secretkey, {
-                      expiresIn: "24h",
-                    });
-
-                    res.json({
-                      status: 200,
-                      success: true,
-                      message: "Login Successful",
-                      data: userdata,
-                      token: token,
-                    });
-                  }
-                }
-              );
-            }
-          });
-        }
-      } else {
-        res.json({
+      if (!verifyRes.data.success) {
+        return res.json({
           status: 400,
           success: false,
           message: "reCAPTCHA Verification Failed!",
         });
       }
-    })
-    .catch((error) => {
-      res.status(500).json({
-        status: 500,
+    }
+
+    // 3️⃣ Continue with login validation
+    if (req.body.email === "" && req.body.contact === "") {
+      validator += "Email Address/Phone Number is required";
+    }
+    if (req.body.password === "") validator += "Password is required";
+
+    if (validator) {
+      return res.json({
+        status: 409,
         success: false,
-        message: "Server Error",
+        message: validator,
       });
+    }
+
+    const query = req.body.email
+      ? { email: req.body.email }
+      : { contact: req.body.contact };
+
+    const userdata = await User.findOne(query);
+
+    if (!userdata) {
+      return res.json({
+        status: 404,
+        success: false,
+        message: "User with this Email Address/Phone Number not Exists!",
+      });
+    }
+
+    const passwordMatch = await bcrypt.compare(
+      req.body.password,
+      userdata.password
+    );
+
+    if (!passwordMatch) {
+      return res.json({
+        status: 409,
+        success: false,
+        message: "Invalid Password!",
+      });
+    }
+
+    const payload = {
+      _id: userdata._id,
+      name: userdata.name,
+      email: userdata.email,
+      userType: userdata.userType,
+    };
+
+    const token = jwt.sign(payload, secretkey, {
+      expiresIn: "24h",
     });
+
+    return res.json({
+      status: 200,
+      success: true,
+      message: "Login Successful",
+      data: userdata,
+      token: token,
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: 500,
+      success: false,
+      message: "Server Error",
+    });
+  }
 };
+
 
 getalluser = (req, res) => {
   User.find(req.body)

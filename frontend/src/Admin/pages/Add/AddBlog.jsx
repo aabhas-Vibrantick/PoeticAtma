@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import JoditEditor from "jodit-react";
+import Select from "react-select";
 function AddBlog() {
   const nav = useNavigate();
   const editor = useRef(null);
@@ -71,6 +72,40 @@ function AddBlog() {
     }
   };
 
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      fontSize: "14px",
+      color: "#212529",
+      minHeight: "38px",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      fontSize: "14px",
+      color: "#212529",
+      backgroundColor: "#ffffff", // Solid white background
+      boxShadow: "0 4px 8px rgba(0,0,0,0.1)", // Optional: dropdown shadow
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected
+        ? "#007bff" // Selected option background
+        : state.isFocused
+        ? "#e9ecef" // Hover/focus background
+        : "#ffffff", // Default background
+      color: state.isSelected ? "#fff" : "#212529",
+      cursor: "pointer",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#212529",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#6c757d",
+    }),
+  };
+
   return (
     <>
       <main className="main-container adminbody">
@@ -104,22 +139,25 @@ function AddBlog() {
                     ))}
                   </select>
                 </div>
+                
                 <div className="form-outline mb-4">
                   <label className="form-label text-dark">
                     Select Author (User)
                   </label>
-                  <select
-                    className="form-select"
-                    value={selectedUserId}
-                    onChange={(e) => setSelectedUserId(e.target.value)}
-                  >
-                    <option value="">Select User</option>
-                    {allUsers.map((user) => (
-                      <option key={user._id} value={user._id}>
-                        {user.name}
-                      </option>
-                    ))}
-                  </select>
+                  <Select
+                    options={allUsers.map((user) => ({
+                      value: user._id,
+                      label: user.name,
+                    }))}
+                    onChange={(selected) =>
+                      setSelectedUserId(selected?.value || "")
+                    }
+                    placeholder="Search or select user..."
+                    isClearable
+                    isSearchable
+                    styles={customStyles}
+                    menuIsOpen={undefined} // keeps default open/close behavior
+                  />
                 </div>
 
                 {/* Title input */}

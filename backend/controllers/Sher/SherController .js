@@ -187,6 +187,9 @@ updatesher = (req, res) => {
   if (req.body._id == "") {
     validation += "ID is required ";
   }
+  if (req.body.userId == "") {
+    validation += "User ID is required ";
+  }
 
   if (!!validation) {
     res.json({
@@ -195,7 +198,7 @@ updatesher = (req, res) => {
       message: validation,
     });
   } else {
-    //check whether data exists or not wrt particular id
+    // Check whether data exists or not wrt particular id
     Sher.findOne({ _id: req.body._id })
       .then((sherdata) => {
         if (sherdata == null) {
@@ -205,14 +208,14 @@ updatesher = (req, res) => {
             message: "Data not found",
           });
         } else {
-          //updatesher
+          // Update sher
           sherdata.title = req.body.title;
           sherdata.Category_id = req.body.Category_id;
           sherdata.sher = req.body.sher;
           sherdata.language = req.body.language;
           const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
           sherdata.tags = tagsArray;
-          sherdata.userId = req.decoded;
+          sherdata.userId = req.body.userId; // Updated to use userId from request body
           if (req.file) {
             sherdata.Image = "sher_photo/" + req.file.filename;
           }

@@ -5,12 +5,7 @@ import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
 import { toast, ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import {
-  FaEdit,
-  FaTrash,
-  FaToggleOn,
-  FaToggleOff,
-} from "react-icons/fa";
+import { FaEdit, FaTrash, FaToggleOn, FaToggleOff } from "react-icons/fa";
 export default function BlogList() {
   const [allBlog, setAllBlog] = useState([]);
   const [filterText, setFilterText] = useState("");
@@ -22,52 +17,59 @@ export default function BlogList() {
   }, []);
 
   const fetchBlogs = () => {
-  setLoading(true);
-  apiServices
-    .getallblog()
-    .then((res) => {
-      if (res.data.success) {
-        // Show all blogs, not just active ones
-        setAllBlog(res.data.data);
-      } else {
-        toast.error(res.data.message);
-      }
-      setLoading(false);
-    })
-    .catch(() => {
-      toast.error("Something went wrong");
-      setLoading(false);
-    });
-};
-
+    setLoading(true);
+    apiServices
+      .getallblog()
+      .then((res) => {
+        if (res.data.success) {
+          // Show all blogs, not just active ones
+          setAllBlog(res.data.data);
+        } else {
+          toast.error(res.data.message);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        toast.error("Something went wrong");
+        setLoading(false);
+      });
+  };
 
   const deleteBlog = (id) => {
-  Swal.fire({
-    title: "Are you sure?",
-    text: "This record will be permanently deleted!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      apiServices
-        .deleteblog({ _id: id })
-        .then((res) => {
-          if (res.data.success) {
-            fetchBlogs(); // Refresh list after deletion
-            Swal.fire("Deleted!", res.data.message || "The record has been deleted.", "success");
-          } else {
-            Swal.fire("Error!", res.data.message || "Failed to delete", "error");
-          }
-        })
-        .catch(() => {
-          Swal.fire("Error!", "Something went wrong", "error");
-        });
-    }
-  });
-};
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This record will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        apiServices
+          .deleteblog({ _id: id })
+          .then((res) => {
+            if (res.data.success) {
+              fetchBlogs(); // Refresh list after deletion
+              Swal.fire(
+                "Deleted!",
+                res.data.message || "The record has been deleted.",
+                "success"
+              );
+            } else {
+              Swal.fire(
+                "Error!",
+                res.data.message || "Failed to delete",
+                "error"
+              );
+            }
+          })
+          .catch(() => {
+            Swal.fire("Error!", "Something went wrong", "error");
+          });
+      }
+    });
+  };
 
   const changeStatus = (id, status) => {
     const updatedStatus = status ? "0" : "1";
@@ -126,14 +128,14 @@ export default function BlogList() {
     },
     {
       name: "Status",
-      selector: (row) => (row.status ? "Active" : "Inactive"),
+      selector: (row) => (row.status ? 1 : 0), // numeric for sorting
       cell: (row) => (
-        <span
-          className={`badge ${row.status ? "bg-success" : "bg-secondary"}`}
-        >
+        <span className={`badge ${row.status ? "bg-success" : "bg-secondary"}`}>
           {row.status ? "Active" : "Inactive"}
         </span>
       ),
+      sortable: true,
+      sortFunction: (a, b) => b.status - a.status, // Active first
     },
     {
       name: "Featured",
@@ -147,40 +149,39 @@ export default function BlogList() {
       ),
     },
     {
-  name: "Actions",
-  cell: (row) => (
-    <div className="d-flex flex-wrap gap-2">
-      {/* Edit */}
-      <Link to={`/admin/update-blog/${row._id}`}>
-        <button className="btn btn-sm btn-outline-warning" title="Edit">
-          <FaEdit />
-        </button>
-      </Link>
+      name: "Actions",
+      cell: (row) => (
+        <div className="d-flex flex-wrap gap-2">
+          {/* Edit */}
+          <Link to={`/admin/update-blog/${row._id}`}>
+            <button className="btn btn-sm btn-outline-warning" title="Edit">
+              <FaEdit />
+            </button>
+          </Link>
 
-      {/* Status Toggle */}
-      <button
-        onClick={() => changeStatus(row._id, row.status)}
-        className={`btn btn-sm ${
-          row.status ? "btn-outline-warning" : "btn-outline-success"
-        }`}
-        title={row.status ? "Set Inactive" : "Set Active"}
-      >
-        {row.status ? <FaToggleOn /> : <FaToggleOff />}
-      </button>
+          {/* Status Toggle */}
+          <button
+            onClick={() => changeStatus(row._id, row.status)}
+            className={`btn btn-sm ${
+              row.status ? "btn-outline-warning" : "btn-outline-success"
+            }`}
+            title={row.status ? "Set Inactive" : "Set Active"}
+          >
+            {row.status ? <FaToggleOn /> : <FaToggleOff />}
+          </button>
 
-      {/* Delete */}
-      <button
-        onClick={() => deleteBlog(row._id)}
-        className="btn btn-sm btn-outline-danger"
-        title="Delete"
-      >
-        <FaTrash />
-      </button>
-    </div>
-  ),
-  width: "300px",
-}
-
+          {/* Delete */}
+          <button
+            onClick={() => deleteBlog(row._id)}
+            className="btn btn-sm btn-outline-danger"
+            title="Delete"
+          >
+            <FaTrash />
+          </button>
+        </div>
+      ),
+      width: "300px",
+    },
   ];
 
   const filteredBlogs = allBlog.filter((item) => {

@@ -1,0 +1,86 @@
+/* CaptchaSettingsForm.css */
+
+.captcha-form {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.captcha-section {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.captcha-section h5 {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.captcha-section label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.captcha-section input[type="text"],
+.captcha-section select {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  transition: border-color 0.3s;
+}
+
+.captcha-section input[type="text"]:focus,
+.captcha-section select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.captcha-form button {
+  display: inline-block;
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.captcha-form button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.captcha-form button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+  .captcha-form {
+    padding: 0.8rem;
+  }
+  .captcha-section input[type="text"],
+  .captcha-section select {
+    font-size: 0.9rem;
+  }
+  .captcha-form button {
+    width: 100%;
+  }
+}

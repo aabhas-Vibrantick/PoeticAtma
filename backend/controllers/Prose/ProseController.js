@@ -207,7 +207,7 @@ updateprose = (req, res) => {
           if (req.file) {
             prosedata.Image = "prose_photo/" + req.file.filename;
           }
-          prosedata.userId = req.decoded;
+          prosedata.userId = req.body.userId;
           prosedata.save();
 
           res.json({

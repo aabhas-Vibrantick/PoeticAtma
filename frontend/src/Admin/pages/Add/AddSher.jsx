@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import JoditEditor from "jodit-react";
 import { useRef } from "react";
+import Select from "react-select";
 function AddSher() {
   const nav = useNavigate();
   const editor = useRef(null);
@@ -81,19 +82,53 @@ function AddSher() {
     }
   };
   const config = {
-  askBeforePasteFromWord: false,
-  askBeforePasteHTML: false,
-  defaultActionOnPaste: "insert_clear_html",
-  preserveWhiteSpace: true,
-  cleanHTML: {
-    removeTags: ["script", "style", "img", "video", "audio"],
-    removeAttrs: ["style", "class", "width", "height"],
-  },
-  style: {
-    color: "#000000",
-    backgroundColor: "#ffffff",
-  },
-};
+    askBeforePasteFromWord: false,
+    askBeforePasteHTML: false,
+    defaultActionOnPaste: "insert_clear_html",
+    preserveWhiteSpace: true,
+    cleanHTML: {
+      removeTags: ["script", "style", "img", "video", "audio"],
+      removeAttrs: ["style", "class", "width", "height"],
+    },
+    style: {
+      color: "#000000",
+      backgroundColor: "#ffffff",
+    },
+  };
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      fontSize: "14px",
+      color: "#212529",
+      minHeight: "38px",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      fontSize: "14px",
+      color: "#212529",
+      backgroundColor: "#ffffff", // Solid white background
+      boxShadow: "0 4px 8px rgba(0,0,0,0.1)", // Optional: dropdown shadow
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected
+        ? "#007bff" // Selected option background
+        : state.isFocused
+        ? "#e9ecef" // Hover/focus background
+        : "#ffffff", // Default background
+      color: state.isSelected ? "#fff" : "#212529",
+      cursor: "pointer",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#212529",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#6c757d",
+    }),
+  };
 
   return (
     <>
@@ -122,6 +157,26 @@ function AddSher() {
                   />
                 </div>
 
+                <div className="form-outline mb-4">
+                  <label className="form-label text-dark">
+                    Select Author (User)
+                  </label>
+                  <Select
+                    options={allUsers.map((user) => ({
+                      value: user._id,
+                      label: user.name,
+                    }))}
+                    onChange={(selected) =>
+                      setSelectedUserId(selected?.value || "")
+                    }
+                    placeholder="Search or select user..."
+                    isClearable
+                    isSearchable
+                    styles={customStyles}
+                    menuIsOpen={undefined} // keeps default open/close behavior
+                  />
+                </div>
+
                 {/* Category input */}
                 <div className="form-group fs-5 mb-4">
                   <label
@@ -140,24 +195,6 @@ function AddSher() {
                     {allCategory.map((data, index) => (
                       <option key={index} value={data._id}>
                         {data.Category_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-outline mb-4">
-                  <label className="form-label text-dark">
-                    Select Author (User)
-                  </label>
-                  <select
-                    className="form-select"
-                    value={selectedUserId}
-                    onChange={(e) => setSelectedUserId(e.target.value)}
-                  >
-                    <option value="">Select User</option>
-                    {allUsers.map((user) => (
-                      <option key={user._id} value={user._id}>
-                        {user.name}
                       </option>
                     ))}
                   </select>
@@ -192,7 +229,9 @@ function AddSher() {
                     onChange={(newContent) => setSher(newContent)}
                     onPaste={(event) => {
                       event.preventDefault();
-                      const text = (event.clipboardData || window.clipboardData).getData("text/plain");
+                      const text = (
+                        event.clipboardData || window.clipboardData
+                      ).getData("text/plain");
                       document.execCommand("insertText", false, text);
                     }}
                   />

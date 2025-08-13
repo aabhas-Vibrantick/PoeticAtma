@@ -177,7 +177,7 @@ updateblog = (req, res) => {
           blogdata.blog = req.body.blog;
           blogdata.language = req.body.language;
           blogdata.isFeatured = req.body.isFeatured;
-          blogdata.userId = req.decoded;
+          blogdata.userId = req.body.userId;
           const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
           blogdata.tags = tagsArray;
 

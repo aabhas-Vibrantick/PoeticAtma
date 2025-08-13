@@ -60,7 +60,11 @@ export default function ProseList() {
               setAllProse((prev) => prev.filter((prose) => prose._id !== id));
               Swal.fire("Deleted!", "The record has been deleted.", "success");
             } else {
-              Swal.fire("Error!", res.data.message || "Failed to delete", "error");
+              Swal.fire(
+                "Error!",
+                res.data.message || "Failed to delete",
+                "error"
+              );
             }
           })
           .catch((err) => {
@@ -145,6 +149,7 @@ export default function ProseList() {
     },
     {
       name: "Approved",
+      selector: (row) => (row.isApproved ? 1 : 0), // numeric value for sorting
       cell: (row) => (
         <span
           className={`badge ${
@@ -155,6 +160,7 @@ export default function ProseList() {
         </span>
       ),
       sortable: true,
+      sortFunction: (a, b) => b.isApproved - a.isApproved, // Approved first
     },
     {
       name: "Status",
@@ -217,14 +223,31 @@ export default function ProseList() {
     },
   ];
 
-  const filteredProse = allProse.filter(
-    (p) =>
-      p.title?.toLowerCase().includes(filterText.toLowerCase()) ||
-      p.userId?.name?.toLowerCase().includes(filterText.toLowerCase()) ||
-      p.Category_id?.Category_name?.toLowerCase().includes(filterText.toLowerCase()) ||
-      p.prose?.toLowerCase().includes(filterText.toLowerCase()) ||
-      p.tags?.toLowerCase().includes(filterText.toLowerCase())
+  const filteredProse = allProse.filter((s) => {
+  const search = filterText.trim().toLowerCase(); // normalize search text
+
+  // Convert every field to string safely
+  const title = (s.title || "").toLowerCase();
+  const author = (s.userId?.name || "").toLowerCase();
+  const category = (s.Category_id?.Category_name || "").toLowerCase();
+  const proseText = (s.prose || "").toLowerCase();
+  const tags = (
+    typeof s.tags === "string"
+      ? s.tags
+      : Array.isArray(s.tags)
+      ? s.tags.join(", ")
+      : ""
+  ).toLowerCase();
+
+  // Match if search is in any field
+  return (
+    title.includes(search) ||
+    author.includes(search) ||
+    category.includes(search) ||
+    proseText.includes(search) ||
+    tags.includes(search)
   );
+});
 
   const ExpandedComponent = ({ data }) => (
     <pre>{JSON.stringify(data, null, 2)}</pre>

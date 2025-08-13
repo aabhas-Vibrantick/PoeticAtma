@@ -1,153 +1,229 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate, useParams } from "react-router-dom";
-import JoditEditor from 'jodit-react';
-import { useRef } from "react";
+import JoditEditor from "jodit-react";
+import Select from "react-select";
 
 function UpProse() {
   const editor = useRef(null);
-  const param = useParams()
-  const nav = useNavigate()
-  const id = param._id
+  const param = useParams();
+  const nav = useNavigate();
+  const id = param._id;
 
-  const [title, setTitle] = useState();
-  const [prose, setProse] = useState();
-  const [Image, setImage] = useState();
-  const [tag, setTag] = useState();
-  const [language, setLanguage] = useState();
-  const [allCategory, setAllCategory] = useState();
-  const [categoryId, setCategoryId] = useState();
-  const [allProseData, setallProseData] = useState();
-  const changeimage = (e) => {
-    // // console.log(e.target.files[0]);
+  const [title, setTitle] = useState("");
+  const [prose, setProse] = useState("");
+  const [image, setImage] = useState(null);
+  const [tag, setTag] = useState("");
+  const [language, setLanguage] = useState("");
+  const [allCategory, setAllCategory] = useState([]);
+  const [categoryId, setCategoryId] = useState("");
+  const [allProseData, setAllProseData] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState("");
+  const [allUsers, setAllUsers] = useState([]);
+
+  const changeImage = (e) => {
     setImage(e.target.files[0]);
   };
 
-  // ---------------Add Prose start----------
-
   useEffect(() => {
-    let data = {
-      _id: id
-    }
-    apiServices.getsingleprose(data).then(data => {
-      if (data.data.success) {
-        setallProseData(data.data.data)
-        setTitle(data.data.data.title)
-        setProse(data.data.data.prose)
-        setTag(data.data.data.tags)
-        setLanguage(data.data.data.language)
-        setCategoryId(data.data.data.Category_id._id)
-      }
-      else {
-        toast.error(data.data.message)
-      }
-    }).catch(err => {
-      // // console.log(err)
-      // toast.error("Something Went wrong")
-    })
-
-    apiServices.getall_prose_category().then((data) => {
-      if (data.data.success) {
-        setAllCategory(data.data.data);
-        // // console.log("all categoryies =>", data.data.data);
-      }
-    });
-  }, []);
-
-  let data = {
-    _id: id
-  }
-  const handleproseData = (x) => {
-    x.preventDefault();
-    let data = new FormData();
-    data.append("title", title);
-    data.append("prose", prose);
-    data.append("tag", tag);
-    data.append("language", language);
-    data.append("Category_id", categoryId);
-    data.append("Image", Image);
-    data.append("_id", id)
+    // Fetch single prose data
+    let requestData = { _id: id };
     apiServices
-      .updateprose(data)
-      .then((data) => {
-        // // console.log(data);
-        if (data.data.success) {
-          toast.success(data.data.message);
-          setTimeout(() => {
-            nav("/admin/view-prose")
-          }, 2000)
+      .getsingleprose(requestData)
+      .then((response) => {
+        if (response.data.success) {
+          const proseData = response.data.data;
+          setAllProseData(proseData);
+          setTitle(proseData.title || "");
+          setProse(proseData.prose || "");
+          setTag(proseData.tags || "");
+          setLanguage(proseData.language || "");
+          setCategoryId(proseData.Category_id?._id || "");
+          setSelectedUserId(proseData.userId?._id || "");
         } else {
-          toast.error(data.data.message);
+          toast.error(response.data.message);
         }
       })
-      .catch((err) => {
-        // // console.log(err);
+      .catch(() => {
+        toast.error("Something went wrong while fetching prose data");
+      });
+
+    // Fetch all categories
+    apiServices
+      .getall_prose_category()
+      .then((response) => {
+        if (response.data.success) {
+          setAllCategory(response.data.data);
+        } else {
+          toast.error(response.data.message);
+        }
+      })
+      .catch(() => {
+        toast.error("Something went wrong while fetching categories");
+      });
+
+    // Fetch all users
+    apiServices
+      .getalluser()
+      .then((response) => {
+        if (response.data.success) {
+          setAllUsers(response.data.data);
+        } else {
+          toast.error(response.data.message);
+        }
+      })
+      .catch(() => {
+        toast.error("Something went wrong while fetching users");
+      });
+  }, [id]);
+
+  const handleProseData = (e) => {
+    e.preventDefault();
+    let formData = new FormData();
+    formData.append("title", title);
+    formData.append("prose", prose);
+    formData.append("Category_id", categoryId);
+    formData.append("userId", selectedUserId);
+    if (image) {
+      formData.append("Image", image);
+    }
+    formData.append("tag", tag);
+    formData.append("language", language);
+    formData.append("_id", id);
+
+    apiServices
+      .updateprose(formData)
+      .then((response) => {
+        if (response.data.success) {
+          toast.success(response.data.message);
+          setTimeout(() => {
+            nav("/admin/view-prose");
+          }, 2000);
+        } else {
+          toast.error(response.data.message);
+        }
+      })
+      .catch(() => {
         toast.error("Something went wrong");
       });
   };
-  // ---------------Add prose start----------
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      fontSize: "14px",
+      color: "#212529",
+      minHeight: "38px",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      fontSize: "14px",
+      color: "#212529",
+      backgroundColor: "#ffffff",
+      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected
+        ? "#007bff"
+        : state.isFocused
+        ? "#e9ecef"
+        : "#ffffff",
+      color: state.isSelected ? "#fff" : "#212529",
+      cursor: "pointer",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#212529",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#6c757d",
+    }),
+  };
+
   return (
     <>
       <main className="main-container adminbody">
-
         <div className="container">
           <div className="row">
             <div className="col-2"></div>
             <div className="col article">
               <h2 className="text-dark">Update Prose</h2>
-              <form className="mt-5" >
-                {/* <!-- Title input --> */}
+              <form className="mt-5" onSubmit={handleProseData}>
+                {/* Title */}
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Title </label>
+                  <label className="form-label text-dark">Title</label>
                   <input
                     type="text"
-                    id="form6Example3"
                     className="form-control"
                     placeholder="Title"
                     value={title}
-                    onChange={(e) => {
-                      setTitle(e.target.value);
-                    }}
+                    onChange={(e) => setTitle(e.target.value)}
                   />
                 </div>
 
-                {/* <!--  Category --> */}
-                <div className="form-group  fs-5 mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Category </label>
+                {/* Author */}
+                <div className="form-outline mb-4">
+                  <label className="form-label text-dark">Select Author (User)</label>
+                  <Select
+                    options={allUsers.map((user) => ({
+                      value: user._id,
+                      label: user.name,
+                    }))}
+                    value={
+                      allUsers
+                        .filter((user) => user._id === selectedUserId)
+                        .map((user) => ({
+                          value: user._id,
+                          label: user.name,
+                        }))[0] || null
+                    }
+                    onChange={(selected) =>
+                      setSelectedUserId(selected?.value || "")
+                    }
+                    placeholder="Search or select user..."
+                    isClearable
+                    isSearchable
+                    styles={customStyles}
+                  />
+                </div>
+
+                {/* Category */}
+                <div className="form-group fs-5 mb-4">
+                  <label className="form-label text-dark">Category</label>
                   <select
-                    className="form-select  mb-2"
+                    className="form-select mb-2"
                     value={categoryId}
-                    onChange={(e) => {
-                      setCategoryId(e.target.value);
-                    }}
-                    aria-label=".form-select-lg example"
+                    onChange={(e) => setCategoryId(e.target.value)}
                   >
-                    <option selected>Select Category</option>
-                    {allCategory?.map((data, index) => (
-                      <option key={index} value={data?._id}>
-                        {data?.Category_name}
+                    <option value="">Select Category</option>
+                    {allCategory?.map((data) => (
+                      <option key={data._id} value={data._id}>
+                        {data.Category_name}
                       </option>
                     ))}
                   </select>
                 </div>
-                {/* <!-- prose input --> */}
+
+                {/* Prose content */}
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Prose </label>
+                  <label className="form-label text-dark">Prose</label>
                   <JoditEditor
                     ref={editor}
                     value={prose}
                     className="text-dark"
-                    onChange={newContent => setProse(newContent)}
+                    onChange={(newContent) => setProse(newContent)}
                   />
                 </div>
+
+                {/* Tag */}
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Tag </label>
+                  <label className="form-label text-dark">Tag</label>
                   <input
                     type="text"
-                    id="form6Example3"
                     className="form-control"
                     placeholder="#tag"
                     value={tag}
@@ -155,38 +231,41 @@ function UpProse() {
                   />
                 </div>
 
+                {/* Language */}
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Language</label>
-                  <select className="form-select" aria-label="Default select example" value={language}
-                    onChange={(e) => setLanguage(e.target.value)}>
-                    <option selected>Select Language</option>
+                  <label className="form-label text-dark">Language</label>
+                  <select
+                    className="form-select"
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                  >
+                    <option value="">Select Language</option>
                     <option value="hindi">Hindi</option>
                     <option value="English">English</option>
                   </select>
                 </div>
-                {/* <!-- prose image --> */}
+
+                {/* Image */}
                 <div className="mb-4">
-                  <img
-                    src={BASE_URL_IMG + allProseData?.Image}
-                    alt="uprofile"
-                    className="img-fluid"
-                    style={{ height: "150px" }}
-                  />
+                  {allProseData?.Image && (
+                    <img
+                      src={BASE_URL_IMG + allProseData.Image}
+                      alt="Prose"
+                      className="img-fluid"
+                      style={{ height: "150px" }}
+                    />
+                  )}
                   <input
                     className="form-control"
                     type="file"
-                    id="formFile"
-                    onChange={(e) => {
-                      changeimage(e);
-                    }}
+                    onChange={changeImage}
                   />
                 </div>
 
-                {/* <!-- Submit button --> */}
+                {/* Submit */}
                 <button
                   type="submit"
                   className="btn btn-primary-1 btn-block mb-4"
-                  onClick={handleproseData}
                 >
                   Post
                 </button>

@@ -159,13 +159,18 @@ export default function ShayriList() {
     },
     {
       name: "Approved",
+      selector: (row) => (row.isApproved ? 1 : 0), // numeric value for sorting
       cell: (row) => (
         <span
-          className={`badge ${row.isApproved ? "bg-success" : "bg-secondary"}`}
+          className={`badge ${
+            row.isApproved ? "bg-success" : "bg-secondary"
+          } text-light`}
         >
           {row.isApproved ? "Approved" : "Pending"}
         </span>
       ),
+      sortable: true,
+      sortFunction: (a, b) => b.isApproved - a.isApproved, // Approved first
     },
     {
       name: "Status",
@@ -227,14 +232,29 @@ export default function ShayriList() {
     },
   ];
 
-  const filteredShayari = allShayari.filter((item) => {
-    const search = filterText.toLowerCase();
+  const filteredShayari = allShayari.filter((s) => {
+    const search = filterText.trim().toLowerCase(); // normalize search text
+
+    // Convert every field to string safely
+    const title = (s.title || "").toLowerCase();
+    const author = (s.userId?.name || "").toLowerCase();
+    const category = (s.Category_id?.Category_name || "").toLowerCase();
+    const shayariText = (s.shayari || "").toLowerCase();
+    const tags = (
+      typeof s.tags === "string"
+        ? s.tags
+        : Array.isArray(s.tags)
+        ? s.tags.join(", ")
+        : ""
+    ).toLowerCase();
+
+    // Match if search is in any field
     return (
-      item.title?.toLowerCase().includes(search) ||
-      item.shayari?.toLowerCase().includes(search) ||
-      item.tags?.toLowerCase().includes(search) ||
-      item.userId?.name?.toLowerCase().includes(search) ||
-      item.Category_id?.Category_name?.toLowerCase().includes(search)
+      title.includes(search) ||
+      author.includes(search) ||
+      category.includes(search) ||
+      shayariText.includes(search) ||
+      tags.includes(search)
     );
   });
 

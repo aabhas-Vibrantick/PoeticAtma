@@ -1,94 +1,144 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate, useParams } from "react-router-dom";
 import JoditEditor from 'jodit-react';
-import { useRef } from "react";
+import Select from "react-select";
 
 function UpShayari() {
   const editor = useRef(null);
-  const param = useParams()
-  const nav = useNavigate()
-  const id = param._id
+  const param = useParams();
+  const nav = useNavigate();
+  const id = param._id;
 
-  const [title, setTitle] = useState();
-  const [shayari, setShayari] = useState();
-  const [Image, setImage] = useState();
-  const [tag, setTag] = useState();
-  const [language, setLanguage] = useState();
-  const [allCategory, setAllCategory] = useState();
-  const [categoryId, setCategoryId] = useState();
-  const [allShayariData, setallShayariData] = useState();
-  const changeimage = (e) => {
-    // // console.log(e.target.files[0]);
+  const [title, setTitle] = useState("");
+  const [shayari, setShayari] = useState("");
+  const [image, setImage] = useState(null);
+  const [tag, setTag] = useState("");
+  const [language, setLanguage] = useState("");
+  const [allCategory, setAllCategory] = useState([]);
+  const [categoryId, setCategoryId] = useState("");
+  const [allShayariData, setAllShayariData] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState("");
+  const [allUsers, setAllUsers] = useState([]);
+
+  const changeImage = (e) => {
     setImage(e.target.files[0]);
   };
 
-  // ---------------Add shayari start----------
-
+  // Fetch shayari data, users, and categories
   useEffect(() => {
+    // Fetch single shayari data
     let data = {
       _id: id
-    }
-    apiServices.getsingleshayari(data).then(data => {
-      if (data.data.success) {
-        setallShayariData(data.data.data)
-        setTitle(data.data.data.title)
-        setShayari(data.data.data.shayari)
-        setLanguage(data.data.data.language)
-        setTag(data.data.data.tags)
-        setCategoryId(data.data.data.Category_id._id)
-      }
-      else {
-        toast.error(data.data.message)
+    };
+    apiServices.getsingleshayari(data).then(response => {
+      if (response.data.success) {
+        const shayariData = response.data.data;
+        setAllShayariData(shayariData);
+        setTitle(shayariData.title || "");
+        setShayari(shayariData.shayari || "");
+        setLanguage(shayariData.language || "");
+        setTag(shayariData.tags || "");
+        setCategoryId(shayariData.Category_id?._id || "");
+        setSelectedUserId(shayariData.userId?._id || "");
+      } else {
+        toast.error(response.data.message);
       }
     }).catch(err => {
-      // // console.log(err)
-      // toast.error("Something Went wrong")
-    })
-
-    apiServices.getall_shayari_category().then((data) => {
-      if (data.data.success) {
-        setAllCategory(data.data.data);
-        // // console.log("all categoryies =>", data.data.data);
-      }
+      toast.error("Something went wrong while fetching shayari data");
     });
-  }, []);
 
-  let data = {
-    _id: id
-  }
-  const handleshayariData = (x) => {
-    x.preventDefault();
-    let data = new FormData();
-    data.append("title", title);
-    data.append("shayari", shayari);
-    data.append("Category_id", categoryId);
-    data.append("Image", Image);
-    data.append("tag", tag);
-    data.append("language", language);
-    data.append("_id", id)
+    // Fetch all users
+    apiServices.getalluser().then(response => {
+      if (response.data.success) {
+        setAllUsers(response.data.data); 
+      } else {
+        toast.error(response.data.message);
+      }
+    }).catch(err => {
+      toast.error("Something went wrong while fetching users");
+    });
+
+    // Fetch all categories
+    apiServices.getall_shayari_category().then(response => {
+      if (response.data.success) {
+        setAllCategory(response.data.data);
+      } else {
+        toast.error(response.data.message);
+      }
+    }).catch(err => {
+      toast.error("Something went wrong while fetching categories");
+    });
+  }, [id]);
+
+  const handleShayariData = (e) => {
+    e.preventDefault();
+    let formData = new FormData();
+    formData.append("title", title);
+    formData.append("shayari", shayari);
+    formData.append("Category_id", categoryId);
+    formData.append("userId", selectedUserId);
+    if (image) {
+      formData.append("Image", image);
+    }
+    formData.append("tag", tag);
+    formData.append("language", language);
+    formData.append("_id", id);
+
     apiServices
-      .updateshayari(data)
-      .then((data) => {
-        // // console.log(data);
-        if (data.data.success) {
-          toast.success(data.data.message);
+      .updateshayari(formData)
+      .then((response) => {
+        if (response.data.success) {
+          toast.success(response.data.message);
           setTimeout(() => {
-            nav("/admin/view-shayari")
-          }, 2000)
+            nav("/admin/view-shayari");
+          }, 2000);
         } else {
-          toast.error(data.data.message);
+          toast.error(response.data.message);
         }
       })
       .catch((err) => {
-        // // console.log(err);
         toast.error("Something went wrong");
       });
   };
-  // ---------------Add shayari start----------
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      fontSize: "14px",
+      color: "#212529",
+      minHeight: "38px",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      fontSize: "14px",
+      color: "#212529",
+      backgroundColor: "#ffffff",
+      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected
+        ? "#007bff"
+        : state.isFocused
+        ? "#e9ecef"
+        : "#ffffff",
+      color: state.isSelected ? "#fff" : "#212529",
+      cursor: "pointer",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#212529",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#6c757d",
+    }),
+  };
+
   return (
     <>
       <main className="main-container adminbody">
@@ -97,54 +147,76 @@ function UpShayari() {
             <div className="col-2"></div>
             <div className="col article">
               <h2 className="text-dark">Update Shayari</h2>
-              <form className="mt-5" >
-                {/* <!-- Title input --> */}
+              <form className="mt-5" onSubmit={handleShayariData}>
+                {/* Title input */}
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Title </label>
+                  <label htmlFor="form6Example3" className="form-label text-dark">Title</label>
                   <input
                     type="text"
                     id="form6Example3"
                     className="form-control"
                     placeholder="Title"
                     value={title}
-                    onChange={(e) => {
-                      setTitle(e.target.value);
-                    }}
+                    onChange={(e) => setTitle(e.target.value)}
                   />
                 </div>
 
-                {/* <!--  Category --> */}
-                <div className="form-group  fs-5 mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Category </label>
+                {/* Author selection */}
+                <div className="form-outline mb-4">
+                  <label className="form-label text-dark">
+                    Select Author (User)
+                  </label>
+                  <Select
+                    options={allUsers.map((user) => ({
+                      value: user._id,
+                      label: user.name,
+                    }))}
+                    value={allUsers
+                      .filter(user => user._id === selectedUserId)
+                      .map(user => ({
+                        value: user._id,
+                        label: user.name
+                      }))[0] || null}
+                    onChange={(selected) => setSelectedUserId(selected?.value || "")}
+                    placeholder="Search or select user..."
+                    isClearable
+                    isSearchable
+                    styles={customStyles}
+                  />
+                </div>
+
+                {/* Category */}
+                <div className="form-group fs-5 mb-4">
+                  <label htmlFor="categorySelect" className="form-label text-dark">Category</label>
                   <select
-                    className="form-select  mb-2"
+                    id="categorySelect"
+                    className="form-select mb-2"
                     value={categoryId}
-                    onChange={(e) => {
-                      setCategoryId(e.target.value);
-                    }}
-                    aria-label=".form-select-lg example"
+                    onChange={(e) => setCategoryId(e.target.value)}
                   >
-                    <option selected>Select Category</option>
-                    {allCategory?.map((data, index) => (
-                      <option key={index} value={data?._id}>
-                        {data?.Category_name}
+                    <option value="">Select Category</option>
+                    {allCategory?.map((data) => (
+                      <option key={data._id} value={data._id}>
+                        {data.Category_name}
                       </option>
                     ))}
                   </select>
                 </div>
-                {/* <!-- shayari input --> */}
-                <div className="form-outline mb-4">
 
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Shayari </label>
+                {/* Shayari input */}
+                <div className="form-outline mb-4">
+                  <label htmlFor="shayariEditor" className="form-label text-dark">Shayari</label>
                   <JoditEditor
                     ref={editor}
                     value={shayari}
                     className="text-dark"
-                    onChange={newContent => setShayari(newContent)}
+                    onChange={(newContent) => setShayari(newContent)}
                   />
                 </div>
+
+                {/* Tag input */}
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Tag </label>
+                  <label htmlFor="form6Example3" className="form-label text-dark">Tag</label>
                   <input
                     type="text"
                     id="form6Example3"
@@ -155,38 +227,43 @@ function UpShayari() {
                   />
                 </div>
 
+                {/* Language selection */}
                 <div className="form-outline mb-4">
-                  <label for="exampleFormControlInput1" className="form-label text-dark">Language</label>
-                  <select className="form-select" aria-label="Default select example" value={language}
-                    onChange={(e) => setLanguage(e.target.value)}>
-                    <option selected>Select Language</option>
+                  <label htmlFor="languageSelect" className="form-label text-dark">Language</label>
+                  <select
+                    id="languageSelect"
+                    className="form-select"
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                  >
+                    <option value="">Select Language</option>
                     <option value="hindi">Hindi</option>
                     <option value="English">English</option>
                   </select>
                 </div>
-                {/* <!-- shayari image --> */}
+
+                {/* Shayari image */}
                 <div className="mb-4">
-                  <img
-                    src={BASE_URL_IMG + allShayariData?.Image}
-                    alt="uprofile"
-                    className="img-fluid"
-                    style={{ height: "150px" }}
-                  />
+                  {allShayariData?.Image && (
+                    <img
+                      src={BASE_URL_IMG + allShayariData.Image}
+                      alt="Shayari image"
+                      className="img-fluid"
+                      style={{ height: "150px" }}
+                    />
+                  )}
                   <input
                     className="form-control"
                     type="file"
                     id="formFile"
-                    onChange={(e) => {
-                      changeimage(e);
-                    }}
+                    onChange={changeImage}
                   />
                 </div>
 
-                {/* <!-- Submit button --> */}
+                {/* Submit button */}
                 <button
                   type="submit"
                   className="btn btn-primary-1 btn-block mb-4"
-                  onClick={handleshayariData}
                 >
                   Post
                 </button>

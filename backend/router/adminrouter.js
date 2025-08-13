@@ -36,7 +36,7 @@ const bookcontroller = require("../controllers/BookController");
 const testcontroller = require("../controllers/TestimonialController");
 const dashboardcontroller = require("../controllers/Dashboard");
 const QuoteController = require("../controllers/Quotecontroller");
-const SettingsController = require("../controllers/SettingsController");
+const { getCaptchaSettings, updateCaptchaSettings } = require("../controllers/SettingsController");
 const userstorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./public/customer_photo");
@@ -350,7 +350,8 @@ router.post(
 );
 router.post("/latestProse", proseController.latestProse);
 router.post("/getFeaturedProse", proseController.getFeaturedProse);
-router.get("/captcha-status", SettingsController.getCaptchaStatus)
+router.get("/captcha", getCaptchaSettings);
+router.put("/captcha", updateCaptchaSettings);
 // --------end without login Router------------
 
 // =====================middleware start===========================
@@ -369,8 +370,7 @@ router.post(
   userupload.single("Image"),
   usercontroller.updateuser
 );
-router.get("/captcha", SettingsController.getAdminCaptchaSettings);
-router.put("/captcha", SettingsController.updateCaptchaSettings);
+
 // ----------user Authenticated -----------
 
 // ---------blog Category---------

@@ -1,78 +1,101 @@
-// src/pages/admin/CaptchaSettingsPage.js
+import { useEffect, useState } from "react";
+import swal from 'sweetalert2'; // Import SweetAlert
+import apiServices from '../../ApiServices/ApiServices';
+import "./CaptchaSettingsForm.css";
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './CaptchaToggle.css';
-import apiServices, { BASE_URL } from "../../ApiServices/ApiServices";
+const CaptchaSettingsForm = () => {
+  const [settings, setSettings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const CaptchaSettingsPage = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  // Fetch the current setting when the component loads
   useEffect(() => {
-    const fetchCaptchaStatus = async () => {
+    const loadSettings = async () => {
       try {
-        setIsLoading(true);
-        // Use BASE_URL so it always calls backend port 8000
-        const response = await axios.get(`${BASE_URL}admin/captcha`);
-        setIsEnabled(response.data.setting_value);
-        setError('');
+        const data = await apiServices.fetchCaptchaSettings();
+        setSettings(data);
       } catch (err) {
-        setError('Failed to load settings. Please try again.');
         console.error(err);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
-
-    fetchCaptchaStatus();
+    loadSettings();
   }, []);
 
-  // Handle toggle switch change
-  const handleToggleChange = async () => {
-    const newStatus = !isEnabled;
-    setIsEnabled(newStatus);
+  const handleChange = (index, field, value) => {
+    const newSettings = [...settings];
+    // Correctly handle boolean conversion for status
+    newSettings[index][field] = field === "status" ? (value === "true") : value;
+    setSettings(newSettings);
+  };
 
+  const handleSave = async () => {
     try {
-      await axios.put(`${BASE_URL}admin/captcha`, { enabled: newStatus });
-      alert('Settings updated successfully!');
+      for (const s of settings) {
+        await apiServices.updateCaptchaSettings(s);
+      }
+      // Use swal for success message
+      new swal({
+        title: "Success!",
+        text: "Captcha settings have been saved successfully.",
+        icon: "success",
+        button: "OK",
+      });
     } catch (err) {
-      setError('Failed to update settings.');
-      setIsEnabled(!newStatus); // revert if update fails
       console.error(err);
+      // Use swal for error message
+      swal({
+        title: "Error!",
+        text: "Failed to save settings. Please try again.",
+        icon: "error",
+        button: "OK",
+      });
     }
   };
 
-  if (isLoading) {
-    return <div>Loading Settings...</div>;
-  }
+  if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="settings-page">
+    <div className="captcha-form">
+      {settings.map((s, index) => (
+        <div key={s.type} className="captcha-section">
+          <h5>{s.type.charAt(0).toUpperCase() + s.type.slice(1)} Captcha</h5>
 
-        <h1>UnderDevelop</h1>
-      {/* <h2>CAPTCHA Settings ⚙️</h2> */}
-      <p>Control whether reCAPTCHA is active on public registration forms.</p>
-      
-      {error && <p className="error-message">{error}</p>}
-
-      <div className="toggle-container">
-        <label className="toggle-switch">
+          <label>Site Key</label>
           <input
-            type="checkbox"
-            checked={isEnabled}
-            onChange={handleToggleChange}
+            type="text"
+            value={s.sitekey || ""}
+            onChange={(e) => handleChange(index, "sitekey", e.target.value)}
           />
-          <span className="slider round"></span>
-        </label>
-        <span className="toggle-label">
-          {isEnabled ? 'CAPTCHA is ON' : 'CAPTCHA is OFF'}
-        </span>
-      </div>
+
+          <label>Secret Key</label>
+          <input
+            type="text"
+            value={s.secretkey || ""}
+            onChange={(e) => handleChange(index, "secretkey", e.target.value)}
+          />
+
+          <label>Status</label>
+          <select
+            value={s.status}
+            onChange={(e) => handleChange(index, "status", e.target.value)}
+          >
+            <option value={true}>Active</option>
+            <option value={false}>Inactive</option>
+          </select>
+
+          <label>Allowed Domain</label>
+          <input
+            type="text"
+            value={s.allowedDomain || ""}
+            onChange={(e) => handleChange(index, "allowedDomain", e.target.value)}
+            placeholder="example.com or localhost"
+          />
+        </div>
+      ))}
+
+      <button onClick={handleSave}>Save Settings</button>
     </div>
   );
 };
 
-export default CaptchaSettingsPage;
+export default CaptchaSettingsForm;

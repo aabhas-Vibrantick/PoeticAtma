@@ -145,6 +145,7 @@ export default function SherList() {
     },
     {
       name: "Approved",
+      selector: (row) => (row.isApproved ? 1 : 0), // numeric value for sorting
       cell: (row) => (
         <span
           className={`badge ${
@@ -155,6 +156,7 @@ export default function SherList() {
         </span>
       ),
       sortable: true,
+      sortFunction: (a, b) => b.isApproved - a.isApproved, // Approved first
     },
     {
       name: "Status",
@@ -217,16 +219,32 @@ export default function SherList() {
     },
   ];
 
-  const filteredShers = allSher.filter(
-    (s) =>
-      s.title?.toLowerCase().includes(filterText.toLowerCase()) ||
-      s.userId?.name?.toLowerCase().includes(filterText.toLowerCase()) ||
-      s.Category_id?.Category_name?.toLowerCase().includes(
-        filterText.toLowerCase()
-      ) ||
-      s.sher?.toLowerCase().includes(filterText.toLowerCase()) ||
-      s.tags?.toLowerCase().includes(filterText.toLowerCase())
+  const filteredShers = allSher.filter((s) => {
+  const search = filterText.trim().toLowerCase(); // normalize search text
+
+  // Convert every field to string safely
+  const title = (s.title || "").toLowerCase();
+  const author = (s.userId?.name || "").toLowerCase();
+  const category = (s.Category_id?.Category_name || "").toLowerCase();
+  const sherText = (s.sher || "").toLowerCase();
+  const tags = (
+    typeof s.tags === "string"
+      ? s.tags
+      : Array.isArray(s.tags)
+      ? s.tags.join(", ")
+      : ""
+  ).toLowerCase();
+
+  // Match if search is in any field
+  return (
+    title.includes(search) ||
+    author.includes(search) ||
+    category.includes(search) ||
+    sherText.includes(search) ||
+    tags.includes(search)
   );
+});
+
 
   const ExpandedComponent = ({ data }) => (
     <pre>{JSON.stringify(data, null, 2)}</pre>

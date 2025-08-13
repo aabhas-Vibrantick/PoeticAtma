@@ -1,62 +1,65 @@
-// controllers/settingsController.js
-const Settings = require("../models/Setting");
+const Setting = require("../models/Setting");
 
-// Public endpoint to check if captcha is enabled
-const getCaptchaStatus = async (req, res) => {
+/**
+ * @desc GET all captcha settings, with status dynamically adjusted by domain
+ * @route GET /api/admin/captcha
+ * @access Private
+ */
+const getCaptchaSettings = async (req, res) => {
   try {
-    const setting = await Settings.findOne({ setting_key: "is_captcha_enabled" });
-    const isEnabled = setting ? setting.setting_value : true; // default to true
-    res.status(200).json({ showCaptcha: isEnabled });
-  } catch (error) {
-    console.error("Error fetching CAPTCHA status:", error);
-    res.status(500).json({ showCaptcha: true });
+    const settings = await Setting.find();
+
+    // Use req.hostname for a more reliable domain check (e.g., "localhost" or "poeticatma.com")
+    const host = req.hostname;
+
+    const updatedSettings = settings.map(s => {
+      // Only modify the google captcha setting
+      if (s.type === "google") {
+        // Check if the domain from the request matches the one in the database
+        const domainMatches = s.allowedDomain === host;
+        
+        return {
+          ...s.toObject(),
+          // If domains don't match, send status as false so the frontend can hide the CAPTCHA
+          // If they do match, send the original status from the database
+          status: domainMatches ? s.status : false,
+        };
+      }
+      // Return other settings (like cloudflare) unmodified
+      return s;
+    });
+
+    res.status(200).json(updatedSettings);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error fetching captcha settings" });
   }
 };
 
-// Admin GET
-const getAdminCaptchaSettings = async (req, res) => {
-  try {
-    let setting = await Settings.findOne({ setting_key: "is_captcha_enabled" });
-
-    if (!setting) {
-      setting = await Settings.create({}); // Defaults kick in here
-    }
-
-    res.status(200).json({ setting_value: setting.setting_value });
-  } catch (error) {
-    console.error("Error fetching admin CAPTCHA settings:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-
-// Admin PUT
+/**
+ * @desc PUT update or create captcha setting
+ * @route PUT /api/admin/captcha
+ * @access Private
+ */
 const updateCaptchaSettings = async (req, res) => {
-  const { enabled } = req.body;
+  const { type, sitekey, secretkey, status, allowedDomain } = req.body;
 
-  if (typeof enabled !== "boolean") {
-    return res.status(400).json({ message: "Invalid 'enabled' value. Must be a boolean." });
+  if (!type || !sitekey || !secretkey || !allowedDomain) {
+    return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
-    const updatedSetting = await Settings.findOneAndUpdate(
-      { setting_key: "is_captcha_enabled" },
-      { setting_value: enabled },
-      { upsert: true, new: true }
+    const updatedSetting = await Setting.findOneAndUpdate(
+      { type }, // Find setting by its type (e.g., "google")
+      { sitekey, secretkey, status, allowedDomain }, // Data to update with
+      { upsert: true, new: true } // Options: create if it doesn't exist, and return the new document
     );
 
-    res.status(200).json({
-      message: "CAPTCHA setting updated successfully.",
-      setting_value: updatedSetting.setting_value,
-    });
-  } catch (error) {
-    console.error("Error updating CAPTCHA settings:", error);
-    res.status(500).json({ message: "Failed to update setting." });
+    res.status(200).json({ message: "Captcha updated successfully", setting: updatedSetting });
+  } catch (err) {
+    console.error("Error updating captcha:", err);
+    res.status(500).json({ message: "Failed to update setting" });
   }
 };
 
-module.exports = {
-  getCaptchaStatus,
-  getAdminCaptchaSettings,
-  updateCaptchaSettings,
-};
+module.exports = { getCaptchaSettings, updateCaptchaSettings };

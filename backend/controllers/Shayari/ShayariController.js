@@ -248,7 +248,7 @@ updateshayari = (req, res) => {
           shayaridata.shayari = req.body.shayari;
           const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
           shayaridata.tags = tagsArray;
-          shayaridata.userId = req.decoded;
+          shayaridata.userId = req.body.userId;
           if (req.file) {
             shayaridata.Image = "shayari_photo/" + req.file.filename;
           }

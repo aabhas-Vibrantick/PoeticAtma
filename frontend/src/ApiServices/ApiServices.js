@@ -19,6 +19,22 @@ class apiServices {
     return axios.post(BASE_URL + "register", data);
   }
 
+   fetchCaptchaSettings() {
+    const headers = {
+      Accept: "application/json",
+      Authorization: sessionStorage.getItem("token"), // if your backend requires auth
+    };
+    return axios.get(BASE_URL + "captcha", { headers }).then((res) => res.data);
+  }
+  
+  updateCaptchaSettings(data) {
+    const headers = {
+      Accept: "application/json",
+      Authorization: sessionStorage.getItem("token"),
+    };
+    return axios.put(BASE_URL + "captcha", data, { headers }).then((res) => res.data);
+  }
+
   adduser(data) {
     return axios.post(BASE_URL + "adduser", data);
   }

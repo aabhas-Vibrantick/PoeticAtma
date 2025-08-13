@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import JoditEditor from "jodit-react";
 import { useRef } from "react";
+import Select from "react-select";
 function AddShayari() {
   const nav = useNavigate();
   const editor = useRef(null);
@@ -86,7 +87,39 @@ function AddShayari() {
   },
 };
 
-
+const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      fontSize: "14px",
+      color: "#212529",
+      minHeight: "38px",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      fontSize: "14px",
+      color: "#212529",
+      backgroundColor: "#ffffff", // Solid white background
+      boxShadow: "0 4px 8px rgba(0,0,0,0.1)", // Optional: dropdown shadow
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected
+        ? "#007bff" // Selected option background
+        : state.isFocused
+        ? "#e9ecef" // Hover/focus background
+        : "#ffffff", // Default background
+      color: state.isSelected ? "#fff" : "#212529",
+      cursor: "pointer",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#212529",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#6c757d",
+    }),
+  };
 
   return (
     <>
@@ -118,6 +151,26 @@ function AddShayari() {
                   />
                 </div>
 
+                <div className="form-outline mb-4">
+                  <label className="form-label text-dark">
+                    Select Author (User)
+                  </label>
+                  <Select
+                    options={allUsers.map((user) => ({
+                      value: user._id,
+                      label: user.name,
+                    }))}
+                    onChange={(selected) =>
+                      setSelectedUserId(selected?.value || "")
+                    }
+                    placeholder="Search or select user..."
+                    isClearable
+                    isSearchable
+                    styles={customStyles}
+                    menuIsOpen={undefined} // keeps default open/close behavior
+                  />
+                </div>
+
                 {/* Category input */}
                 <div className="form-group fs-5 mb-4">
                   <label
@@ -141,7 +194,7 @@ function AddShayari() {
                   </select>
                 </div>
 
-                <div className="form-outline mb-4">
+                {/* <div className="form-outline mb-4">
                   <label className="form-label text-dark">
                     Select Author (User)
                   </label>
@@ -157,7 +210,9 @@ function AddShayari() {
                       </option>
                     ))}
                   </select>
-                </div>
+                </div> */}
+
+          
 
                 {/* shayari input */}
                 <div className="form-outline mb-4">

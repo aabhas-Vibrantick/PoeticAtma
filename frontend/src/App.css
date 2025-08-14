@@ -675,3 +675,26 @@ Timeline
   height: 20px;
 }
 
+/* Large screens: 425px width */
+@media (max-width: 450px) {
+  .forgetbody {
+    width: 424px;
+  }
+}
+
+/* Medium screens: 375px width */
+@media (max-width: 395px) {
+  .forgetbody {
+    width: 370px;
+  }
+}
+
+/* Small screens: 320px width */
+@media (max-width: 350px) {
+  .forgetcontainer {
+    padding: 8px;
+  }
+  .forgetbody {
+    width: 314px;
+  }
+}

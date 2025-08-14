@@ -186,7 +186,7 @@ const routes = [
     ],
   },
   {
-    name: "Shayari Category",
+    name: "Shayari (Ghazal) Category",
     icon: <AiTwotoneFileExclamation />,
     subRoutes: [
       {
@@ -218,7 +218,7 @@ const routes = [
     ],
   },
   {
-    name: "Prose Category",
+    name: "Prose (Nazm) Category",
     icon: <AiTwotoneFileExclamation />,
     subRoutes: [
       {
@@ -252,7 +252,7 @@ const routes = [
     ],
   },
   {
-    name: "Shayari",
+    name: "Shayari (Ghazal)",
     icon: <AiTwotoneFileExclamation />,
     subRoutes: [
      
@@ -286,7 +286,7 @@ const routes = [
     ],
   },
   {
-    name: "Prose",
+    name: "Prose (Nazm)",
     icon: <AiTwotoneFileExclamation />,
     subRoutes: [
      
@@ -389,7 +389,7 @@ const SideBar = ({ children }) => {
       <div className="admin_main-container">
         <motion.div
           animate={{
-            width: isOpen ? "200px" : "45px",
+            width: isOpen ? "263px" : "45px",
 
             transition: {
               duration: 0.5,

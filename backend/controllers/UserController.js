@@ -961,105 +961,91 @@ forgotPassword = async (req, res) => {
   try {
     const { email, recaptchaValue } = req.body;
 
-    axios({
-      url: `https://www.google.com/recaptcha/api/siteverify?secret=${SECRETKEY}&response=${recaptchaValue}`,
-      method: "post",
-    })
-      .then((recaptchaResponse) => {
-        if (recaptchaResponse.data.success) {
-          User.findOne({ email })
-            .then(async (user) => {
-              if (!user) {
-                return res.status(404).json({ message: "User not found" });
-              }
+    // Verify reCAPTCHA
+    const recaptchaResponse = await axios.post(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${SECRETKEY}&response=${recaptchaValue}`
+    );
 
-              const passwordResetTime = user.passwordResetTime;
-
-              if (passwordResetTime) {
-                if (new Date() <= passwordResetTime) {
-                  res.status(200).json({
-                    message:
-                      "Your password has been recently Changed, Please try after 3 days",
-                    passwordResetTimeReached: true,
-                  });
-                }
-              }
-
-              const otp = otpGenerator.generate(8, {
-                digits: true,
-                lowerCaseAlphabets: false,
-                upperCaseAlphabets: false,
-                specialChars: false,
-              });
-
-              const otpExpiration = new Date();
-              otpExpiration.setMinutes(otpExpiration.getMinutes() + 30);
-
-              user.otp = otp;
-              user.otpExpiration = otpExpiration;
-
-              await user.save();
-
-              const transporter = nodemailer.createTransport({
-                host: "smtp.hostinger.com",
-                port: 465,
-                auth: {
-                  user: "info@poeticatma.com",
-                  pass: "Y^o~^3CyI7]j",
-                },
-              });
-
-              const mailOptions = {
-                from: '"Poetic Atma" <info@poeticatma.com>',
-                to: email,
-                subject: "Forget Password Verification Code",
-                html: `
-                      <div style="justify-content:center;font-family:sans-serif;">
-                        Verification Code : <b> ${otp} </b>
-                        <br/> <br/>
-                        <b>Note : Your Email Verification Code will expire in 20 Minutes.</b>
-                      </div>
-                      `,
-              };
-
-              transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                  console.error("Error in Sending Email : ", error);
-
-                  return res.status(500).json({
-                    message: "Failed to send OTP via Email!",
-                    status: false,
-                  });
-                } else {
-                  res.status(200).json({
-                    message: "OTP sent Successfully",
-                    status: true,
-                    otpSent: true,
-                  });
-                }
-              });
-            })
-            .catch((error) => {
-              console.log(error);
-              res.status(500).json({ message: "Internal server error" });
-            });
-        } else {
-          res.json({
-            status: 400,
-            success: false,
-            message: "reCAPTCHA verification failed",
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("reCAPTCHA error:", error);
-        res.status(500).json({ message: "Internal server error" });
+    if (!recaptchaResponse.data.success) {
+      return res.status(400).json({
+        success: false,
+        message: "reCAPTCHA verification failed",
       });
+    }
+
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User with this email does not exist" });
+    }
+
+    // Check recent password reset
+    if (user.passwordResetTime && new Date() <= user.passwordResetTime) {
+      return res.status(200).json({
+        message: "Your password has been recently changed. Please try after 3 days",
+        passwordResetTimeReached: true,
+      });
+    }
+
+    // Generate OTP
+    const otp = otpGenerator.generate(8, {
+      digits: true,
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
+
+    const otpExpiration = new Date();
+    otpExpiration.setMinutes(otpExpiration.getMinutes() + 20); // OTP valid for 20 mins
+
+    user.otp = otp;
+    user.otpExpiration = otpExpiration;
+
+    await user.save();
+
+    // Send OTP email
+    const transporter = nodemailer.createTransport({
+      host: "smtp.hostinger.com",
+      port: 465,
+      auth: {
+        user: "info@poeticatma.com",
+        pass: "Y^o~^3CyI7]j",
+      },
+    });
+
+    const mailOptions = {
+      from: '"Poetic Atma" <info@poeticatma.com>',
+      to: email,
+      subject: "Forget Password Verification Code",
+      html: `
+        <div style="justify-content:center;font-family:sans-serif;">
+          Verification Code : <b>${otp}</b>
+          <br/><br/>
+          <b>Note: Your Email Verification Code will expire in 20 minutes.</b>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({
+      message: "OTP sent successfully",
+      status: true,
+      otpSent: true,
+    });
+
   } catch (error) {
-    console.error("Error generating OTP:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in forgotPassword:", error);
+
+    // Send proper message if email not found
+    if (error.response && error.response.status === 404) {
+      return res.status(404).json({ message: "User with this email does not exist" });
+    }
+
+    res.status(500).json({ message: "An unexpected error occurred. Please try again later." });
   }
 };
+
 
 resetPassword = async (req, res) => {
   console.log("Received resetPassword data:", req.body);

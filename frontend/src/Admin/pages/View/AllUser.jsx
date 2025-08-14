@@ -4,7 +4,7 @@ import { CSVLink } from "react-csv";
 import { ToastContainer, toast } from "react-toastify";
 import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
 import { Link } from "react-router-dom";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 function AllUserList() {
   const [toggleCleared, setToggleCleared] = useState(false);
@@ -32,35 +32,41 @@ function AllUserList() {
 
   const deleteuser = (id) => {
     const data = { _id: id };
-    apiServices.deletecustomer(data).then((response) => {
-      if (response.data.success) {
-        toast.success(response.data.message);
-        fetchData();
-      } else {
-        toast.error(response.data.message);
-      }
-    }).catch(() => {
-      toast.error("Something went wrong");
-    });
+    apiServices
+      .deletecustomer(data)
+      .then((response) => {
+        if (response.data.success) {
+          toast.success(response.data.message);
+          fetchData();
+        } else {
+          toast.error(response.data.message);
+        }
+      })
+      .catch(() => {
+        toast.error("Something went wrong");
+      });
   };
 
   const changeStatus = (id, status) => {
     setLoading(true);
-    const upstatus = status ? '0' : '1';
+    const upstatus = status ? "0" : "1";
     const data = { _id: id, status: upstatus };
 
-    apiServices.changeStatus(data).then((response) => {
-      if (response.data.success) {
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
-      setLoading(false);
-      fetchData();
-    }).catch(() => {
-      toast.error('Something went wrong!! Try Again Later');
-      setLoading(false);
-    });
+    apiServices
+      .changeStatus(data)
+      .then((response) => {
+        if (response.data.success) {
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message);
+        }
+        setLoading(false);
+        fetchData();
+      })
+      .catch(() => {
+        toast.error("Something went wrong!! Try Again Later");
+        setLoading(false);
+      });
   };
 
   const handleClear = () => {
@@ -72,19 +78,19 @@ function AllUserList() {
   };
 
   const confirmDelete = (id) => {
-  Swal.fire({
-    title: 'Are you sure?',
-    text: "You won't be able to revert this!",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Yes, delete it!',
-    cancelButtonText: 'Cancel',
-  }).then((result) => {
-    if (result.isConfirmed) {
-      deleteuser(id);
-    }
-  });
-};
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteuser(id);
+      }
+    });
+  };
 
   const columns = [
     { name: "S.No", selector: (_, index) => index + 1, width: "70px" },
@@ -101,7 +107,12 @@ function AllUserList() {
           src={BASE_URL_IMG + row.Image}
           alt=""
           className="img-thumbnail"
-          style={{ width: "70px", height: "70px", objectFit: "cover", borderRadius: "8px" }}
+          style={{
+            width: "70px",
+            height: "70px",
+            objectFit: "cover",
+            borderRadius: "8px",
+          }}
         />
       ),
     },
@@ -122,7 +133,11 @@ function AllUserList() {
       name: "Status",
       selector: (row) => (row.userId?.status ? "Active" : "Inactive"),
       cell: (row) => (
-        <span className={`badge ${row.userId?.status ? "bg-success" : "bg-secondary"}`}>
+        <span
+          className={`badge ${
+            row.userId?.status ? "bg-success" : "bg-secondary"
+          }`}
+        >
           {row.userId?.status ? "Active" : "Inactive"}
         </span>
       ),
@@ -132,19 +147,21 @@ function AllUserList() {
       cell: (row) => (
         <div className="d-flex flex-wrap gap-1">
           <Link to={`/admin/admin-profile/${row.userId?._id}`}>
-            <button className="btn btn-sm btn-outline-primary">Edit</button>
+            <button className="btn btn-sm btn-outline-primary">
+              <i className="fas fa-edit"></i>
+            </button>
           </Link>
-          {/* <button
+          <button
             className="btn btn-sm btn-outline-danger"
             onClick={() => confirmDelete(row._id)}
           >
-            Delete
-          </button> */}
+            <i className="fas fa-trash-alt"></i>
+          </button>
           <button
             className="btn btn-sm btn-outline-warning"
             onClick={() => changeStatus(row.userId?._id, row.userId?.status)}
           >
-            Status
+            <i className="fas fa-toggle-on"></i>
           </button>
         </div>
       ),
@@ -157,7 +174,9 @@ function AllUserList() {
     return (
       user.name?.toLowerCase().includes(search) ||
       user.email?.toLowerCase().includes(search) ||
-      (user.contact && typeof user.contact === "string" && user.contact.toLowerCase().includes(search)) ||
+      (user.contact &&
+        typeof user.contact === "string" &&
+        user.contact.toLowerCase().includes(search)) ||
       user.address?.toLowerCase().includes(search) ||
       user.userId?._id?.toLowerCase().includes(search)
     );

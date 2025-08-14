@@ -100,7 +100,7 @@ export default function Footer() {
                 <p>
                   <i className="fas fa-phone me-3 "></i>
                   <a href="tel:+918699524005" style={{ color: "inherit", fontSize: "inherit" }}>
-                    +91 8699524005
+                    +91 9888323607
                   </a>
                 </p>
               </div>

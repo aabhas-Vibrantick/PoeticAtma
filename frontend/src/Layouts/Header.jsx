@@ -4,11 +4,9 @@ import { useEffect, useState } from "react";
 import apiServices, { BASE_URL_IMG } from "../ApiServices/ApiServices";
 import { ToastContainer, toast } from "react-toastify";
 
-
-
 export default function Header() {
-  const user_type = sessionStorage.getItem('user_type')
-  const authenticate = sessionStorage.getItem('authenticate')
+  const user_type = sessionStorage.getItem("user_type");
+  const authenticate = sessionStorage.getItem("authenticate");
 
   const [isOpen, setIsOpen] = useState(false);
   const [id, setId] = useState(sessionStorage.getItem("_id"));
@@ -23,7 +21,6 @@ export default function Header() {
 
   //  ------------------- user------------
 
-  
   useEffect(() => {
     setId(sessionStorage.getItem("_id"));
 
@@ -46,29 +43,37 @@ export default function Header() {
       });
   }, []);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const logout = () => {
-    sessionStorage.clear()
+    sessionStorage.clear();
 
     setTimeout(() => {
-      navigate("/login")
-      sessionStorage.clear()
-    }, 500)
+      navigate("/login");
+      sessionStorage.clear();
+    }, 500);
 
-    toast.success("Logged Out Successfully")
-  }
-
-  
+    toast.success("Logged Out Successfully");
+  };
 
   return (
     <>
-      <header id="header" className="container-fluid fixed-top  header-transparent ">
+      <header
+        id="header"
+        className="container-fluid fixed-top  header-transparent "
+      >
         <div className="row top-header">
           <div className="col-lg-8  top-header-content text-center">
             <span className="top-company-name fw-bold">
-              Have any Question? Email Us<i className="fas fa-solid fas fa-envelope px-3"></i>
-              info@poeticatma.com
+              Have any Question? Email Us
+              <i className="fas fa-envelope px-3"></i>
+              <a
+                href="mailto:info@poeticatma.com"
+                className="text-decoration-none text-reset"
+              >
+                info@poeticatma.com
+              </a>
+              <i className="fas fa-phone px-3"></i>9888323607
               <span className="mx-2">|</span>
               Chandigarh, India
             </span>
@@ -77,40 +82,73 @@ export default function Header() {
           <div className="col-lg-4 top-header-content">
             <div className="top-social-media text-center">
               <p>Find Us On</p>
-              <a href="https://www.facebook.com/poeticatma" className="top-social-icon" target="_blank">
+              <a
+                href="https://www.facebook.com/poeticatma"
+                className="top-social-icon"
+                target="_blank"
+              >
                 <i className="fab fa-brands fab fa-facebook"></i>
               </a>
-              <a href="https://www.youtube.com/@poeticatma" className="top-social-icon" target="_blank">
+              <a
+                href="https://www.youtube.com/@poeticatma"
+                className="top-social-icon"
+                target="_blank"
+              >
                 <i className="fab fa-brands fab fa-youtube"></i>
               </a>
-              <a href="https://www.instagram.com/poeticatma/" className="top-social-icon" target="_blank">
+              <a
+                href="https://www.instagram.com/poeticatma/"
+                className="top-social-icon"
+                target="_blank"
+              >
                 <i className="fab fa-brands fab fa-instagram"></i>
               </a>
-              <a href="https://wa.me/919888323607" target="_blank" className="top-social-icon">
+              <a
+                href="https://wa.me/919888323607"
+                target="_blank"
+                className="top-social-icon"
+              >
                 <i className="fab fa-brands fab fa-whatsapp"></i>
               </a>
             </div>
-
           </div>
         </div>
 
-        {authenticate && user_type == 2 ?
+        {authenticate && user_type == 2 ? (
           <>
-            <nav className="navbar navbar-expand-lg navbar-light .nav-header" id="navbarid">
+            <nav
+              className="navbar navbar-expand-lg navbar-light .nav-header"
+              id="navbarid"
+            >
               <div className="container-fluid">
                 <Link to="/">
-                  <img src="/assets/images/Poeticatma_logo.png" className="poetic-logo" />
+                  <img
+                    src="/assets/images/Poeticatma_logo.png"
+                    className="poetic-logo"
+                  />
                 </Link>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <button
+                  className="navbar-toggler"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#navbarSupportedContent"
+                  aria-controls="navbarSupportedContent"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation"
+                >
                   <span className="navbar-toggler-icon"></span>
                 </button>
-                <div className="collapse navbar-collapse  menu" id="navbarSupportedContent">
-
+                <div
+                  className="collapse navbar-collapse  menu"
+                  id="navbarSupportedContent"
+                >
                   <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-3 ">
-
                     <li className="nav-item">
                       <Link to="/">
-                        <a className="active nav-link text-dark" aria-current="page" >
+                        <a
+                          className="active nav-link text-dark"
+                          aria-current="page"
+                        >
                           HOME
                         </a>
                       </Link>
@@ -124,58 +162,52 @@ export default function Header() {
                     </li>
                     <li className="nav-item">
                       <Link to="/poets">
-                        <a className="nav-link text-dark">
-                          POETS
-                        </a>
+                        <a className="nav-link text-dark">POETS</a>
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/shers">
-                        <a className="nav-link text-dark">
-                          SHER
-                        </a>
+                        <a className="nav-link text-dark">SHER</a>
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/shayari">
-                        <a className="nav-link text-dark">
-                          SHAYARI
-                        </a>
+                        <a className="nav-link text-dark">SHAYARI</a>
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/prose">
-                        <a className="nav-link text-dark">
-                          PROSE
-                        </a>
+                        <a className="nav-link text-dark">PROSE</a>
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/blogs">
-                        <a className="nav-link text-dark">
-                          BLOGS
-                        </a>
+                        <a className="nav-link text-dark">BLOGS</a>
                       </Link>
                     </li>
 
                     <li className="nav-item">
                       <Link to="/contact">
-                        <a className="nav-link text-dark">
-                          CONTACT 
-                        </a>
+                        <a className="nav-link text-dark">CONTACT</a>
                       </Link>
                     </li>
-
                   </ul>
 
                   <form className="">
-
-                    <div className="user-profile" data-bs-toggle="dropdown"
-                      aria-expanded="false">
-                      <img className="profile-image" src={BASE_URL_IMG + userDetail?.Image} alt="User Profile Image" onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/avtar.png";
-                                      }}/>
+                    <div
+                      className="user-profile"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <img
+                        className="profile-image"
+                        src={BASE_URL_IMG + userDetail?.Image}
+                        alt="User Profile Image"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/avtar.png";
+                        }}
+                      />
                       <i className="fa-solid fa-caret-down dropdown-icon"></i>
                     </div>
 
@@ -185,7 +217,8 @@ export default function Header() {
                           <li>
                             <a
                               className="dropdown-item d-flex align-items-center"
-                              href="">
+                              href=""
+                            >
                               <i className="fa-solid fa-person px-2"></i>
                               <span>My Dashboard</span>
                             </a>
@@ -226,22 +259,38 @@ export default function Header() {
               </div>
             </nav>
           </>
-          :
+        ) : (
           <>
             <nav className="navbar  navbar-expand-lg navbar-light bg-transparent nav-header">
               <div className="container-fluid">
                 <Link to="/">
-                  <img src="/assets/images/Poeticatma_logo.png" className="poetic-logo" />
+                  <img
+                    src="/assets/images/Poeticatma_logo.png"
+                    className="poetic-logo"
+                  />
                 </Link>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <button
+                  className="navbar-toggler"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#navbarSupportedContent"
+                  aria-controls="navbarSupportedContent"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation"
+                >
                   <span className="navbar-toggler-icon"></span>
                 </button>
-                <div className="collapse navbar-collapse  menu" id="navbarSupportedContent">
+                <div
+                  className="collapse navbar-collapse  menu"
+                  id="navbarSupportedContent"
+                >
                   <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-3 ">
-
                     <li className="nav-item">
                       <Link to="/">
-                        <a className="active nav-link text-dark" aria-current="page" >
+                        <a
+                          className="active nav-link text-dark"
+                          aria-current="page"
+                        >
                           HOME
                         </a>
                       </Link>
@@ -255,68 +304,53 @@ export default function Header() {
                     </li>
                     <li className="nav-item">
                       <Link to="/poets">
-                        <a className="nav-link text-dark">
-                          POETS
-                        </a>
+                        <a className="nav-link text-dark">POETS</a>
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/shers">
-                        <a className="nav-link text-dark">
-                          SHER
-                        </a>
+                        <a className="nav-link text-dark">SHER</a>
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/shayari">
-                        <a className="nav-link text-dark">
-                          SHAYARI
-                        </a>
+                        <a className="nav-link text-dark">SHAYARI</a>
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/prose">
-                        <a className="nav-link text-dark">
-                          PROSE
-                        </a>
+                        <a className="nav-link text-dark">PROSE</a>
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/blogs">
-                        <a className="nav-link text-dark">
-                          BLOGS
-                        </a>
+                        <a className="nav-link text-dark">BLOGS</a>
                       </Link>
                     </li>
 
                     <li className="nav-item">
                       <Link to="/contact">
-                        <a className="nav-link text-dark">
-                          CONTACT US
-                        </a>
+                        <a className="nav-link text-dark">CONTACT US</a>
                       </Link>
                     </li>
-
                   </ul>
 
                   <form className="loginbutton-box">
                     <Link to="/login">
                       <button className="login-button">
                         <i className="fa-solid fa-right-to-bracket px-2 "></i>
-                        <span >Sign In</span>
+                        <span>Sign In</span>
                       </button>
                     </Link>
                   </form>
-
                 </div>
               </div>
             </nav>
           </>
-        }
-
+        )}
       </header>
 
       <ToastContainer />
     </>
-  )
+  );
 }

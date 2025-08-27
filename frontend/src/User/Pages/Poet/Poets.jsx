@@ -27,7 +27,7 @@ export default function Poets() {
       const response = await apiServices.getallcustomer();
       if (response.data.success) {
         const filteredUsers = response.data.data.filter(
-          (user) => user.userId !== null
+          (user) => user.userId !== null && user.userId.status === true
         );
         setUsers(filteredUsers);
 
@@ -98,9 +98,9 @@ export default function Poets() {
   return (
     <div className="col-sm-6 col-md-4 col-lg-3 poetwraper mb-4" key={data._id}>
       <Link
-        to={`/poets-profile/${userId}`}
-        className="text-decoration-none text-dark"
-      >
+  to={`/poets-profile/${data.slug}`}
+  className="text-decoration-none text-dark"
+>
         <div className="card poetcard shadow-sm border-0 rounded-4 h-100 card-hover">
           <div className="card-body text-center px-4 py-3">
             <div className="poet-img-wrapper mx-auto mb-3">

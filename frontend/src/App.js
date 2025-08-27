@@ -126,8 +126,9 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/blogs" element={<Blog />} />
             <Route path="/poets" element={<Poets />} />
-            <Route path="/single-blog/:_id" element={<Singleblog />} />
-            <Route path="/poets-profile/:userId" element={<Porfile />} />
+            <Route path="/single-blog/:slug" element={<Singleblog />} />
+            <Route path="/poets-profile/:slug" element={<Porfile />} />
+            {/* <Route path="/poets-profile/:_id" element={<Porfile />} /> */}
             <Route path="/user-profile" element={<Useruprofile />} />
             <Route path="/prose-Image" element={<ProseImage />} />
             <Route path="/sher-Image" element={<SherImage />} />
@@ -141,7 +142,7 @@ function App() {
             <Route path="/top20-sher" element={<Top20sher />} />
             <Route path="/occasion-sher" element={<Occasionsher />} />
             <Route path="/best-sher" element={<Bestsher />} />
-            <Route path="/single-sher/:_id" element={<SingleSher />} />
+            <Route path="/single-sher/:slug" element={<SingleSher />} />
 
             <Route path="/shayari" element={<Shayari />} />
             <Route path="/hindi-shayari" element={<Hindishayari />} />
@@ -149,7 +150,7 @@ function App() {
             <Route path="/top20-shayari" element={<Top20shayari />} />
             <Route path="/occasion-shayari" element={<Occasionshayari />} />
             <Route path="/best-shayari" element={<Bestshayari />} />
-            <Route path="/single-shayari/:_id" element={<SingleShayari />} />
+            <Route path="/single-shayari/:slug" element={<SingleShayari />} />
 
             <Route path="/prose" element={<Prose />} />
             <Route path="/hindi-prose" element={<Hindiprose />} />
@@ -157,7 +158,7 @@ function App() {
             <Route path="/top20-prose" element={<Top20prose />} />
             <Route path="/occasion-prose" element={<Occasionprose />} />
             <Route path="/best-prose" element={<Bestprose />} />
-            <Route path="/single-prose/:_id" element={<Singleprose />} />
+            <Route path="/single-prose/:slug" element={<Singleprose />} />
 
             <Route path="/update-blog/:_id" element={<UpdateBlog />} />
             <Route path="/update-prose/:_id" element={<UpdateProse />} />

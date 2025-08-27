@@ -1,24 +1,21 @@
-
-
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 // Import Swiper React components
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 
 // import './styles.css';
 
 // import required modules
-import { Pagination, Navigation } from 'swiper/modules';
-import { Link } from 'react-router-dom';
-import apiServices, { BASE_URL_IMG } from '../../../ApiServices/ApiServices'
-import { toast, ToastContainer } from 'react-toastify'
+import { Pagination, Navigation } from "swiper/modules";
+import { Link } from "react-router-dom";
+import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
+import { toast, ToastContainer } from "react-toastify";
 import ScaleLoader from "react-spinners/ScaleLoader";
 export default function Prose() {
-
   const [allProseImg, setAllProseImg] = useState([]);
   const [allPopular, setAllPopular] = useState([]);
   const [allBest, setAllBest] = useState([]);
@@ -40,7 +37,8 @@ export default function Prose() {
     setTimeout(() => {
       setLoading(false);
     }, 1500);
-    apiServices.getallProseImage()
+    apiServices
+      .getallProseImage()
       .then((data) => {
         if (data.data.success) {
           setAllProseImg(data.data.data);
@@ -54,23 +52,27 @@ export default function Prose() {
         toast.error("Something went wrong");
       });
 
-    const categoryId = '65115f1e2a54efb15c3cbb41';
-    apiServices.getProseByCategory({ Category_id: categoryId })
-      .then(response => {
+    const categoryId = "65115f1e2a54efb15c3cbb41";
+    apiServices
+      .getProseByCategory({ Category_id: categoryId })
+      .then((response) => {
         if (response.data.success) {
-          const filteredProses = response.data.data.filter((prose) => prose.status === true);
+          const filteredProses = response.data.data.filter(
+            (prose) => prose.status === true
+          );
           setByCategory(filteredProses);
           // setByCategory(response.data.data);
         } else {
           // console.error(response.data.message);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         // console.error('Error:', error);
       });
 
-    apiServices.getproseByHindi()
-      .then(response => {
+    apiServices
+      .getproseByHindi()
+      .then((response) => {
         if (response.data.success) {
           // const filteredProses = response.data.allhindi.filter((prose) => prose.status === true);
           // setAllHindi(filteredProses);
@@ -80,14 +82,17 @@ export default function Prose() {
           // console.error(response.data.message);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         // console.error('Error:', error);
       });
 
-    apiServices.getproseByEnglish()
-      .then(response => {
+    apiServices
+      .getproseByEnglish()
+      .then((response) => {
         if (response.data.success) {
-          const filteredProses = response.data.allenglish.filter((prose) => prose.status === true);
+          const filteredProses = response.data.allenglish.filter(
+            (prose) => prose.status === true
+          );
           setAllEnglish(filteredProses);
           // setAllEnglish(response.data.allenglish);
           // // console.log("english",response)
@@ -96,14 +101,17 @@ export default function Prose() {
           // console.error(response.data.message);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         // console.error('Error:', error);
       });
 
-    apiServices.getPopularProse()
+    apiServices
+      .getPopularProse()
       .then((data) => {
         if (data.data.success) {
-          const filteredProses = data.data.data.filter((prose) => prose.status === true);
+          const filteredProses = data.data.data.filter(
+            (prose) => prose.status === true
+          );
           setAllPopular(filteredProses);
           // setAllPopular(data.data.data);
           // // console.log(data);
@@ -116,10 +124,13 @@ export default function Prose() {
         toast.error("Something went wrong");
       });
 
-    apiServices.getBestProse()
+    apiServices
+      .getBestProse()
       .then((data) => {
         if (data.data.success) {
-          const filteredProses = data.data.data.filter((prose) => prose.status === true);
+          const filteredProses = data.data.data.filter(
+            (prose) => prose.status === true
+          );
           setAllBest(filteredProses);
           // setAllBest(data.data.data);
           // // console.log(data);
@@ -131,31 +142,26 @@ export default function Prose() {
         // // console.log(err);
         toast.error("Something went wrong");
       });
-
-
   }, [loading]);
-
-
-
 
   const pagination = {
     clickable: true,
     renderBullet: function (index, className) {
-      return '<span className="' + className + '">' + (index + 1) + '</span>';
+      return '<span className="' + className + '">' + (index + 1) + "</span>";
     },
   };
 
   const [selectedProse, setSelectedProse] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-  
-    const handleOpenModal = (data) => {
-      setSelectedProse(data);
-      setShowModal(true);
-    };
-  
-    const handleCloseModal = () => {
-      setShowModal(false);
-    };
+  const [showModal, setShowModal] = useState(false);
+
+  const handleOpenModal = (data) => {
+    setSelectedProse(data);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
   return (
     <>
@@ -208,23 +214,27 @@ export default function Prose() {
                 modules={[Navigation]}
                 className="mySwiper"
               >
-                {allHindi.map((data, index) => (
-                  <SwiperSlide className="swiperSlide">
-                    <Link to={"/single-prose/" + `${data?._id}`}>
-                      <div className="Sher-box">
-                        <img
-                          className="img-2"
-                          src={BASE_URL_IMG + data?.Image}
-                          onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
-                        />
-                        <p>{data?.title}</p>
-                      </div>
-                    </Link>
-                  </SwiperSlide>
-                ))}
+                {allHindi.map((item) => {
+                  const slug = item?.slug || item?._id; // fallback for older records
+                  return (
+                    <SwiperSlide className="swiperSlide" key={item?._id}>
+                      <Link to={`/single-prose/${encodeURIComponent(slug)}`}>
+                        <div className="Sher-box">
+                          <img
+                            className="img-2"
+                            src={BASE_URL_IMG + (item?.Image || "no-image.jpg")}
+                            alt={item?.title || "prose"}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = "/default_image.jpg";
+                            }}
+                          />
+                          <p>{item?.title}</p>
+                        </div>
+                      </Link>
+                    </SwiperSlide>
+                  );
+                })}
               </Swiper>
             </div>
           </div>
@@ -264,23 +274,27 @@ export default function Prose() {
                 modules={[Navigation]}
                 className="mySwiper"
               >
-                {allEnglish.map((data, index) => (
-                  <SwiperSlide className="swiperSlide">
-                    <Link to={"/single-prose/" + `${data?._id}`}>
-                      <div className="Sher-box">
-                        <img
-                          className="img-2"
-                          src={BASE_URL_IMG + data?.Image}
-                          onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
-                        />
-                        <p>{data?.title}</p>
-                      </div>
-                    </Link>
-                  </SwiperSlide>
-                ))}
+                {allEnglish.map((item) => {
+                  const slug = item?.slug || item?._id; // fallback for older records
+                  return (
+                    <SwiperSlide className="swiperSlide" key={item?._id}>
+                      <Link to={`/single-prose/${encodeURIComponent(slug)}`}>
+                        <div className="Sher-box">
+                          <img
+                            className="img-2"
+                            src={BASE_URL_IMG + (item?.Image || "no-image.jpg")}
+                            alt={item?.title || "prose"}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = "/default_image.jpg";
+                            }}
+                          />
+                          <p>{item?.title}</p>
+                        </div>
+                      </Link>
+                    </SwiperSlide>
+                  );
+                })}
               </Swiper>
             </div>
           </div>
@@ -320,23 +334,27 @@ export default function Prose() {
                 modules={[Navigation]}
                 className="mySwiper"
               >
-                {allPopular.map((data, index) => (
-                  <SwiperSlide className="swiperSlide">
-                    <Link to={"/single-prose/" + `${data?._id}`}>
-                      <div className="Sher-box">
-                        <img
-                          className="img-2"
-                          src={BASE_URL_IMG + data?.Image}
-                          onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
-                        />
-                        <p>{data?.title}</p>
-                      </div>
-                    </Link>
-                  </SwiperSlide>
-                ))}
+                {allPopular.map((item) => {
+                  const slug = item?.slug || item?._id; // fallback for old records
+                  return (
+                    <SwiperSlide className="swiperSlide" key={item?._id}>
+                      <Link to={`/single-prose/${encodeURIComponent(slug)}`}>
+                        <div className="Sher-box">
+                          <img
+                            className="img-2"
+                            src={BASE_URL_IMG + (item?.Image || "no-image.jpg")}
+                            alt={item?.title || "prose"}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = "/default_image.jpg";
+                            }}
+                          />
+                          <p>{item?.title}</p>
+                        </div>
+                      </Link>
+                    </SwiperSlide>
+                  );
+                })}
               </Swiper>
             </div>
           </div>
@@ -384,9 +402,9 @@ export default function Prose() {
                           className="img-2"
                           src={BASE_URL_IMG + data?.Image}
                           onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
+                            e.target.onerror = null;
+                            e.target.src = "/default_image.jpg";
+                          }}
                         />
                         <p>{data?.title}</p>
                       </div>
@@ -439,10 +457,14 @@ export default function Prose() {
                       onClick={() => handleOpenModal(data)}
                       style={{ cursor: "pointer" }}
                     >
-                      <img className="img-2" src={BASE_URL_IMG + data?.Image} onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }} />
+                      <img
+                        className="img-2"
+                        src={BASE_URL_IMG + data?.Image}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/default_image.jpg";
+                        }}
+                      />
                       <p>{data?.title}</p>
                     </div>
                   </SwiperSlide>
@@ -486,23 +508,27 @@ export default function Prose() {
                 modules={[Navigation]}
                 className="mySwiper"
               >
-                {allBest.map((data, index) => (
-                  <SwiperSlide className="swiperSlide">
-                    <Link to={"/single-prose/" + `${data?._id}`}>
-                      <div className="Sher-box">
-                        <img
-                          className="img-2"
-                          src={BASE_URL_IMG + data?.Image}
-                          onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
-                        />
-                        <p>{data?.title}</p>
-                      </div>
-                    </Link>
-                  </SwiperSlide>
-                ))}
+                {allBest.map((item) => {
+                  const slug = item?.slug || item?._id; // fallback for older records
+                  return (
+                    <SwiperSlide className="swiperSlide" key={item?._id}>
+                      <Link to={`/single-prose/${encodeURIComponent(slug)}`}>
+                        <div className="Sher-box">
+                          <img
+                            className="img-2"
+                            src={BASE_URL_IMG + (item?.Image || "no-image.jpg")}
+                            alt={item?.title || "prose"}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = "/default_image.jpg";
+                            }}
+                          />
+                          <p>{item?.title}</p>
+                        </div>
+                      </Link>
+                    </SwiperSlide>
+                  );
+                })}
               </Swiper>
             </div>
             {showModal && selectedProse && (
@@ -513,9 +539,9 @@ export default function Prose() {
                   className="modal-image"
                   onClick={(e) => e.stopPropagation()}
                   onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}
+                    e.target.onerror = null;
+                    e.target.src = "/default_image.jpg";
+                  }}
                 />
               </div>
             )}

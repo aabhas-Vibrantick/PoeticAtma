@@ -223,72 +223,88 @@ export default function Blog() {
             <div className="row ">
               <div className="col-lg-8  blogwraparticle">
                 {activeTab === 1 && <div>
-                  <div className="row mx-auto blogWraper" >
-                    {searchResults.length > 0
-                      ? searchResults.map((data, index) => (
-                        <div className="col-lg-6 main-blogcard">
-                          <div className="homeblog-card">
-                            <Link to={"/single-blog/" + `${data?._id}`}> <img src={BASE_URL_IMG + data?.Image} alt="Blog Image 1" onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }}/></Link>
-                            <div className="homeblog-info">
-                              <Link to={"/single-blog/" + `${data?._id}`} > <div className="blogtitlecontent-container"> <h2 className="text-start blogtitlecontent">{data?.title}</h2></div>
-                                <div className="blogcontent-container">
-                                  <p className="blogcontent ">
-                                    {data?.description}
-                                  </p>
-                                </div>
-                                <div className="homedate-time">
-                                  {/* <span className="date">{format(new Date(data.created_at), 'MMMM d, yyyy')}</span> */}
-                                  {/* <span className="time">10:00 AM</span> */}
-                                </div>
-                              </Link>
-                              <div className="homesocial-icons">
-                                <a href="#"><i className="fab fa-facebook"></i></a>
-                                <a href="#"><i className="fab fa-twitter"></i></a>
-                                <a href="#"><i className="fab fa-instagram"></i></a>
-                                <br />
-                                <a href="#" className="text-muted">Connact on other social media</a>
-                              </div>
-
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                      : allBlog.map((data, index) => (
-                        <div className="col-lg-6 main-blogcard">
-                          <div className="homeblog-card">
-                            <Link to={"/single-blog/" + `${data?._id}`}> <img src={BASE_URL_IMG + data?.Image} alt="Blog Image 1" onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }} /></Link>
-                            <div className="homeblog-info">
-                              <Link to={"/single-blog/" + `${data?._id}`} > <div className="blogtitlecontent-container"> <h2 className="text-start blogtitlecontent">{data?.title}</h2></div>
-                                <div className="blogcontent-container">
-                                  <p className="blogcontent ">
-                                    {data?.description}
-                                  </p>
-                                </div>
-                                <div className="homedate-time">
-                                  {/* <span className="date">{format(new Date(data.created_at), 'MMMM d, yyyy')}</span> */}
-                                  {/* <span className="time">10:00 AM</span> */}
-                                </div>
-                              </Link>
-                              <div className="homesocial-icons">
-                                <a href="#"><i className="fab fa-facebook"></i></a>
-                                <a href="#"><i className="fab fa-twitter"></i></a>
-                                <a href="#"><i className="fab fa-instagram"></i></a>
-                                <br />
-                                <a href="#" className="text-muted">Connact on other social media</a>
-                              </div>
-
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-
+                  <div className="row mx-auto blogWraper">
+  {searchResults.length > 0
+    ? searchResults.map((item) => {
+        const slug = item?.slug || item?._id;
+        return (
+          <div className="col-lg-6 main-blogcard" key={item?._id}>
+            <div className="homeblog-card">
+              <Link to={`/single-blog/${encodeURIComponent(slug)}`}>
+                <img
+                  src={BASE_URL_IMG + (item?.Image || "no-image.jpg")}
+                  alt={item?.title || "Blog Image"}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = "/default_image.jpg";
+                  }}
+                />
+              </Link>
+              <div className="homeblog-info">
+                <Link to={`/single-blog/${encodeURIComponent(slug)}`}>
+                  <div className="blogtitlecontent-container">
+                    <h2 className="text-start blogtitlecontent">{item?.title}</h2>
                   </div>
+                  <div className="blogcontent-container">
+                    <p className="blogcontent ">{item?.description}</p>
+                  </div>
+                  <div className="homedate-time">
+                    {/* <span className="date">{format(new Date(item.created_at), 'MMMM d, yyyy')}</span> */}
+                  </div>
+                </Link>
+                <div className="homesocial-icons">
+                  <a href="#"><i className="fab fa-facebook"></i></a>
+                  <a href="#"><i className="fab fa-twitter"></i></a>
+                  <a href="#"><i className="fab fa-instagram"></i></a>
+                  <br />
+                  <a href="#" className="text-muted">Connect on other social media</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })
+    : allBlog.map((item) => {
+        const slug = item?.slug || item?._id;
+        return (
+          <div className="col-lg-6 main-blogcard" key={item?._id}>
+            <div className="homeblog-card">
+              <Link to={`/single-blog/${encodeURIComponent(slug)}`}>
+                <img
+                  src={BASE_URL_IMG + (item?.Image || "no-image.jpg")}
+                  alt={item?.title || "Blog Image"}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = "/default_image.jpg";
+                  }}
+                />
+              </Link>
+              <div className="homeblog-info">
+                <Link to={`/single-blog/${encodeURIComponent(slug)}`}>
+                  <div className="blogtitlecontent-container">
+                    <h2 className="text-start blogtitlecontent">{item?.title}</h2>
+                  </div>
+                  <div className="blogcontent-container">
+                    <p className="blogcontent ">{item?.description}</p>
+                  </div>
+                  <div className="homedate-time">
+                    {/* <span className="date">{format(new Date(item.created_at), 'MMMM d, yyyy')}</span> */}
+                  </div>
+                </Link>
+                <div className="homesocial-icons">
+                  <a href="#"><i className="fab fa-facebook"></i></a>
+                  <a href="#"><i className="fab fa-twitter"></i></a>
+                  <a href="#"><i className="fab fa-instagram"></i></a>
+                  <br />
+                  <a href="#" className="text-muted">Connect on other social media</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+</div>
+
                 </div>}
                 {activeTab === 2 && <div>
 
@@ -329,34 +345,41 @@ export default function Blog() {
                     <h3>Latest Post</h3>
                   </div>
                   <div className="widget-body">
-                    {alllatest.map((data, index) => (
-                      <div className="latest-post-aside media">
-                        <div className="lpa-left media-body">
-                          <div className="lpa-title">
-                            <h5 className="shayaricontent-container2 "> < Link className="shayaricontent2 " to={"/single-blog/" + `${data?._id}`}>{data?.description}</Link></h5>
+                    {alllatest.map((item) => {
+  const slug = item?.slug || item?._id; // fallback for older records
+  return (
+    <div className="latest-post-aside media" key={item?._id}>
+      <div className="lpa-left media-body">
+        <div className="lpa-title">
+          <h5 className="shayaricontent-container2">
+            <Link className="shayaricontent2" to={`/single-blog/${encodeURIComponent(slug)}`}>
+              {item?.description}
+            </Link>
+          </h5>
+        </div>
+        <div className="lpa-meta">
+          <Link className="name" to={`/poets-profile/${item?.userId?._id}`}>
+            {item?.userId?.name || "Admin"}
+          </Link>
+        </div>
+      </div>
+      <div className="lpa-right">
+        <Link to={`/single-blog/${encodeURIComponent(slug)}`}>
+          <img
+            src={BASE_URL_IMG + (item?.Image || "no-image.jpg")}
+            alt={item?.title || "blog"}
+            className=""
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default_image.jpg";
+            }}
+          />
+        </Link>
+      </div>
+    </div>
+  );
+})}
 
-                          </div>
-                          <div className="lpa-meta">
-                            {/* <a  href="#">
-                              Rachel Roth
-                            </a> */}
-                            <Link className="name" to={"/poets-profile/" + `${data?.userId?._id}`}>{data?.userId?.name || "Admin"}</Link>
-                            {/* <a className="date" href="#">
-                            {format(new Date(data.created_at), 'MMMM d, yyyy')}
-                            </a> */}
-                          </div>
-                        </div>
-                        <div className="lpa-right">
-                          {/* <a href="#"> */}
-                          <Link to={"/single-blog/" + `${data?._id}`}><img src={BASE_URL_IMG + data?.Image} alt="" className="" onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = "/default_image.jpg";
-                                      }} /></Link>
-                          {/* <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt="" /> */}
-                          {/* </a> */}
-                        </div>
-                      </div>
-                    ))}
                   </div>
                 </div>
                 {/* <!-- End Latest Post --> */}

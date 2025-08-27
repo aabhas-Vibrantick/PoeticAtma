@@ -300,6 +300,17 @@ class apiServices {
     });
   }
 
+  getsinglecustomerBySlug(slug) {
+  const header = {
+    Accept: "application/json",
+    Authorization: sessionStorage.getItem("token"),
+  };
+
+  return axios.get(BASE_URL + "getsinglecustomer/" + slug, {
+    headers: header,
+  });
+}
+
   getallcustomer(data) {
     const header = {
       Accept: "application/json",
@@ -432,6 +443,17 @@ class apiServices {
 
     return axios.post(BASE_URL + "getsingleblog", data, { headers: header });
   }
+
+  getsingleblogBySlug(slug) {
+  const headers = { Accept: "application/json" };
+
+  const token = sessionStorage.getItem("token");
+  if (token) {
+    headers.Authorization = token;
+  }
+
+  return axios.get(BASE_URL + "blog/" + slug, { headers });
+}
 
   getallblog(data) {
     const header = {
@@ -639,6 +661,18 @@ class apiServices {
 
     return axios.post(BASE_URL + "getsingleprose", data, { headers: header });
   }
+
+  getsingleproseBySlug(slug) {
+  const headers = { Accept: "application/json" };
+
+  const token = sessionStorage.getItem("token");
+  if (token) {
+    headers.Authorization = token;
+  }
+
+  return axios.get(BASE_URL + "prose/" + slug, { headers });
+}
+
 
   getallprosebyUserId(data) {
     const header = {
@@ -933,6 +967,17 @@ class apiServices {
     return axios.post(BASE_URL + "getsingleshayari", data, { headers: header });
   }
 
+  getsingleshayariBySlug(slug) {
+  const headers = { Accept: "application/json" };
+
+  const token = sessionStorage.getItem("token");
+  if (token) {
+    headers.Authorization = token;
+  }
+
+  return axios.get(BASE_URL + "shayari/" + slug, { headers });
+}
+
   updateshayari(data) {
     const header = {
       Accept: "application/json",
@@ -1172,6 +1217,15 @@ approveProse(data) {
 
     return axios.post(BASE_URL + "getsinglesher", data, { headers: header });
   }
+
+ getsinglesherBySlug(slug) {
+  const headers = { Accept: "application/json" };
+  const token = sessionStorage.getItem("token");
+  if (token) headers.Authorization = `Bearer ${token}`; // add Bearer + only if token exists
+  return axios.get(`${BASE_URL}sher/${encodeURIComponent(slug)}`, { headers });
+}
+
+  
 
   getallsherbyUserId(data) {
     const header = {

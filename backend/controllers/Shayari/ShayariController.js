@@ -184,6 +184,29 @@ getsingleshayari = (req, res) => {
   }
 };
 
+getsingleshayariBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    if (!slug) {
+      return res.status(400).json({ success: false, message: "slug is required" });
+    }
+
+    const shayaridata = await Shayari.findOne({ slug })
+      .populate({ path: "Category_id", select: "Category_name status createdAt" })
+      .populate({ path: "userId", select: "name Image _id slug" }) // avoid password/email unless needed
+      .lean();
+
+    if (!shayaridata) {
+      return res.status(404).json({ success: false, message: "Shayari not found" });
+    }
+
+    return res.status(200).json({ success: true, message: "data loaded", data: shayaridata });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: "Error Occur", error: String(err) });
+  }
+};
+
+
 getallshayaribyUserId = (req, res) => {
   Shayari.find({ userId: req.body.userId })
     .select({})
@@ -736,6 +759,7 @@ module.exports = {
   approveShayari,
   getallshayari,
   getsingleshayari,
+  getsingleshayariBySlug,
   updateshayari,
   deleteShayari,
   getAllTags,

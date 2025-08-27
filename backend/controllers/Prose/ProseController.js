@@ -124,6 +124,28 @@ getsingleprose = (req, res) => {
   }
 };
 
+getsingleproseBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    if (!slug) {
+      return res.status(400).json({ success: false, message: "slug is required" });
+    }
+
+    const prosedata = await Prose.findOne({ slug })
+      .populate({ path: "Category_id", select: "Category_name status createdAt" })
+      .populate({ path: "userId", select: "name Image _id slug" }) // avoid leaking sensitive fields
+      .lean();
+
+    if (!prosedata) {
+      return res.status(404).json({ success: false, message: "Prose not found" });
+    }
+
+    return res.status(200).json({ success: true, message: "data loaded", data: prosedata });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: "Error Occur", error: String(err) });
+  }
+};
+
 approveProse = async (req, res) => {
   try {
     const { _id } = req.body;
@@ -646,6 +668,7 @@ module.exports = {
   approveProse,
   getallprose,
   getsingleprose,
+  getsingleproseBySlug,
   updateprose,
   deleteProse,
   getProseByCategory,

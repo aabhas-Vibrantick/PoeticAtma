@@ -119,6 +119,42 @@ getsinglesher = (req, res) => {
   }
 };
 
+getsinglesherBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    if (!slug) {
+      return res.status(400).json({
+        success: false,
+        message: "slug is required",
+      });
+    }
+
+    const sherdata = await Sher.findOne({ slug })
+      .populate({ path: "Category_id", select: "Category_name status createdAt" })
+      .populate({ path: "userId", select: "name Image _id slug" }) // avoid sensitive fields
+      .lean();
+
+    if (!sherdata) {
+      return res.status(404).json({
+        success: false,
+        message: "Sher not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "data loaded",
+      data: sherdata,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Error Occur",
+      error: String(err),
+    });
+  }
+};
+
 // --------Approve sher-----------
 // ----------------------------------------------------------
 approvesher = (req, res) => {
@@ -682,6 +718,7 @@ module.exports = {
   addsher,
   getallsher,
   getsinglesher,
+  getsinglesherBySlug,
   approvesher,
   updatesher,
   deleteSher,

@@ -21,6 +21,8 @@ export default function SingleShayari() {
   const [viewCount, setViewCount] = useState(0);
   const [likeCount, setLikeCount] = useState(null);
   const [user, setUserId] = useState(null);
+  const { slug } = useParams();          // from /single-shayari/:slug
+  const navigate = useNavigate();
   const parse = require("html-react-parser");
   const authenticate = sessionStorage.getItem("authenticate");
   // console.log("()()()",user)
@@ -40,120 +42,102 @@ export default function SingleShayari() {
     zIndex: "1",
   };
 
-  const incrementViewCount = async () => {
+const incrementViewCount = async (id) => {
+  if (!id) return; // prevent undefined
+  try {
+    const response = await apiServices.shayariincrementPageView({ postId: id });
+    if (response.data.success) {
+      setViewCount((prevCount) => prevCount + 1);
+    }
+  } catch (error) {
+    // console.error("Error incrementing view count:", error);
+  }
+};
+
+  useEffect(() => {
+  let isMounted = true;          // avoid state update after unmount
+  setLoading(true);
+
+  const fetchData = async () => {
     try {
-      const response = await apiServices.shayariincrementPageView({
-        postId: _id,
-      });
-      if (response.data.success) {
-        setViewCount((prevCount) => prevCount + 1);
-      } else {
-        // console.error(response.data.message);
+      // 1) Fetch by slug
+      const res = await apiServices.getsingleshayariBySlug(slug);
+      const ok = res?.data?.success && res?.data?.data;
+
+      if (!ok) {
+        // optional: handle 404
+        // toast.error("Shayari not found");
+        navigate("/404", { replace: true });
+        return;
       }
-    } catch (error) {
-      // console.error("Error incrementing view count:", error);
+
+      const item = res.data.data;
+      const shayariId = item._id;
+
+      if (!isMounted) return;
+
+      setAllShayari(item);
+      setUserId(item.userId?._id);
+
+      // 2) Latest Shayari (unchanged)
+      apiServices
+        .latestShayari()
+        .then(({ data }) => {
+          if (!isMounted) return;
+          if (data.success) {
+            setAlllatest(data.data.filter(s => s.status === true));
+          } else {
+            // toast.error(data.message);
+          }
+        })
+        .catch(() => {});
+
+      // 3) Comments + replies
+      try {
+        const commentRes = await apiServices.getAllshayariComments({ shayariId });
+        if (isMounted && commentRes.data.success) {
+          const base = commentRes.data.data || [];
+          const withReplies = await Promise.all(
+            base.map(async (c) => {
+              const rr = await apiServices.getAllshayariReplies({ _id: c._id });
+              return rr.data.success ? { ...c, replies: rr.data.data } : c;
+            })
+          );
+          if (isMounted) setComments(withReplies);
+        }
+      } catch {}
+
+      // 4) View count
+      try {
+        const vc = await apiServices.shayarigetPageViewCount({ postId: shayariId });
+        if (isMounted && vc.data) setViewCount(vc.data.count);
+      } catch {}
+
+      // 5) Like count
+      apiServices
+        .getLikeCountForShayari({ shayariId })
+        .then((r) => {
+          if (!isMounted) return;
+          const count = r?.data?.data?.likeCount ?? 0;
+          setLikeCount(count);
+        })
+        .catch(() => {});
+
+      // 6) (Optional) increment page views after successful load
+      if (typeof incrementViewCount === "function") {
+        incrementViewCount(shayariId); // pass id if your function accepts it
+      }
+
+    } finally {
+      if (isMounted) setLoading(false);
     }
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
+  fetchData();
 
-    const fetchData = async () => {
-      try {
-        const response = await apiServices.getsingleshayari({ _id });
+  return () => { isMounted = false; };
+}, [slug, liked]);  // re-fetch when slug changes, or likes update
 
-        if (response.data.success) {
-          setAllShayari(response.data.data);
-          setUserId(response.data.data.userId?._id);
-          // // console.log(response)
-        } else {
-          // console.error(response.data.message);
-        }
-      } catch (error) {
-        // console.error("Error fetching shayari:", error);
-      }
-
-      apiServices
-        .latestShayari()
-        .then((data) => {
-          if (data.data.success) {
-            const filteredShayaris = data.data.data.filter(
-              (shayari) => shayari.status === true
-            );
-            setAlllatest(filteredShayaris);
-            // setAllBest(data.data.data);
-            // // console.log(data);
-          } else {
-            toast.error(data.data.message);
-          }
-        })
-        .catch((err) => {
-          // // console.log(err);
-          // toast.error("Something went wrong");
-        });
-
-      try {
-        const commentResponse = await apiServices.getAllshayariComments({
-          shayariId: _id,
-        });
-        if (commentResponse.data.success) {
-          setComments(commentResponse.data.data);
-
-          // Fetch replies for each comment
-          const promises = commentResponse.data.data.map(async (comment) => {
-            const replyResponse = await apiServices.getAllshayariReplies({
-              _id: comment._id,
-            });
-            if (replyResponse.data.success) {
-              return { ...comment, replies: replyResponse.data.data };
-            } else {
-              return comment;
-            }
-          });
-
-          // Wait for all reply fetch requests to complete
-          const commentsWithReplies = await Promise.all(promises);
-
-          setComments(commentsWithReplies);
-        } else {
-          // console.error(commentResponse.data.message);
-        }
-      } catch (error) {
-        // console.error("Error fetching comments:", error);
-      }
-
-      try {
-        const response = await apiServices.shayarigetPageViewCount({
-          postId: _id,
-        });
-
-        setViewCount(response.data.count);
-        if (response.data.success) {
-        } else {
-          // console.error(response.data.message);
-        }
-      } catch (error) {
-        // console.error("Error fetching view count:", error);
-      }
-
-      apiServices
-        .getLikeCountForShayari({ shayariId: _id })
-        .then((response) => {
-          const data = response.data.data;
-          setLikeCount(data.likeCount);
-        })
-        .catch((error) => {
-          // console.error('Error fetching like count:', error);
-        });
-
-      setLoading(false);
-    };
-
-    fetchData();
-    incrementViewCount();
-  }, [liked]);
 
   const shayariId = {
     shayariId: _id,
@@ -556,38 +540,37 @@ export default function SingleShayari() {
               <div className="col-lg-4 m-15px-tb blog-aside">
                 {/* <!-- Author --> */}
                 <div className="widget widget-author">
-                  <div className="widget-title">
-                    <h3>Author</h3>
-                  </div>
-                  <div className="widget-body">
-                    <div className="media align-items-center">
-                      <div className="avatar">
-                        <img
-                          src={
-                            BASE_URL_IMG + shayari?.userId?.Image ||
-                            "/assets/images/avtar.png"
-                          }
-                          title=""
-                          alt=""
-                          onError={(e) => {
-                            e.target.src = "/assets/images/avtar.png";
-                          }}
-                        />
-                      </div>
-                      <div className="media-body">
-                        <h6 className="text-capitalize">
-                          {" "}
-                          <Link
-                            className="name"
-                            to={"/poets-profile/" + `${shayari?.userId?._id}`}
-                          >
-                            {shayari?.userId?.name || "Admin"}
-                          </Link>
-                        </h6>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+  <div className="widget-title">
+    <h3>Author</h3>
+  </div>
+  <div className="widget-body">
+    <div className="media align-items-center">
+      <div className="avatar">
+        <img
+          src={
+            BASE_URL_IMG + (shayari?.userId?.Image || "/assets/images/avtar.png")
+          }
+          title={shayari?.userId?.name || "Author"}
+          alt={shayari?.userId?.name || "Author"}
+          onError={(e) => {
+            e.target.src = "/assets/images/avtar.png";
+          }}
+        />
+      </div>
+      <div className="media-body">
+        <h6 className="text-capitalize">
+          <Link
+              className="name"
+              to={`/poets-profile/${encodeURIComponent(shayari?.userId?.slug)}`}
+            >
+              {shayari?.userId?.name || "Admin"}
+            </Link>
+        </h6>
+      </div>
+    </div>
+  </div>
+</div>
+
                 {/* <!-- End Author --> */}
                 {/* <!-- category Post --> */}
                 <div className="widget widget-author">

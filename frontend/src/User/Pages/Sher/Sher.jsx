@@ -262,23 +262,28 @@ export default function Sher() {
                 modules={[Navigation]}
                 className="mySwiper"
               >
-                {allHindi.map((data, index) => (
-                  <SwiperSlide className="swiperSlide">
-                    <Link to={"/single-sher/" + `${data?._id}`}>
-                      <div className="Sher-box">
-                        <img
-                          className="img-2"
-                          src={BASE_URL_IMG + data?.Image}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "/default_image.jpg";
-                          }}
-                        />
-                        <p>{data?.title}</p>
-                      </div>
-                    </Link>
-                  </SwiperSlide>
-                ))}
+                {allHindi.map((item) => {
+  const slug = item?.slug || item?._id; // fallback for older records
+  return (
+    <SwiperSlide className="swiperSlide" key={item?._id}>
+      <Link to={`/single-sher/${encodeURIComponent(slug)}`}>
+        <div className="Sher-box">
+          <img
+            className="img-2"
+            src={BASE_URL_IMG + (item?.Image || "no-image.jpg")}
+            alt={item?.title || "sher"}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default_image.jpg";
+            }}
+          />
+          <p>{item?.title}</p>
+        </div>
+      </Link>
+    </SwiperSlide>
+  );
+})}
+
               </Swiper>
             </div>
           </div>
@@ -318,23 +323,28 @@ export default function Sher() {
                 modules={[Navigation]}
                 className="mySwiper"
               >
-                {allEnglish.map((data, index) => (
-                  <SwiperSlide className="swiperSlide">
-                    <Link to={"/single-sher/" + `${data?._id}`}>
-                      <div className="Sher-box">
-                        <img
-                          className="img-2"
-                          src={BASE_URL_IMG + data?.Image}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "/default_image.jpg";
-                          }}
-                        />
-                        <p>{data?.title}</p>
-                      </div>
-                    </Link>
-                  </SwiperSlide>
-                ))}
+                {allEnglish.map((item) => {
+  const slug = item?.slug || item?._id; // fallback for older records
+  return (
+    <SwiperSlide className="swiperSlide" key={item?._id}>
+      <Link to={`/single-sher/${encodeURIComponent(slug)}`}>
+        <div className="Sher-box">
+          <img
+            className="img-2"
+            src={BASE_URL_IMG + (item?.Image || "no-image.jpg")}
+            alt={item?.title || "sher"}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default_image.jpg";
+            }}
+          />
+          <p>{item?.title}</p>
+        </div>
+      </Link>
+    </SwiperSlide>
+  );
+})}
+
               </Swiper>
             </div>
           </div>
@@ -374,23 +384,27 @@ export default function Sher() {
                 modules={[Navigation]}
                 className="mySwiper"
               >
-                {allPopular.map((data, index) => (
-                  <SwiperSlide className="swiperSlide">
-                    <Link to={"/single-sher/" + `${data?._id}`}>
-                      <div className="Sher-box">
-                        <img
-                          className="img-2"
-                          src={BASE_URL_IMG + data?.Image}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "/default_image.jpg";
-                          }}
-                        />
-                        <p>{data?.title}</p>
-                      </div>
-                    </Link>
-                  </SwiperSlide>
-                ))}
+                {allPopular.map((item) => {
+  const slug = item?.slug || item?._id; // fallback if slug not present
+  return (
+    <SwiperSlide className="swiperSlide" key={item?._id}>
+      <Link to={`/single-sher/${encodeURIComponent(slug)}`}>
+        <div className="Sher-box">
+          <img
+            className="img-2"
+            src={BASE_URL_IMG + (item?.Image || "no-image.jpg")}
+            alt={item?.title || "sher"}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default_image.jpg";
+            }}
+          />
+          <p>{item?.title}</p>
+        </div>
+      </Link>
+    </SwiperSlide>
+  );
+})}
               </Swiper>
             </div>
           </div>
@@ -544,23 +558,28 @@ export default function Sher() {
                 modules={[Navigation]}
                 className="mySwiper"
               >
-                {allBest.map((data, index) => (
-                  <SwiperSlide className="swiperSlide">
-                    <Link to={"/single-sher/" + `${data?._id}`}>
-                      <div className="Sher-box">
-                        <img
-                          className="img-2"
-                          src={BASE_URL_IMG + data?.Image}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "/default_image.jpg";
-                          }}
-                        />
-                        <p>{data?.title}</p>
-                      </div>
-                    </Link>
-                  </SwiperSlide>
-                ))}
+               {allBest.map((item) => {
+  const slug = item?.slug || item?._id; // fallback if slug not present
+  return (
+    <SwiperSlide className="swiperSlide" key={item?._id}>
+      <Link to={`/single-sher/${encodeURIComponent(slug)}`}>
+        <div className="Sher-box">
+          <img
+            className="img-2"
+            src={BASE_URL_IMG + (item?.Image || "no-image.jpg")}
+            alt={item?.title || "sher"}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default_image.jpg";
+            }}
+          />
+          <p>{item?.title}</p>
+        </div>
+      </Link>
+    </SwiperSlide>
+  );
+})}
+
               </Swiper>
             </div>
             {showModal && selectedSher && (

@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const shayarischema = new mongoose.Schema({
-  title: { type: String, default: null },
-  shayari: { type: String, default: null },
-  language: { type: String, default: null },
+  title: { type: String, default: null, required: true },
+  shayari: { type: String, default: null, required: true },
+  language: { type: String, default: null, required: true },
   Image: { type: String, default: "no-image.jpg" },
   userId: { type: mongoose.SchemaTypes.ObjectId, ref: "user", default: null },
   Category_id: {
@@ -15,18 +15,59 @@ const shayarischema = new mongoose.Schema({
   tags: [{ type: String }],
   isApproved: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now() },
+
+  // NEW FIELD
+  slug: { type: String, required: true, unique: true, index: true },
 });
 
+// Preserve formatting in shayari text
 shayarischema.pre("save", function (next) {
   if (this.shayari && typeof this.shayari === "string") {
     this.shayari = this.shayari.replace(/<\/?p>/g, "\n");
     this.shayari = this.shayari.replace(/<br\s*\/?>/gi, "\n");
-    // Don't trim or remove empty lines to preserve formatting
   }
   next();
 });
 
+// Helper: Unicode-safe slug generator
+function toSlug(str) {
+  return String(str)
+    .normalize("NFKC")                // normalize Unicode
+    .toLowerCase()                    // lowercase for latin scripts
+    .replace(/[\s\-_]+/g, "-")        // spaces/underscores → hyphen
+    .replace(/[^\p{L}\p{N}-]+/gu, "") // keep only letters, numbers, hyphens (Unicode aware)
+    .replace(/-+/g, "-")              // collapse multiple hyphens
+    .replace(/^-|-$/g, "");           // trim hyphens at start/end
+}
 
+// Auto-generate slug before validation
+shayarischema.pre("validate", async function (next) {
+  if (!this.title) return next(new Error("Title is required to generate slug"));
 
+  if (this.isNew || this.isModified("title") || !this.slug) {
+    let base = toSlug(this.title);
+    if (!base) base = "untitled";
 
-module.exports = new mongoose.model("shayari", shayarischema);
+    const regex = new RegExp(`^${base}(?:-(\\d+))?$`, "u");
+    const existing = await this.constructor.find({ slug: regex }, { slug: 1 }).lean();
+
+    if (existing.length === 0) {
+      this.slug = base;
+      return next();
+    }
+
+    const taken = new Set(existing.map(d => d.slug));
+    if (!taken.has(base)) {
+      this.slug = base;
+      return next();
+    }
+
+    let i = 2;
+    while (taken.has(`${base}-${i}`)) i++;
+    this.slug = `${base}-${i}`;
+  }
+
+  next();
+});
+
+module.exports = mongoose.model("shayari", shayarischema);

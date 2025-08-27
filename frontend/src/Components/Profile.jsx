@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-
+ 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -68,183 +68,83 @@ export default function Porfile() {
 
   const param = useParams();
 
+
+
+ const { slug } = useParams();   // get slug here
+
   useEffect(() => {
-    let data = {
-      userId: param.userId,
-    };
+    if (!slug) return;            // guard
 
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
+    setTimeout(() => setLoading(false), 1500);
 
-    apiServices
-      .getsinglecustomer(data)
-      .then((data) => {
-        if (data.data.success) {
-          setUserId(data.data.data.userId._id);
-          setUserDetail(data.data.data);
-          setUserEmail(data.data.data.email);
-        } else {
-          toast.error(data.data.message);
-        }
+    apiServices.getsinglecustomerBySlug(slug)
+      .then((res) => {
+        if (!res.data.success) return toast.error(res.data.message);
+
+        const profile = res.data.data;
+        const uid = profile.userId._id;
+
+        setUserId(uid);
+        setUserDetail(profile);
+        setUserEmail(profile.email);
+
+        const unique = { userId: uid };
+
+        // chain the rest
+        apiServices.getallshayaribyUserId(unique).then(({ data }) => {
+          if (data.success) setAllShayari(data.data.filter((s) => s.isApproved === true));
+          else toast.error(data.message);
+        });
+
+        apiServices.getallsherbyUserId(unique).then(({ data }) => {
+          if (data.success) setAllSher(data.data.filter((s) => s.isApproved === true));
+          else toast.error(data.message);
+        });
+
+        apiServices.getallprosebyUserId(unique).then(({ data }) => {
+          if (data.success) setAllProse(data.data.filter((p) => p.isApproved === true));
+          else toast.error(data.message);
+        });
+
+        apiServices.getallblogbyUserId(unique).then(({ data }) => {
+          if (data.success) setAllBlog(data.data.filter((b) => b.isApproved === true));
+          else toast.error(data.message);
+        });
+
+        apiServices.getenglishShayariByUserId(unique).then((r) => {
+          if (r.data.success) setAllEnglishShayari(r.data.allenglish.filter((s) => s.status));
+        });
+
+        apiServices.getenglishSherByUserId(unique).then((r) => {
+          if (r.data.success) setAllEnglishSher(r.data.allenglish.filter((s) => s.status));
+        });
+
+        apiServices.getenglishProseByUserId(unique).then((r) => {
+          if (r.data.success) setAllEnglishProse(r.data.allenglish.filter((p) => p.status));
+        });
+
+        apiServices.gethindiShayariByUserId(unique).then((r) => {
+          if (r.data.success) setAllHindiShayari(r.data.allhindi.filter((s) => s.status));
+        });
+
+        apiServices.gethindiSherByUserId(unique).then((r) => {
+          if (r.data.success) setAllHindiSher(r.data.allhindi.filter((s) => s.status));
+        });
+
+        apiServices.gethindiProseByUserId(unique).then((r) => {
+          if (r.data.success) setAllHindiProse(r.data.allhindi.filter((p) => p.status));
+        });
+
+        apiServices.getFollowCountsForUser(unique).then((r) => {
+          const d = r.data.data || {};
+          setFollowerCount(d.followerCount || 0);
+          setFollowingCount(d.followingCount || 0);
+        });
       })
-      .catch((err) => {
-        toast.error("Something went wrong");
-      });
+      .catch(() => toast.error("Something went wrong"));
+  }, [slug]);   //  depend on slug
 
-    const unique = { userId: param.userId };
 
-    apiServices
-      .getallshayaribyUserId(unique)
-      .then((data) => {
-        if (data.data.success) {
-          const filteredShayaris = data.data.data.filter(
-            (shayari) => shayari.isApproved === true
-          );
-          setAllShayari(filteredShayaris);
-        } else {
-          toast.error(data.data.message);
-        }
-      })
-      .catch((err) => {
-        toast.error("Something went wrong");
-      });
-
-    apiServices
-      .getallsherbyUserId(unique)
-      .then((data) => {
-        if (data.data.success) {
-          const filteredShers = data.data.data.filter(
-            (sher) => sher.isApproved === true
-          );
-          setAllSher(filteredShers);
-        } else {
-          toast.error(data.data.message);
-        }
-      })
-      .catch((err) => {
-        toast.error("Something went wrong");
-      });
-
-    apiServices
-      .getallprosebyUserId(unique)
-      .then((data) => {
-        if (data.data.success) {
-          const filteredProses = data.data.data.filter(
-            (prose) => prose.isApproved === true
-          );
-          setAllProse(filteredProses);
-        } else {
-          toast.error(data.data.message);
-        }
-      })
-      .catch((err) => {
-        toast.error("Something went wrong");
-      });
-
-    apiServices
-      .getallblogbyUserId(unique)
-      .then((data) => {
-        if (data.data.success) {
-          const filteredBlogs = data.data.data.filter(
-            (blog) => blog.isApproved === true
-          );
-          setAllBlog(filteredBlogs);
-        } else {
-          toast.error(data.data.message);
-        }
-      })
-      .catch((err) => {
-        toast.error("Something went wrong");
-      });
-
-    apiServices
-      .getenglishShayariByUserId(unique)
-      .then((response) => {
-        if (response.data.success) {
-          const filteredShayaris = response.data.allenglish.filter(
-            (shayari) => shayari.status === true
-          );
-          setAllEnglishShayari(filteredShayaris);
-        } else {
-        }
-      })
-      .catch((error) => {});
-
-    apiServices
-      .getenglishSherByUserId(unique)
-      .then((response) => {
-        if (response.data.success) {
-          const filteredShers = response.data.allenglish.filter(
-            (sher) => sher.status === true
-          );
-          setAllEnglishSher(filteredShers);
-        } else {
-        }
-      })
-      .catch((error) => {});
-
-    apiServices
-      .getenglishProseByUserId(unique)
-      .then((response) => {
-        if (response.data.success) {
-          const filteredProses = response.data.allenglish.filter(
-            (prose) => prose.status === true
-          );
-          setAllEnglishProse(filteredProses);
-        } else {
-        }
-      })
-      .catch((error) => {});
-
-    apiServices
-      .gethindiShayariByUserId(unique)
-      .then((response) => {
-        if (response.data.success) {
-          const filteredShayaris = response.data.allhindi.filter(
-            (shayari) => shayari.status === true
-          );
-          setAllHindiShayari(filteredShayaris);
-        } else {
-        }
-      })
-      .catch((error) => {});
-
-    apiServices
-      .gethindiSherByUserId(unique)
-      .then((response) => {
-        if (response.data.success) {
-          const filteredShers = response.data.allhindi.filter(
-            (sher) => sher.status === true
-          );
-          setAllHindiSher(filteredShers);
-        } else {
-        }
-      })
-      .catch((error) => {});
-
-    apiServices
-      .gethindiProseByUserId(unique)
-      .then((response) => {
-        if (response.data.success) {
-          const filteredProses = response.data.allhindi.filter(
-            (prose) => prose.status === true
-          );
-          setAllHindiProse(filteredProses);
-        } else {
-        }
-      })
-      .catch((error) => {});
-
-    apiServices
-      .getFollowCountsForUser(unique)
-      .then((response) => {
-        const data = response.data.data;
-        setFollowerCount(data.followerCount);
-        setFollowingCount(data.followingCount);
-      })
-      .catch((error) => {});
-  }, [userId]);
 
   const uniquefollow = { followerId: userId };
 
@@ -535,50 +435,47 @@ export default function Porfile() {
                             bgcolor: "background.paper",
                           }}
                         >
-                          {allshayari.map((data, index) => (
-                            <ListItem
-                              key={data?._id || index}
-                              component={Link}
-                              to={`/single-shayari/${data?._id}`}
-                              sx={{
-                                textDecoration: "none",
-                                color: "inherit",
-                                "&:hover": { backgroundColor: "#fff3e0" },
-                              }}
-                            >
-                              {/* <ListItemAvatar>
-                                <Avatar
-                                  variant="circle"
-                                  src={BASE_URL_IMG + data?.Image}
-                                  alt={data?.title}
-                                  sx={{ width: 50, height: 56 }}
-                                  onError={(e) => {
-                                    e.target.src = "/default_image.jpg";
-                                  }}
-                                />
-                              </ListItemAvatar> */}
-                              <ListItemAvatar>
-                                <Avatar
-                                  variant="circle"
-                                  src={
-                                    data?.Image
-                                      ? BASE_URL_IMG + data.Image
-                                      : "/default_image.jpg"
-                                  }
-                                  alt={data?.title}
-                                  sx={{ width: 50, height: 56 }}
-                                />
-                              </ListItemAvatar>
-                              <ListItemText
-                                primary={data?.title}
-                                secondary={data?.tags || "No tags"}
-                                primaryTypographyProps={{
-                                  fontWeight: "bold",
-                                  color: "primary.main",
-                                }}
-                              />
-                            </ListItem>
-                          ))}
+                          {allshayari.map((data, index) => {
+  const shayariSlug = data?.slug || data?._id; // ✅ prefer slug, fallback to _id
+  return (
+    <ListItem
+      key={shayariSlug || index}
+      component={Link}
+      to={`/single-shayari/${encodeURIComponent(shayariSlug)}`}
+      sx={{
+        textDecoration: "none",
+        color: "inherit",
+        "&:hover": { backgroundColor: "#fff3e0" },
+      }}
+    >
+      <ListItemAvatar>
+        <Avatar
+          variant="circle"
+          src={
+            data?.Image
+              ? BASE_URL_IMG + data.Image
+              : "/default_image.jpg"
+          }
+          alt={data?.title}
+          sx={{ width: 50, height: 56 }}
+          onError={(e) => {
+            e.currentTarget.src = "/default_image.jpg";
+          }}
+        />
+      </ListItemAvatar>
+
+      <ListItemText
+        primary={data?.title}
+        secondary={data?.tags?.join(", ") || "No tags"} 
+        primaryTypographyProps={{
+          fontWeight: "bold",
+          color: "primary.main",
+        }}
+      />
+    </ListItem>
+  );
+})}
+
                         </List>
                       </div>
                     )}
@@ -592,39 +489,47 @@ export default function Porfile() {
                             bgcolor: "background.paper",
                           }}
                         >
-                          {allsher.map((data, index) => (
-                            <ListItem
-                              key={data?._id || index}
-                              component={Link}
-                              to={`/single-sher/${data?._id}`}
-                              sx={{
-                                textDecoration: "none",
-                                color: "inherit",
-                                "&:hover": { backgroundColor: "#fff3e0" },
-                              }}
-                            >
-                              <ListItemAvatar>
-                                <Avatar
-                                  variant="circle"
-                                  src={
-                                    data?.Image
-                                      ? BASE_URL_IMG + data.Image
-                                      : "/default_image.jpg"
-                                  }
-                                  alt={data?.title}
-                                  sx={{ width: 50, height: 56 }}
-                                />
-                              </ListItemAvatar>
-                              <ListItemText
-                                primary={data?.title}
-                                secondary={data?.tags || "No tags"}
-                                primaryTypographyProps={{
-                                  fontWeight: "bold",
-                                  color: "primary.main",
-                                }}
-                              />
-                            </ListItem>
-                          ))}
+                          {allsher.map((data, index) => {
+  const sherSlug = data?.slug || data?._id; // ✅ prefer slug, fallback to _id
+  return (
+    <ListItem
+      key={sherSlug || index}
+      component={Link}
+      to={`/single-sher/${encodeURIComponent(sherSlug)}`}
+      sx={{
+        textDecoration: "none",
+        color: "inherit",
+        "&:hover": { backgroundColor: "#fff3e0" },
+      }}
+    >
+      <ListItemAvatar>
+        <Avatar
+          variant="circle"
+          src={
+            data?.Image
+              ? BASE_URL_IMG + data.Image
+              : "/default_image.jpg"
+          }
+          alt={data?.title}
+          sx={{ width: 50, height: 56 }}
+          onError={(e) => {
+            e.currentTarget.src = "/default_image.jpg";
+          }}
+        />
+      </ListItemAvatar>
+
+      <ListItemText
+        primary={data?.title}
+        secondary={Array.isArray(data?.tags) ? data.tags.join(", ") : (data?.tags || "No tags")}
+        primaryTypographyProps={{
+          fontWeight: "bold",
+          color: "primary.main",
+        }}
+      />
+    </ListItem>
+  );
+})}
+
                         </List>
                       </div>
                     )}
@@ -638,488 +543,396 @@ export default function Porfile() {
                             bgcolor: "background.paper",
                           }}
                         >
-                          {allprose.map((data, index) => (
-                            <ListItem
-                              key={data?._id || index}
-                              component={Link}
-                              to={`/single-prose/${data?._id}`}
-                              sx={{
-                                textDecoration: "none",
-                                color: "inherit",
-                                "&:hover": { backgroundColor: "#fff3e0" },
-                              }}
-                            >
-                              <ListItemAvatar>
-                                <Avatar
-                                  variant="circle"
-                                  src={
-                                    data?.Image
-                                      ? BASE_URL_IMG + data.Image
-                                      : "/default_image.jpg"
-                                  }
-                                  alt={data?.title}
-                                  sx={{ width: 50, height: 56 }}
-                                />
-                              </ListItemAvatar>
-                              <ListItemText
-                                primary={data?.title}
-                                secondary={data?.tags || "No tags"}
-                                primaryTypographyProps={{
-                                  fontWeight: "bold",
-                                  color: "primary.main",
-                                }}
-                              />
-                            </ListItem>
-                          ))}
+                          {allprose.map((data, index) => {
+  const proseSlug = data?.slug || data?._id; // ✅ prefer slug, fallback to _id
+  return (
+    <ListItem
+      key={proseSlug || index}
+      component={Link}
+      to={`/single-prose/${encodeURIComponent(proseSlug)}`}
+      sx={{
+        textDecoration: "none",
+        color: "inherit",
+        "&:hover": { backgroundColor: "#fff3e0" },
+      }}
+    >
+      <ListItemAvatar>
+        <Avatar
+          variant="circle"
+          src={
+            data?.Image
+              ? BASE_URL_IMG + data.Image
+              : "/default_image.jpg"
+          }
+          alt={data?.title}
+          sx={{ width: 50, height: 56 }}
+          onError={(e) => {
+            e.currentTarget.src = "/default_image.jpg";
+          }}
+        />
+      </ListItemAvatar>
+
+      <ListItemText
+        primary={data?.title}
+        secondary={Array.isArray(data?.tags) ? data.tags.join(", ") : (data?.tags || "No tags")}
+        primaryTypographyProps={{
+          fontWeight: "bold",
+          color: "primary.main",
+        }}
+      />
+    </ListItem>
+  );
+})}
+
                         </List>
                       </div>
                     )}
 
                     {activeTab === 4 && (
-                      <div className="tab-content">
-                        {/* English Shayari */}
-                        {allEnglishShayari.length > 0 && (
-                          <>
-                            <h2 className="tab-title">English Shayari</h2>
-                            <List
-                              sx={{
-                                width: "100%",
-                                maxWidth: 600,
-                                bgcolor: "background.paper",
-                              }}
-                            >
-                              {allEnglishShayari.map((data, index) => (
-                                <ListItem
-                                  key={data?._id || index}
-                                  component={Link}
-                                  to={`/single-shayari/${data?._id}`}
-                                  sx={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                    "&:hover": { backgroundColor: "#fff3e0" },
-                                  }}
-                                >
-                                  <ListItemAvatar>
-                                    <Avatar
-                                      variant="circle"
-                                      src={
-                                        data?.Image
-                                          ? BASE_URL_IMG + data.Image
-                                          : "/default_image.jpg"
-                                      }
-                                      alt={data?.title}
-                                      sx={{ width: 50, height: 56 }}
-                                    />
-                                  </ListItemAvatar>
-                                  <ListItemText
-                                    primary={data?.title}
-                                    secondary={`${
-                                      data?.userId?.name || "Unknown"
-                                    } • ${format(
-                                      new Date(data.created_at),
-                                      "MMMM d, yyyy"
-                                    )}`}
-                                    primaryTypographyProps={{
-                                      fontWeight: "bold",
-                                      color: "primary.main",
-                                    }}
-                                  />
-                                </ListItem>
-                              ))}
-                            </List>
-                          </>
-                        )}
+  <div className="tab-content">
+    {/* English Shayari */}
+    {allEnglishShayari.length > 0 && (
+      <>
+        <h2 className="tab-title">English Shayari</h2>
+        <List
+          sx={{
+            width: "100%",
+            maxWidth: 600,
+            bgcolor: "background.paper",
+          }}
+        >
+          {allEnglishShayari.map((data, index) => {
+            const shayariSlug = data?.slug || data?._id; // ✅ slug fallback
+            return (
+              <ListItem
+                key={shayariSlug || index}
+                component={Link}
+                to={`/single-shayari/${encodeURIComponent(shayariSlug)}`}
+                sx={{
+                  textDecoration: "none",
+                  color: "inherit",
+                  "&:hover": { backgroundColor: "#fff3e0" },
+                }}
+              >
+                <ListItemAvatar>
+                  <Avatar
+                    variant="circle"
+                    src={
+                      data?.Image
+                        ? BASE_URL_IMG + data.Image
+                        : "/default_image.jpg"
+                    }
+                    alt={data?.title}
+                    sx={{ width: 50, height: 56 }}
+                    onError={(e) => (e.currentTarget.src = "/default_image.jpg")}
+                  />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={data?.title}
+                  secondary={`${
+                    data?.userId?.name || "Unknown"
+                  } • ${format(new Date(data.created_at), "MMMM d, yyyy")}`}
+                  primaryTypographyProps={{
+                    fontWeight: "bold",
+                    color: "primary.main",
+                  }}
+                />
+              </ListItem>
+            );
+          })}
+        </List>
+      </>
+    )}
 
-                        {/* English Sher */}
-                        {allEnglishSher.length > 0 && (
-                          <>
-                            <h2 className="tab-title">English Sher</h2>
-                            <List
-                              sx={{
-                                width: "100%",
-                                maxWidth: 600,
-                                bgcolor: "background.paper",
-                              }}
-                            >
-                              {allEnglishSher.map((data, index) => (
-                                <ListItem
-                                  key={data?._id || index}
-                                  component={Link}
-                                  to={`/single-sher/${data?._id}`}
-                                  sx={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                    "&:hover": { backgroundColor: "#fff3e0" },
-                                  }}
-                                >
-                                  <ListItemAvatar>
-                                    <Avatar
-                                      variant="circle"
-                                      src={
-                                        data?.Image
-                                          ? BASE_URL_IMG + data.Image
-                                          : "/default_image.jpg"
-                                      }
-                                      alt={data?.title}
-                                      sx={{ width: 50, height: 56 }}
-                                    />
-                                  </ListItemAvatar>
-                                  <ListItemText
-                                    primary={data?.title}
-                                    secondary={`${
-                                      data?.userId?.name || "Unknown"
-                                    } • ${format(
-                                      new Date(data.created_at),
-                                      "MMMM d, yyyy"
-                                    )}`}
-                                    primaryTypographyProps={{
-                                      fontWeight: "bold",
-                                      color: "primary.main",
-                                    }}
-                                  />
-                                </ListItem>
-                              ))}
-                            </List>
-                          </>
-                        )}
+    {/* English Sher */}
+    {allEnglishSher.length > 0 && (
+      <>
+        <h2 className="tab-title">English Sher</h2>
+        <List
+          sx={{
+            width: "100%",
+            maxWidth: 600,
+            bgcolor: "background.paper",
+          }}
+        >
+          {allEnglishSher.map((data, index) => {
+            const sherSlug = data?.slug || data?._id; // ✅ slug fallback
+            return (
+              <ListItem
+                key={sherSlug || index}
+                component={Link}
+                to={`/single-sher/${encodeURIComponent(sherSlug)}`}
+                sx={{
+                  textDecoration: "none",
+                  color: "inherit",
+                  "&:hover": { backgroundColor: "#fff3e0" },
+                }}
+              >
+                <ListItemAvatar>
+                  <Avatar
+                    variant="circle"
+                    src={
+                      data?.Image
+                        ? BASE_URL_IMG + data.Image
+                        : "/default_image.jpg"
+                    }
+                    alt={data?.title}
+                    sx={{ width: 50, height: 56 }}
+                    onError={(e) => (e.currentTarget.src = "/default_image.jpg")}
+                  />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={data?.title}
+                  secondary={`${
+                    data?.userId?.name || "Unknown"
+                  } • ${format(new Date(data.created_at), "MMMM d, yyyy")}`}
+                  primaryTypographyProps={{
+                    fontWeight: "bold",
+                    color: "primary.main",
+                  }}
+                />
+              </ListItem>
+            );
+          })}
+        </List>
+      </>
+    )}
 
-                        {/* English Prose */}
-                        {allEnglishProse.length > 0 && (
-                          <>
-                            <h2 className="tab-title">English Prose</h2>
-                            <List
-                              sx={{
-                                width: "100%",
-                                maxWidth: 600,
-                                bgcolor: "background.paper",
-                              }}
-                            >
-                              {allEnglishProse.map((data, index) => (
-                                <ListItem
-                                  key={data?._id || index}
-                                  component={Link}
-                                  to={`/single-prose/${data?._id}`}
-                                  sx={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                    "&:hover": { backgroundColor: "#fff3e0" },
-                                  }}
-                                >
-                                  <ListItemAvatar>
-                                    <Avatar
-                                      variant="circle"
-                                      src={
-                                        data?.Image
-                                          ? BASE_URL_IMG + data.Image
-                                          : "/default_image.jpg"
-                                      }
-                                      alt={data?.title}
-                                      sx={{ width: 50, height: 56 }}
-                                    />
-                                  </ListItemAvatar>
-                                  <ListItemText
-                                    primary={data?.title}
-                                    secondary={`${
-                                      data?.userId?.name || "Unknown"
-                                    } • ${format(
-                                      new Date(data.created_at),
-                                      "MMMM d, yyyy"
-                                    )}`}
-                                    primaryTypographyProps={{
-                                      fontWeight: "bold",
-                                      color: "primary.main",
-                                    }}
-                                  />
-                                </ListItem>
-                              ))}
-                            </List>
-                          </>
-                        )}
-                      </div>
-                    )}
+    {/* English Prose */}
+    {allEnglishProse.length > 0 && (
+      <>
+        <h2 className="tab-title">English Prose</h2>
+        <List
+          sx={{
+            width: "100%",
+            maxWidth: 600,
+            bgcolor: "background.paper",
+          }}
+        >
+          {allEnglishProse.map((data, index) => {
+            const proseSlug = data?.slug || data?._id; // ✅ slug fallback
+            return (
+              <ListItem
+                key={proseSlug || index}
+                component={Link}
+                to={`/single-prose/${encodeURIComponent(proseSlug)}`}
+                sx={{
+                  textDecoration: "none",
+                  color: "inherit",
+                  "&:hover": { backgroundColor: "#fff3e0" },
+                }}
+              >
+                <ListItemAvatar>
+                  <Avatar
+                    variant="circle"
+                    src={
+                      data?.Image
+                        ? BASE_URL_IMG + data.Image
+                        : "/default_image.jpg"
+                    }
+                    alt={data?.title}
+                    sx={{ width: 50, height: 56 }}
+                    onError={(e) => (e.currentTarget.src = "/default_image.jpg")}
+                  />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={data?.title}
+                  secondary={`${
+                    data?.userId?.name || "Unknown"
+                  } • ${format(new Date(data.created_at), "MMMM d, yyyy")}`}
+                  primaryTypographyProps={{
+                    fontWeight: "bold",
+                    color: "primary.main",
+                  }}
+                />
+              </ListItem>
+            );
+          })}
+        </List>
+      </>
+    )}
+  </div>
+)}
+
 
                     {activeTab === 5 && (
-                      <div className="tab-content">
-                        {/* Hindi Shayari */}
-                        {allHindiShayari.length > 0 && (
-                          <>
-                            <h2 className="tab-title">Hindi Shayari</h2>
-                            <List
-                              sx={{
-                                width: "100%",
-                                maxWidth: 600,
-                                bgcolor: "background.paper",
-                              }}
-                            >
-                              {allHindiShayari.map((data, index) => (
-                                <ListItem
-                                  key={data?._id || index}
-                                  component={Link}
-                                  to={`/single-shayari/${data?._id}`}
-                                  sx={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                    "&:hover": { backgroundColor: "#fff3e0" },
-                                  }}
-                                >
-                                  <ListItemAvatar>
-                                    <Avatar
-                                      variant="circle"
-                                      src={
-                                        data?.Image
-                                          ? BASE_URL_IMG + data.Image
-                                          : "/default_image.jpg"
-                                      }
-                                      alt={data?.title}
-                                      sx={{ width: 50, height: 56 }}
-                                    />
-                                  </ListItemAvatar>
-                                  <ListItemText
-                                    primary={data?.title}
-                                    secondary={`${
-                                      data?.userId?.name || "Unknown"
-                                    } • ${format(
-                                      new Date(data.created_at),
-                                      "MMMM d, yyyy"
-                                    )}`}
-                                    primaryTypographyProps={{
-                                      fontWeight: "bold",
-                                      color: "primary.main",
-                                    }}
-                                  />
-                                </ListItem>
-                              ))}
-                            </List>
-                          </>
-                        )}
+  <div className="tab-content">
+    {/* Hindi Shayari */}
+    {allHindiShayari.length > 0 && (
+      <>
+        <h2 className="tab-title">Hindi Shayari</h2>
+        <List sx={{ width: "100%", maxWidth: 600, bgcolor: "background.paper" }}>
+          {allHindiShayari.map((data, index) => {
+            const shayariSlug = data?.slug || data?._id;
+            return (
+              <ListItem
+                key={shayariSlug || index}
+                component={Link}
+                to={`/single-shayari/${encodeURIComponent(shayariSlug)}`}
+                sx={{ textDecoration: "none", color: "inherit", "&:hover": { backgroundColor: "#fff3e0" } }}
+              >
+                <ListItemAvatar>
+                  <Avatar
+                    variant="circle"
+                    src={data?.Image ? BASE_URL_IMG + data.Image : "/default_image.jpg"}
+                    alt={data?.title}
+                    sx={{ width: 50, height: 56 }}
+                    onError={(e) => (e.currentTarget.src = "/default_image.jpg")}
+                  />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={data?.title}
+                  secondary={`${data?.userId?.name || "Unknown"} • ${format(new Date(data.created_at), "MMMM d, yyyy")}`}
+                  primaryTypographyProps={{ fontWeight: "bold", color: "primary.main" }}
+                />
+              </ListItem>
+            );
+          })}
+        </List>
+      </>
+    )}
 
-                        {/* Hindi Sher */}
-                        {allHindiSher.length > 0 && (
-                          <>
-                            <h2 className="tab-title">Hindi Sher</h2>
-                            <List
-                              sx={{
-                                width: "100%",
-                                maxWidth: 600,
-                                bgcolor: "background.paper",
-                              }}
-                            >
-                              {allHindiSher.map((data, index) => (
-                                <ListItem
-                                  key={data?._id || index}
-                                  component={Link}
-                                  to={`/single-sher/${data?._id}`}
-                                  sx={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                    "&:hover": { backgroundColor: "#fff3e0" },
-                                  }}
-                                >
-                                  <ListItemAvatar>
-                                    <Avatar
-                                      variant="circle"
-                                      src={
-                                        data?.Image
-                                          ? BASE_URL_IMG + data.Image
-                                          : "/default_image.jpg"
-                                      }
-                                      alt={data?.title}
-                                      sx={{ width: 50, height: 56 }}
-                                    />
-                                  </ListItemAvatar>
-                                  <ListItemText
-                                    primary={data?.title}
-                                    secondary={`${
-                                      data?.userId?.name || "Unknown"
-                                    } • ${format(
-                                      new Date(data.created_at),
-                                      "MMMM d, yyyy"
-                                    )}`}
-                                    primaryTypographyProps={{
-                                      fontWeight: "bold",
-                                      color: "primary.main",
-                                    }}
-                                  />
-                                </ListItem>
-                              ))}
-                            </List>
-                          </>
-                        )}
+    {/* Hindi Sher */}
+    {allHindiSher.length > 0 && (
+      <>
+        <h2 className="tab-title">Hindi Sher</h2>
+        <List sx={{ width: "100%", maxWidth: 600, bgcolor: "background.paper" }}>
+          {allHindiSher.map((data, index) => {
+            const sherSlug = data?.slug || data?._id;
+            return (
+              <ListItem
+                key={sherSlug || index}
+                component={Link}
+                to={`/single-sher/${encodeURIComponent(sherSlug)}`}
+                sx={{ textDecoration: "none", color: "inherit", "&:hover": { backgroundColor: "#fff3e0" } }}
+              >
+                <ListItemAvatar>
+                  <Avatar
+                    variant="circle"
+                    src={data?.Image ? BASE_URL_IMG + data.Image : "/default_image.jpg"}
+                    alt={data?.title}
+                    sx={{ width: 50, height: 56 }}
+                    onError={(e) => (e.currentTarget.src = "/default_image.jpg")}
+                  />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={data?.title}
+                  secondary={`${data?.userId?.name || "Unknown"} • ${format(new Date(data.created_at), "MMMM d, yyyy")}`}
+                  primaryTypographyProps={{ fontWeight: "bold", color: "primary.main" }}
+                />
+              </ListItem>
+            );
+          })}
+        </List>
+      </>
+    )}
 
-                        {/* Hindi Prose */}
-                        {allHindiProse.length > 0 && (
-                          <>
-                            <h2 className="tab-title">Hindi Prose</h2>
-                            <List
-                              sx={{
-                                width: "100%",
-                                maxWidth: 600,
-                                bgcolor: "background.paper",
-                              }}
-                            >
-                              {allHindiProse.map((data, index) => (
-                                <ListItem
-                                  key={data?._id || index}
-                                  component={Link}
-                                  to={`/single-prose/${data?._id}`}
-                                  sx={{
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                    "&:hover": { backgroundColor: "#fff3e0" },
-                                  }}
-                                >
-                                  <ListItemAvatar>
-                                    <Avatar
-                                      variant="circle"
-                                      src={
-                                        data?.Image
-                                          ? BASE_URL_IMG + data.Image
-                                          : "/default_image.jpg"
-                                      }
-                                      alt={data?.title}
-                                      sx={{ width: 50, height: 56 }}
-                                    />
-                                  </ListItemAvatar>
-                                  <ListItemText
-                                    primary={data?.title}
-                                    secondary={`${
-                                      data?.userId?.name || "Unknown"
-                                    } • ${format(
-                                      new Date(data.created_at),
-                                      "MMMM d, yyyy"
-                                    )}`}
-                                    primaryTypographyProps={{
-                                      fontWeight: "bold",
-                                      color: "primary.main",
-                                    }}
-                                  />
-                                </ListItem>
-                              ))}
-                            </List>
-                          </>
-                        )}
-                      </div>
-                    )}
+    {/* Hindi Prose */}
+    {allHindiProse.length > 0 && (
+      <>
+        <h2 className="tab-title">Hindi Prose</h2>
+        <List sx={{ width: "100%", maxWidth: 600, bgcolor: "background.paper" }}>
+          {allHindiProse.map((data, index) => {
+            const proseSlug = data?.slug || data?._id;
+            return (
+              <ListItem
+                key={proseSlug || index}
+                component={Link}
+                to={`/single-prose/${encodeURIComponent(proseSlug)}`}
+                sx={{ textDecoration: "none", color: "inherit", "&:hover": { backgroundColor: "#fff3e0" } }}
+              >
+                <ListItemAvatar>
+                  <Avatar
+                    variant="circle"
+                    src={data?.Image ? BASE_URL_IMG + data.Image : "/default_image.jpg"}
+                    alt={data?.title}
+                    sx={{ width: 50, height: 56 }}
+                    onError={(e) => (e.currentTarget.src = "/default_image.jpg")}
+                  />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={data?.title}
+                  secondary={`${data?.userId?.name || "Unknown"} • ${format(new Date(data.created_at), "MMMM d, yyyy")}`}
+                  primaryTypographyProps={{ fontWeight: "bold", color: "primary.main" }}
+                />
+              </ListItem>
+            );
+          })}
+        </List>
+      </>
+    )}
+  </div>
+)}
 
-                    {activeTab === 6 && allBlog.length > 0 && (
-                      <div className="tab-content">
-                        <h2 className="tab-title">Blog</h2>
-                        <List
-                          sx={{
-                            width: "100%",
-                            maxWidth: 800,
-                            bgcolor: "background.paper",
-                          }}
-                        >
-                          {allBlog.map((data, index) => (
-                            <ListItem
-                              key={data?._id || index}
-                              alignItems="flex-start"
-                              component={Link}
-                              to={`/single-blog/${data?._id}`}
-                              sx={{
-                                textDecoration: "none",
-                                color: "inherit",
-                                "&:hover": { backgroundColor: "#fff3e0" },
-                              }}
-                            >
-                              {/* Blog Thumbnail */}
-                              <ListItemAvatar>
-                                <Avatar
-                                  variant="circle"
-                                  src={
-                                    data?.Image
-                                      ? BASE_URL_IMG + data.Image
-                                      : "/default_image.jpg"
-                                  }
-                                  alt={data?.title}
-                                  sx={{ width: 50, height: 56 }}
-                                />
-                              </ListItemAvatar>
+{activeTab === 6 && allBlog.length > 0 && (
+  <div className="tab-content">
+    <h2 className="tab-title">Blog</h2>
+    <List sx={{ width: "100%", maxWidth: 800, bgcolor: "background.paper" }}>
+      {allBlog.map((data, index) => {
+        const blogSlug = data?.slug || data?._id;
+        const shareUrl = `https://poeticatma.com/single-blog/${encodeURIComponent(blogSlug)}`;
+        const plainDesc = (data?.description || "").replace(/<[^>]+>/g, "");
+        return (
+          <ListItem
+            key={blogSlug || index}
+            alignItems="flex-start"
+            component={Link}
+            to={`/single-blog/${encodeURIComponent(blogSlug)}`}
+            sx={{ textDecoration: "none", color: "inherit", "&:hover": { backgroundColor: "#fff3e0" } }}
+          >
+            <ListItemAvatar>
+              <Avatar
+                variant="circle"
+                src={data?.Image ? BASE_URL_IMG + data.Image : "/default_image.jpg"}
+                alt={data?.title}
+                sx={{ width: 50, height: 56 }}
+                onError={(e) => (e.currentTarget.src = "/default_image.jpg")}
+              />
+            </ListItemAvatar>
 
-                              {/* Blog Content */}
-                              <ListItemText
-                                primary={data?.title}
-                                secondary={
-                                  <>
-                                    {/* Author & Date */}
-                                    <span
-                                      style={{
-                                        display: "block",
-                                        marginBottom: 4,
-                                      }}
-                                    >
-                                      <i className="fa fa-user-circle-o me-1"></i>
-                                      {data?.userId?.name || "Unknown"} •{" "}
-                                      {format(
-                                        new Date(data.created_at),
-                                        "MMMM d, yyyy"
-                                      )}
-                                    </span>
+            <ListItemText
+              primary={data?.title}
+              secondary={
+                <>
+                  <span style={{ display: "block", marginBottom: 4 }}>
+                    <i className="fa fa-user-circle-o me-1"></i>
+                    {data?.userId?.name || "Unknown"} • {format(new Date(data.created_at), "MMMM d, yyyy")}
+                  </span>
 
-                                    {/* Tags */}
-                                    {data?.tags && (
-                                      <span
-                                        style={{
-                                          display: "block",
-                                          fontWeight: "bold",
-                                          marginBottom: 6,
-                                        }}
-                                      >
-                                        <i className="fa fa-tags me-1"></i>{" "}
-                                        {data.tags}
-                                      </span>
-                                    )}
+                  {data?.tags && (
+                    <span style={{ display: "block", fontWeight: "bold", marginBottom: 6 }}>
+                      <i className="fa fa-tags me-1"></i>{" "}
+                      {Array.isArray(data.tags) ? data.tags.join(", ") : data.tags}
+                    </span>
+                  )}
 
-                                    {/* Description */}
-                                    <span
-                                      style={{
-                                        display: "block",
-                                        marginBottom: 6,
-                                      }}
-                                    >
-                                      {data?.description.replace(
-                                        /<[^>]+>/g,
-                                        ""
-                                      )}
-                                    </span>
+                  <span style={{ display: "block", marginBottom: 6 }}>
+                    {plainDesc}
+                  </span>
 
-                                    {/* WhatsApp Share Link */}
-                                    <a
-                                      className="whatsapp-btn"
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      href={`https://wa.me/?text=${encodeURIComponent(
-                                        `${
-                                          data?.title
-                                        }\n\n${data?.description.replace(
-                                          /<[^>]+>/g,
-                                          ""
-                                        )}\n\nRead more: https://poeticatma.com/single-blog/${
-                                          data?._id
-                                        }`
-                                      )}`}
-                                      onClick={(e) => e.stopPropagation()} // Prevents triggering the Link
-                                    >
-                                      <i className="fab fa-whatsapp me-1"></i>{" "}
-                                      Share on WhatsApp
-                                    </a>
-                                  </>
-                                }
-                                primaryTypographyProps={{
-                                  fontWeight: "bold",
-                                  color: "primary.main",
-                                  fontSize: "1.1rem",
-                                }}
-                                secondaryTypographyProps={{
-                                  component: "div",
-                                }}
-                              />
-                            </ListItem>
-                          ))}
-                        </List>
-                      </div>
-                    )}
+                  <a
+                    className="whatsapp-btn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://wa.me/?text=${encodeURIComponent(
+                      `${data?.title}\n\n${plainDesc}\n\nRead more: ${shareUrl}`
+                    )}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <i className="fab fa-whatsapp me-1"></i> Share on WhatsApp
+                  </a>
+                </>
+              }
+              primaryTypographyProps={{ fontWeight: "bold", color: "primary.main", fontSize: "1.1rem" }}
+              secondaryTypographyProps={{ component: "div" }}
+            />
+          </ListItem>
+        );
+      })}
+    </List>
+  </div>
+)}
+
                   </div>
                 </div>
                 {/* Right Column: Ads */}

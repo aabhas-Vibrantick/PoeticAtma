@@ -76,11 +76,11 @@ export default function Register() {
     return;
   }
 
-  if (!Image) {
-    toast.error("Please Upload Image.");
-    setLoading(false);
-    return;
-  }
+  // if (!Image) {
+  //   toast.error("Please Upload Image.");
+  //   setLoading(false);
+  //   return;
+  // }
 
   let data = new FormData();
   data.append("name", name);
@@ -95,20 +95,30 @@ export default function Register() {
     data.append("recaptchaValue", recaptchaValue);
   }
 
-  apiServices.register(data)
-    .then((x) => {
-      setLoading(false);
-      if (x.data.success) {
-        toast.success(x.data.message);
-        setTimeout(() => nav("/login"), 1000);
-      } else {
-        toast.info(x.data.message);
-      }
-    })
-    .catch(() => {
-      toast.error("Something went wrong!! Try again later.");
-      setLoading(false);
-    });
+ apiServices.register(data)
+  .then((x) => {
+    setLoading(false);
+    if (x.data?.success) {
+      toast.success(x.data.message);
+      setTimeout(() => nav("/login"), 1000);
+    } else {
+      // only runs if your backend returns 200 with success:false
+      toast.info(x.data?.message || "Please check your inputs.");
+    }
+  })
+  .catch((err) => {
+    setLoading(false);
+    const status = err.response?.status;
+    const msg = err.response?.data?.message;
+
+    // show precise backend message (e.g. "This name is already used by someone")
+    if ((status === 409 || status === 400) && msg) {
+      toast.info(msg);
+      return;
+    }
+
+    toast.error("Something went wrong!! Try again later.");
+  });
 };
 
 
@@ -219,10 +229,14 @@ export default function Register() {
                           <PropagateLoader color="#fecc01" size={24} />
                         </div>
                       </> : <>
-                        <button href="#" type="submit" className="btn btn-block py-2 btn-facebook btn-signin" disabled={isButtonDisabled}>
-                          <span className="fa-solid fa-right-to-bracket fa-beat mr-2"></span>
-                          Sign Up
-                        </button>
+                        <button
+  type="submit"
+  className="btn btn-block py-2 btn-facebook btn-signin"
+  disabled={captchaStatus && !recaptchaValue}
+>
+  <span className="fa-solid fa-right-to-bracket fa-beat mr-2"></span>
+  Sign Up
+</button>
                       </>}
 
                       <span className="text-center my-3 d-block">or</span>

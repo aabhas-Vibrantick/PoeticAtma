@@ -218,13 +218,13 @@ export default function Login() {
                         </div>
                       ) : (
                         <button
-                          type="submit"
-                          className="btn btn-block py-2 btn-facebook btn-signin"
-                          disabled={captchaStatus ? isButtonDisabled : false}
-                        >
-                          <span className="fa-solid fa-right-to-bracket fa-beat mr-2"></span>
-                          Sign In
-                        </button>
+  type="submit"
+  className="btn btn-block py-2 btn-facebook btn-signin"
+  disabled={captchaStatus && !recaptchaValue}
+>
+  <span className="fa-solid fa-right-to-bracket fa-beat mr-2"></span>
+  Sign In
+</button>
                       )}
 
                       {/* Sign Up */}

@@ -308,15 +308,25 @@ register = async (req, res) => {
       });
     }
 
-    const udata = await User.findOne({ email: req.body.email });
-    if (udata) {
-      return res.json({
+    //  Check if name already exists in Customer
+    const existingName = await Customer.findOne({ name: req.body.name });
+    if (existingName) {
+      return res.status(409).json({
         status: 409,
         success: false,
-        message: "User already exists",
+        message: "Name is already used by someone",
       });
     }
 
+    //  Check if email already exists
+    const existingEmail = await User.findOne({ email: req.body.email });
+    if (existingEmail) {
+      return res.status(409).json({
+        status: 409,
+        success: false,
+        message: "User with this email already exists",
+      });
+    }
     const { token, expirationTime } = generateVerificationToken();
 
     const userobj = new User();
@@ -914,6 +924,39 @@ getsinglecustomer = (req, res) => {
     });
 };
 
+getsinglecustomerBySlug = (req, res) => {
+  const { slug } = req.params;   // get slug from URL
+
+  Customer.findOne({ slug })
+    .populate("userId")
+    .then((udata) => {
+      if (!udata) {
+        return res.status(404).json({
+          status: 404,
+          success: false,
+          message: "Customer not found",
+        });
+      }
+
+      res.json({
+        status: 200,
+        success: true,
+        message: "data loaded",
+        data: udata,
+      });
+    })
+    .catch((err) => {
+      res.json({
+        status: 500,
+        success: false,
+        message: "Error Occurred",
+        error: String(err),
+      });
+    });
+};
+
+
+
 const changeStatus = async (req, res) => {
   try {
     const formData = req.body;
@@ -1268,6 +1311,7 @@ module.exports = {
   updateuser,
   getallcustomer,
   getsinglecustomer,
+  getsinglecustomerBySlug,
   deletecustomer,
   changeStatus,
   forgotPassword,

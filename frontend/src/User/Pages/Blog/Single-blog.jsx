@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams ,useNavigate } from "react-router-dom";
 import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
 import { ToastContainer, toast } from "react-toastify";
 import ScaleLoader from "react-spinners/ScaleLoader";
@@ -12,6 +12,8 @@ import { format } from "date-fns";
 export default function Singleblog() {
   // const param = useParams();
   // const id = param._id;
+    const { slug } = useParams();
+  const navigate = useNavigate();
   const parse = require("html-react-parser");
   const { _id } = useParams();
   const [allBlog, setAllBlog] = useState("");
@@ -41,114 +43,95 @@ export default function Singleblog() {
     zIndex: "1",
   };
 
-  const incrementViewCount = async () => {
-    try {
-      const response = await apiServices.blogincrementPageView({ postId: _id });
-      if (response.data.success) {
-        setViewCount((prevCount) => prevCount + 1);
-      } else {
-        // console.error(response.data.message);
-      }
-    } catch (error) {
-      // console.error("Error incrementing view count:", error);
+  const incrementViewCount = async (id) => {
+  if (!id) return; // guard against undefined
+  try {
+    const response = await apiServices.blogincrementPageView({ postId: id });
+    if (response.data.success) {
+      setViewCount((prevCount) => prevCount + 1);
     }
-  };
+  } catch (error) {
+    // console.error("Error incrementing view count:", error);
+  }
+};
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
+    let isMounted = true;
+    setLoading(true);
 
     const fetchData = async () => {
       try {
-        const response = await apiServices.getsingleblog({ _id });
-        if (response.data.success) {
-          setAllBlog(response.data.data);
-        } else {
-          // console.error(response.data.message);
+        // 1) fetch blog by slug
+        const res = await apiServices.getsingleblogBySlug(slug); // <-- GET /blog/:slug
+        const ok = res?.data?.success && res?.data?.data;
+        if (!ok) {
+          navigate("/404", { replace: true });
+          return;
         }
-      } catch (error) {
-        // console.error("Error fetching blog:", error);
-      }
 
-      apiServices
-        .latestBlog()
-        .then((data) => {
-          if (data.data.success) {
-            const filteredBlogs = data.data.data.filter(
-              (blog) => blog.status === true && !blog.isFeatured
-            );
-            setAlllatest(filteredBlogs);
-            // setAllBest(data.data.data);
-            // // console.log(data);
-          } else {
-            toast.error(data.data.message);
-          }
-        })
-        .catch((err) => {
-          // // console.log(err);
-          toast.error("Something went wrong");
-        });
+        const item = res.data.data;
+        const blogId = item._id;
 
-      try {
-        const commentResponse = await apiServices.getAllComments({
-          blogId: _id,
-        });
-        if (commentResponse.data.success) {
-          setComments(commentResponse.data.data);
+        if (!isMounted) return;
 
-          // Fetch replies for each comment
-          const promises = commentResponse.data.data.map(async (comment) => {
-            const replyResponse = await apiServices.getAllReplies({
-              _id: comment._id,
-            });
-            if (replyResponse.data.success) {
-              return { ...comment, replies: replyResponse.data.data };
+        setAllBlog(item);
+
+        // 2) latest blogs (unchanged)
+        apiServices
+          .latestBlog()
+          .then(({ data }) => {
+            if (!isMounted) return;
+            if (data.success) {
+              const filtered = data.data.filter(b => b.status === true && !b.isFeatured);
+              setAlllatest(filtered);
             } else {
-              return comment;
+              toast.error(data.message);
             }
+          })
+          .catch(() => {
+            toast.error("Something went wrong");
           });
 
-          // Wait for all reply fetch requests to complete
-          const commentsWithReplies = await Promise.all(promises);
+        // 3) comments + replies (use blogId)
+        try {
+          const commentRes = await apiServices.getAllComments({ blogId });
+          if (isMounted && commentRes.data.success) {
+            const base = commentRes.data.data || [];
+            const withReplies = await Promise.all(
+              base.map(async (c) => {
+                const rr = await apiServices.getAllReplies({ _id: c._id });
+                return rr.data.success ? { ...c, replies: rr.data.data } : { ...c, replies: [] };
+              })
+            );
+            if (isMounted) setComments(withReplies);
+          }
+        } catch {}
 
-          setComments(commentsWithReplies);
-        } else {
-          toast.error(commentResponse.data.message);
-        }
-      } catch (error) {
-        // console.error("Error fetching comments:", error);
+        // 4) page view count (read)
+        try {
+          const vc = await apiServices.bloggetPageViewCount({ postId: blogId });
+          if (isMounted && vc.data) setViewCount(vc.data.count ?? 0);
+        } catch {}
+
+        // 5) like count (read)
+        apiServices
+          .getLikeCountForBlog({ blogId })
+          .then((r) => {
+            if (!isMounted) return;
+            const count = r?.data?.data?.likeCount ?? 0;
+            setLikeCount(count);
+          })
+          .catch(() => {});
+
+        // 6) increment views
+        await incrementViewCount(blogId);
+      } finally {
+        if (isMounted) setLoading(false);
       }
-
-      try {
-        const response = await apiServices.bloggetPageViewCount({
-          postId: _id,
-        });
-        setViewCount(response.data.count);
-        if (response.data.success) {
-        } else {
-          // console.error(response.data.message);
-        }
-      } catch (error) {
-        // console.error("Error fetching view count:", error);
-      }
-
-      apiServices
-        .getLikeCountForBlog({ blogId: _id })
-        .then((response) => {
-          const data = response.data.data;
-          setLikeCount(data.likeCount);
-        })
-        .catch((error) => {
-          // console.error("Error fetching like count:", error);
-        });
-
-      setLoading(false);
     };
 
-    // fetchReplies();
     fetchData();
-    incrementViewCount();
-  }, [_id, likeCount]);
+    return () => { isMounted = false; };
+  }, [slug, liked]); // re-run if slug changes or you toggle like
 
   const blogId = {
     blogId: _id,
@@ -542,38 +525,42 @@ export default function Singleblog() {
               <div className="col-lg-4 m-15px-tb blog-aside">
                 {/* <!-- Author --> */}
                 <div className="widget widget-author">
-                  <div className="widget-title">
-                    <h3>Author</h3>
-                  </div>
-                  <div className="widget-body">
-                    <div className="media align-items-center">
-                      <div className="avatar">
-                        <img
-                          src={
-                            BASE_URL_IMG + allBlog?.userId?.Image ||
-                            "/assets/images/avtar.png"
-                          }
-                          title=""
-                          alt=""
-                          onError={(e) => {
-                            e.target.src = "/assets/images/avtar.png";
-                          }}
-                        />
-                      </div>
-                      <div className="media-body">
-                        <h6 className="text-capitalize">
-                          <Link
-                            className="name"
-                            to={"/poets-profile/" + `${allBlog?.userId?._id}`}
-                          >
-                            {allBlog?.userId?.name || "Admin"}
-                          </Link>
-                        </h6>
-                      </div>
-                    </div>
-                    <p></p>
-                  </div>
-                </div>
+  <div className="widget-title">
+    <h3>Author</h3>
+  </div>
+  <div className="widget-body">
+    <div className="media align-items-center">
+      <div className="avatar">
+        <img
+          src={
+            allBlog?.userId?.Image
+              ? BASE_URL_IMG + allBlog.userId.Image
+              : "/assets/images/avtar.png"
+          }
+          title=""
+          alt="Author"
+          onError={(e) => {
+            e.target.src = "/assets/images/avtar.png";
+          }}
+        />
+      </div>
+      <div className="media-body">
+        <h6 className="text-capitalize">
+          <Link
+            className="name"
+            to={`/poets-profile/${encodeURIComponent(
+              allBlog?.userId?.slug || allBlog?.userId?._id
+            )}`}
+          >
+            {allBlog?.userId?.name || "Admin"}
+          </Link>
+        </h6>
+      </div>
+    </div>
+    <p></p>
+  </div>
+</div>
+
                 {/* <!-- End Author --> */}
                 {/* <!-- category Post --> */}
                 <div className="widget widget-author">

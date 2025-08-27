@@ -1,4 +1,5 @@
-import { Link, useParams } from "react-router-dom";
+import { Link} from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import apiServices, { BASE_URL_IMG } from "../../../ApiServices/ApiServices";
 import { toast, ToastContainer } from "react-toastify";
@@ -6,8 +7,11 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import parse from "html-react-parser";
+
 export default function SingleSher() {
   const { _id } = useParams();
+   const { slug } = useParams();      // from /single-sher/:slug
+  const navigate = useNavigate();
   const [sher, setAllSher] = useState([]);
   const [liked, setLiked] = useState(false);
   const [comments, setComments] = useState([]);
@@ -20,130 +24,108 @@ export default function SingleSher() {
   const [likeCount, setLikeCount] = useState(null);
   const authenticate = sessionStorage.getItem("authenticate");
   const [alllatest, setAlllatest] = useState([]);
-  const parse = require("html-react-parser");
+
   const handleReadMoreClick = () => {
     if (!authenticate) {
       window.location.href = "/login";
     }
   };
+
   const override = {
     display: "block",
-    // "margin":"0 auto",
     position: "absolute",
     top: "25%",
     left: "48%",
     zIndex: "1",
   };
 
-  const incrementViewCount = async () => {
-    try {
-      const response = await apiServices.sherincrementPageView({ postId: _id });
-      if (response.data.success) {
-        setViewCount((prevCount) => prevCount + 1);
-      } else {
-        // console.error(response.data.message);
-      }
-    } catch (error) {
-      // console.error("Error incrementing view count:", error);
+  const incrementViewCount = async (id) => {
+  if (!id) return; // guard against undefined
+  try {
+    const response = await apiServices.sherincrementPageView({ postId: id });
+    if (response.data.success) {
+      setViewCount((prevCount) => prevCount + 1);
     }
-  };
+  } catch (error) {
+    // console.error("Error incrementing view count:", error);
+  }
+};
 
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
+   useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
 
     const fetchData = async () => {
       try {
-        const response = await apiServices.getsinglesher({ _id });
-        if (response.data.success) {
-          setAllSher(response.data.data);
-        } else {
-          // console.error(response.data.message);
+        // 1) fetch by slug
+        const res = await apiServices.getsinglesherBySlug(slug); // <-- create this API (GET /sher/:slug)
+        const ok = res?.data?.success && res?.data?.data;
+        if (!ok) {
+          navigate("/404", { replace: true });
+          return;
         }
-      } catch (error) {
-        // console.error("Error fetching sher:", error);
-      }
 
-      apiServices
-        .latestSher()
-        .then((data) => {
-          if (data.data.success) {
-            const filteredShers = data.data.data.filter(
-              (sher) => sher.status === true
-            );
-            setAlllatest(filteredShers);
-            // setAllBest(data.data.data);
-            // // console.log(data);
-          } else {
-            toast.error(data.data.message);
-          }
-        })
-        .catch((err) => {
-          // // console.log(err);
-          toast.error("Something went wrong");
-        });
+        const item = res.data.data;
+        const sherId = item._id;
 
-      try {
-        const commentResponse = await apiServices.getAllsherComments({
-          sherId: _id,
-        });
-        if (commentResponse.data.success) {
-          setComments(commentResponse.data.data);
+        if (!isMounted) return;
 
-          // Fetch replies for each comment
-          const promises = commentResponse.data.data.map(async (comment) => {
-            const replyResponse = await apiServices.getAllsherReplies({
-              _id: comment._id,
-            });
-            if (replyResponse.data.success) {
-              return { ...comment, replies: replyResponse.data.data };
-            } else {
-              return comment;
+        setAllSher(item);
+
+        // 2) latest shers (unchanged)
+        apiServices
+          .latestSher()
+          .then(({ data }) => {
+            if (!isMounted) return;
+            if (data.success) {
+              setAlllatest(data.data.filter((s) => s.status === true));
             }
-          });
+          })
+          .catch(() => {});
 
-          // Wait for all reply fetch requests to complete
-          const commentsWithReplies = await Promise.all(promises);
+        // 3) comments + replies (use sherId)
+        try {
+          const commentRes = await apiServices.getAllsherComments({ sherId });
+          if (isMounted && commentRes.data.success) {
+            const base = commentRes.data.data || [];
+            const withReplies = await Promise.all(
+              base.map(async (c) => {
+                const rr = await apiServices.getAllsherReplies({ _id: c._id });
+                return rr.data.success ? { ...c, replies: rr.data.data } : { ...c, replies: [] };
+              })
+            );
+            if (isMounted) setComments(withReplies);
+          }
+        } catch {}
 
-          setComments(commentsWithReplies);
-        } else {
-          // console.error(commentResponse.data.message);
-        }
-      } catch (error) {
-        // console.error("Error fetching comments:", error);
+        // 4) view count (read)
+        try {
+          const vc = await apiServices.shergetPageViewCount({ postId: sherId });
+          if (isMounted && vc.data) setViewCount(vc.data.count ?? 0);
+        } catch {}
+
+        // 5) like count
+        apiServices
+          .getLikeCountForSher({ sherId })
+          .then((r) => {
+            if (!isMounted) return;
+            const count = r?.data?.data?.likeCount ?? 0;
+            setLikeCount(count);
+          })
+          .catch(() => {});
+
+        // 6) increment views after load
+        await incrementViewCount(sherId);
+      } finally {
+        if (isMounted) setLoading(false);
       }
-
-      try {
-        const response = await apiServices.shergetPageViewCount({
-          postId: _id,
-        });
-        setViewCount(response.data.count);
-        if (response.data.success) {
-        } else {
-          // console.error(response.data.message);
-        }
-      } catch (error) {
-        // console.error("Error fetching view count:", error);
-      }
-
-      apiServices
-        .getLikeCountForSher({ sherId: _id })
-        .then((response) => {
-          const data = response.data.data;
-          setLikeCount(data.likeCount);
-        })
-        .catch((error) => {
-          // console.error('Error fetching like count:', error);
-        });
-
-      setLoading(false);
     };
 
-    // fetchReplies();
     fetchData();
-    incrementViewCount();
-  }, [_id]);
+    return () => {
+      isMounted = false;
+    };
+  }, [slug]);
 
   const sherId = {
     sherId: _id,
@@ -154,7 +136,6 @@ export default function SingleSher() {
       apiServices
         .SherUnLike(sherId)
         .then((response) => {
-          // // console.log("UnLike response>>>>",response)
           setLiked(false);
         })
         .catch((error) => {
@@ -164,7 +145,6 @@ export default function SingleSher() {
       apiServices
         .SherLike(sherId)
         .then((response) => {
-          // // console.log("Like response>>>>",response)
           setLiked(true);
         })
         .catch((error) => {
@@ -192,9 +172,7 @@ export default function SingleSher() {
   };
 
   const createReply = async (_id) => {
-    // // console.log(_id);
     try {
-      // Send a request to your API to create a reply
       const response = await apiServices.createSherReply({
         _id,
         text: newReply,
@@ -214,8 +192,6 @@ export default function SingleSher() {
         setCommentId(_id);
         setComments(updatedComments);
         setNewReply("");
-      } else {
-        // console.error(response.data.message);
       }
     } catch (error) {
       // console.error("Error creating reply:", error);
@@ -228,7 +204,6 @@ export default function SingleSher() {
       [commentId]: !prevShowReplies[commentId],
     }));
     if (!showReply[commentId]) {
-      // Clear the newReply state when hiding replies
       setNewReply("");
     }
   };
@@ -241,26 +216,22 @@ export default function SingleSher() {
   return (
     <>
       <style>{`.sher-content p {
-  margin-bottom: 1em;  /* Add spacing between paragraphs */
+  margin-bottom: 1em;
 }
 
 .sher-content {
-  white-space: pre-wrap; /* preserve spaces and line breaks */
-  word-wrap: break-word; /* break long words */
-}
-`}</style>
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}`}</style>
       <ScaleLoader loading={loading} cssOverride={override} size={70} />
       <div className={loading ? "disable-full-screen" : ""}>
         <div className="blog-blogsingle bloggray-bg">
           <div className="container">
-            {/* <!-- Blog Ads --> */}
             <section id="blogads"></section>
-            {/* ---------------------left sidebar start---------------------------*/}
             <div className="row align-items-start">
               <div className="col-lg-8 m-15px-tb">
                 <div className="container mb-5">
                   <article className="card shadow-sm border-0 rounded-3 overflow-hidden">
-                    {/* Featured Image */}
                     <div className="position-relative">
                       <img
                         src={BASE_URL_IMG + sher?.Image}
@@ -278,12 +249,8 @@ export default function SingleSher() {
                         </span>
                       </div>
                     </div>
-
-                    {/* Article Content */}
                     <div className="card-body p-4 p-md-5">
                       <h1 className="display-5 fw-bold mb-3">{sher?.title}</h1>
-
-                      {/* Meta Info */}
                       <div className="d-flex flex-wrap align-items-center mb-4 text-muted">
                         <div className="d-flex align-items-center me-4">
                           <i className="fa fa-user-circle-o me-2"></i>
@@ -299,9 +266,6 @@ export default function SingleSher() {
                           <span className="fw-bold">{sher?.tags}</span>
                         </div>
                       </div>
-
-                      {/* Sher Content */}
-
                       <div className="sher-content">
                         {sher?.sher && typeof sher.sher === "string" ? (
                           parse(sher.sher)
@@ -309,8 +273,6 @@ export default function SingleSher() {
                           <p>Invalid or missing content.</p>
                         )}
                       </div>
-
-                      {/* Article Footer: Likes, Views */}
                       <div className="d-flex flex-wrap align-items-center justify-content-start border-top pt-3">
                         <div className="like-button me-4">
                           <label className="d-flex align-items-center mb-0">
@@ -345,13 +307,10 @@ export default function SingleSher() {
                       </div>
                     </div>
                   </article>
-
-                  {/* Comments Section */}
                   <section className="mt-5">
                     <h2 className="h4 mb-4">Comments</h2>
                     <div className="card shadow-sm border-0 rounded-3">
                       <div className="card-body p-4">
-                        {/* Add Comment */}
                         <div className="d-flex mb-4">
                           <textarea
                             className="form-control me-2"
@@ -366,8 +325,6 @@ export default function SingleSher() {
                             Send
                           </button>
                         </div>
-
-                        {/* Comments List */}
                         {comments && comments.length > 0 ? (
                           comments.map((comment) => (
                             <div className="mb-4" key={comment._id}>
@@ -390,16 +347,18 @@ export default function SingleSher() {
                                   <div className="d-flex justify-content-between align-items-baseline">
                                     <h6 className="mb-1">
                                       <Link
-                                        to={`/poets-profile/${comment.userId?._id}`}
+                                        to={`/poets-profile/${comment.userId?._id || ""}`}
                                         className="text-decoration-none text-capitalize"
                                       >
-                                        {comment.userId.name}
+                                        {comment.userId?.name || "Anonymous"}
                                       </Link>
                                       <small className="text-muted ms-2">
-                                        {format(
-                                          new Date(comment.created_at),
-                                          "MMMM d, yyyy"
-                                        )}
+                                        {isValidDate(comment.created_at)
+                                          ? format(
+                                              new Date(comment.created_at),
+                                              "MMMM d, yyyy"
+                                            )
+                                          : "Invalid Date"}
                                       </small>
                                     </h6>
                                     <a
@@ -414,8 +373,6 @@ export default function SingleSher() {
                                     </a>
                                   </div>
                                   <p className="mb-2">{comment.text}</p>
-
-                                  {/* Reply Form */}
                                   {showReply[comment._id] && (
                                     <div className="d-flex mt-3">
                                       <textarea
@@ -435,8 +392,6 @@ export default function SingleSher() {
                                       </button>
                                     </div>
                                   )}
-
-                                  {/* Replies */}
                                   {comment.replies &&
                                     comment.replies.length > 0 && (
                                       <div className="mt-3">
@@ -464,16 +419,18 @@ export default function SingleSher() {
                                             <div className="flex-grow-1">
                                               <h6 className="mb-1 small">
                                                 <Link
-                                                  to={`/poets-profile/${reply.userId?._id}`}
+                                                  to={`/poets-profile/${reply.userId?._id || ""}`}
                                                   className="text-decoration-none text-capitalize"
                                                 >
-                                                  {reply.userId.name}
+                                                  {reply.userId?.name || "Anonymous"}
                                                 </Link>
                                                 <small className="text-muted ms-2">
-                                                  {format(
-                                                    new Date(reply.created_at),
-                                                    "MMMM d, yyyy"
-                                                  )}
+                                                  {isValidDate(reply.created_at)
+                                                    ? format(
+                                                        new Date(reply.created_at),
+                                                        "MMMM d, yyyy"
+                                                      )
+                                                    : "Invalid Date"}
                                                 </small>
                                               </h6>
                                               <p className="mb-0 small">
@@ -499,188 +456,116 @@ export default function SingleSher() {
                 </div>
               </div>
               <div className="col-lg-4 m-15px-tb blog-aside">
-                {/* <!-- Author --> */}
-                <div className="widget widget-author">
-                  <div className="widget-title">
-                    <h3>Author</h3>
-                  </div>
-                  <div className="widget-body">
-                    <div className="media align-items-center">
-                      <div className="avatar">
-                        <img
-                          src={
-                            BASE_URL_IMG + sher?.userId?.Image ||
-                            "/assets/images/avtar.png"
-                          }
-                          title=""
-                          alt=""
-                          onError={(e) => {
-                            e.target.src = "/assets/images/avtar.png";
-                          }}
-                        />
-                      </div>
-                      <div className="media-body">
-                        <h6 className="text-capitalize">
-                          {" "}
-                          <Link
-                            className="name"
-                            to={"/poets-profile/" + `${sher?.userId?._id}`}
-                          >
-                            {sher?.userId?.name || "Admin"}
-                          </Link>
-                        </h6>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* <!-- End Author --> */}
-                {/* <!-- category Post --> */}
-                <div className="widget widget-author">
-                  <div className="widget-title">
-                    <h3>Category</h3>
-                  </div>
-                  <div className="blogbox categories">
-                    <ul className="list-unstyled">
-                      <li>
-                        <Link to="/english-sher">
-                          <i className="fa-solid fa-heart"></i>English
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/hindi-sher">
-                          <i className="fa-solid fa-heart"></i>Hindi
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/top20-sher">
-                          <i className="fa-solid fa-heart"></i>Top-20 Sher
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/sher-Image">
-                          <i className="fa-solid fa-heart"></i>Sher Images
-                        </Link>
-                      </li>
-                      {/* <li>
-                        <a href="#">
-                          <i className="fa-brands fa-canadian-maple-leaf"></i>
-                          Nature
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#">
-                          <i className="fa-solid fa-star"></i>Occasion
-                        </a>
-                      </li> */}
-                    </ul>
-                  </div>
-                </div>
+  <div className="widget widget-author">
+    <div className="widget-title">
+      <h3>Author</h3>
+    </div>
+    <div className="widget-body">
+      <div className="media align-items-center">
+        <div className="avatar">
+          <img
+            src={BASE_URL_IMG + (sher?.userId?.Image || "/assets/images/avtar.png")}
+            title={sher?.userId?.name || "Author"}
+            alt={sher?.userId?.name || "Author"}
+            onError={(e) => {
+              e.target.src = "/assets/images/avtar.png";
+            }}
+          />
+        </div>
+        <div className="media-body">
+          <h6 className="text-capitalize">
+            <Link
+              className="name"
+              to={`/poets-profile/${encodeURIComponent(sher?.userId?.slug)}`}
+            >
+              {sher?.userId?.name || "Admin"}
+            </Link>
+          </h6>
+        </div>
+      </div>
+    </div>
+  </div>
 
-                {/* <!-- category Post end --> */}
-                {/* <!-- Trending Post --> */}
-                {/* <div className="widget widget-post">
-                        <div className="widget-title">
-                            <h3>Trending Now</h3>
-                        </div>
-                        <div className="widget-body">
-                        <div className="latest-post-aside media">
-                                <div className="lpa-left media-body">
-                                    <div className="lpa-title">
-                                        <h5><a href="#">Prevent 75% of visitors from google analytics</a></h5>
-                                    </div>
-                                    <div className="lpa-meta">
-                                        <a className="name" href="#">
-                                            Rachel Roth
-                                        </a>
-                                        <a className="date" href="#">
-                                            26 FEB 2020
-                                        </a>
-                                    </div>
-                                </div>
-                                <div className="lpa-right">
-                                    <a href="#">
-                                        <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt=""/>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> */}
-                {/* <!-- End Trending Post --> */}
-                {/* <!-- Latest Post --> */}
-                <div className="widget widget-latest-post">
-                  <div className="widget-title">
-                    <h3>Latest Post</h3>
-                  </div>
-                  <div className="widget-body">
-                    {alllatest.map((data, index) => (
-                      <div className="latest-post-aside media">
-                        <div className="lpa-left media-body">
-                          <div className="lpa-title">
-                            <h5 className="shayaricontent-container2 ">
-                              {" "}
-                              <Link
-                                className="shayaricontent2 "
-                                to={"/single-sher/" + `${data?._id}`}
-                              >
-                                {data?.sher}
-                              </Link>
-                            </h5>
-                          </div>
-                          <div className="lpa-meta">
-                            {/* <a  href="#">
-                              Rachel Roth
-                            </a> */}
-                            <Link
-                              className="name"
-                              to={"/poets-profile/" + `${data?.userId?._id}`}
-                            >
-                              {data?.userId?.name || "Admin"}
-                            </Link>
-                            {/* <a className="date" href="#">
-                            {format(new Date(data.created_at), 'MMMM d, yyyy')}
-                            </a> */}
-                          </div>
-                        </div>
-                        <div className="lpa-right">
-                          {/* <a href="#"> */}
-                          <Link to={"/single-sher/" + `${data?._id}`}>
-                            <img
-                              src={BASE_URL_IMG + data?.Image}
-                              alt=""
-                              className=""
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = "/default_image.jpg";
-                              }}
-                            />
-                          </Link>
-                          {/* <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt="" /> */}
-                          {/* </a> */}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                {/* <!-- End Latest Post --> */}
-                {/* <!-- widget Tags --> */}
-                {/* <div className="widget widget-tags">
-                        <div className="widget-title">
-                            <h3>Latest Tags</h3>
-                        </div>
-                        <div className="widget-body">
-                            <div className="nav tag-cloud">
-                                <a href="#">Love</a>
-                                <a href="#">Romantic</a>
-                                <a href="#">Sad</a>
-                                <a href="#">Attitude</a>
-                                <a href="#">Shayari</a>
-                                <a href="#">beautifull</a>
-                              
-                            </div>
-                        </div>
-                    </div> */}
-                {/* <!-- End widget Tags --> */}
+  <div className="widget widget-author">
+    <div className="widget-title">
+      <h3>Category</h3>
+    </div>
+    <div className="blogbox categories">
+      <ul className="list-unstyled">
+        <li>
+          <Link to="/english-sher">
+            <i className="fa-solid fa-heart"></i>English
+          </Link>
+        </li>
+        <li>
+          <Link to="/hindi-sher">
+            <i className="fa-solid fa-heart"></i>Hindi
+          </Link>
+        </li>
+        <li>
+          <Link to="/top20-sher">
+            <i className="fa-solid fa-heart"></i>Top-20 Sher
+          </Link>
+        </li>
+        <li>
+          <Link to="/sher-Image">
+            <i className="fa-solid fa-heart"></i>Sher Images
+          </Link>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div className="widget widget-latest-post">
+    <div className="widget-title">
+      <h3>Latest Post</h3>
+    </div>
+    <div className="widget-body">
+      {alllatest.map((data) => {
+        const slug = data?.slug || data?._id; // fallback for old shers
+        const poetSlug = data?.userId?.slug || data?.userId?._id; // fallback for old users
+        return (
+          <div className="latest-post-aside media" key={data._id}>
+            <div className="lpa-left media-body">
+              <div className="lpa-title">
+                <h5 className="shayaricontent-container2">
+                  <Link
+                    className="shayaricontent2"
+                    to={`/single-sher/${encodeURIComponent(slug)}`}
+                  >
+                    {data?.sher}
+                  </Link>
+                </h5>
               </div>
+              <div className="lpa-meta">
+                <Link
+                  className="name"
+                  to={`/poets-profile/${encodeURIComponent(poetSlug)}`}
+                >
+                  {data?.userId?.name || "Admin"}
+                </Link>
+              </div>
+            </div>
+            <div className="lpa-right">
+              <Link to={`/single-sher/${encodeURIComponent(slug)}`}>
+                <img
+                  src={BASE_URL_IMG + (data?.Image || "no-image.jpg")}
+                  alt={data?.title || "sher"}
+                  className=""
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "/default_image.jpg";
+                  }}
+                />
+              </Link>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</div>
+
             </div>
           </div>
         </div>

@@ -881,7 +881,7 @@ getTop10Customers = (req, res) => {
       match: { status: true, userType: 2, bedgeverify: true },
     })
     .sort({ Like: -1 })
-    .limit(10)
+    // .limit(10)
     .then((topCustomers) => {
       // ✅ Filter only those with matched userId (i.e., verified users)
       const verifiedUsers = topCustomers.filter((cust) => cust.userId !== null);

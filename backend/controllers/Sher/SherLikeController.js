@@ -1,28 +1,68 @@
-const SherLike = require('../../models/Sher/SherLikeModel'); 
+const SherLike = require('../../models/Sher/SherLikeModel');
 
-// const { validationResult } = require('express-validator');
-likeOrUnlikeSher = async (req, res) => {
+// Like or Unlike a Sher
+const likeOrUnlikeSher = async (req, res) => {
   try {
-    const userId = req.decoded;
-    const sherId = req.body.sherId;
+    const userId = req.decoded;       // from token middleware
+    const { sherId } = req.body;
+
+    if (!sherId) {
+      return res.status(400).json({
+        status: 400,
+        success: false,
+        message: "Sher ID is required",
+      });
+    }
+
     const existingLike = await SherLike.findOne({ userId, sherId });
+
     if (existingLike) {
       await SherLike.deleteOne({ userId, sherId });
-      res.status(200).json({ message: 'Post unliked successfully' });
+      const likeCount = await SherLike.countDocuments({ sherId });
+
+      return res.json({
+        status: 200,
+        success: true,
+        liked: false,
+        message: "Post unliked successfully",
+        data: { likeCount },
+      });
     } else {
       const newLike = new SherLike({ userId, sherId });
       await newLike.save();
-      res.status(201).json({ message: 'Post liked successfully' });
+      const likeCount = await SherLike.countDocuments({ sherId });
+
+      return res.json({
+        status: 201,
+        success: true,
+        liked: true,
+        message: "Post liked successfully",
+        data: { likeCount },
+      });
     }
   } catch (error) {
-    console.error('Error performing like/unlike operation:', error);
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+    console.error("Error performing like/unlike operation:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };
 
+// Get Like Count for Sher
 const getLikeCountForSher = async (req, res) => {
   try {
-    const sherId = req.body.sherId;
+    const { sherId } = req.body;
+
+    if (!sherId) {
+      return res.status(400).json({
+        status: 400,
+        success: false,
+        message: "Sher ID is required",
+      });
+    }
 
     const likeCount = await SherLike.countDocuments({ sherId });
 
@@ -30,23 +70,20 @@ const getLikeCountForSher = async (req, res) => {
       status: 200,
       success: true,
       message: "Like count fetched successfully",
-      data: {
-        likeCount,
-      },
+      data: { likeCount },
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error in getLikeCountForSher:", error);
     res.status(500).json({
       status: 500,
       success: false,
-      message: "Internal Error Occurred",
-      error: String(error),
+      message: "Internal server error",
+      error: error.message,
     });
   }
 };
 
-
 module.exports = {
   likeOrUnlikeSher,
-  getLikeCountForSher
+  getLikeCountForSher,
 };

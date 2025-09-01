@@ -2,106 +2,79 @@ const Comment = require("../../models/Blog/BCommentModel");
 
 // Create a new comment on a blog post
 async function createblogComment(req, res) {
-  // const { text, authorId, blogId } = req.body;
+  try {
+    const { text, blogId } = req.body;
+    let validation = "";
 
-  var validation = "";
-  if (req.body.text == "") {
-    validation += "Comment text is required ";
-  }
-  if (req.body.authorId == "") {
-    validation += "Author ID is required ";
-  }
-  if (req.body.blogId == "") {
-    validation += "Blog ID is required ";
-  }
+    if (!text) validation += "Comment text is required ";
+    if (!blogId) validation += "Blog ID is required ";
 
-  if (!!validation) {
-    res.json({
-      status: 409,
-      success: false,
-      message: validation,
-    });
-  } else {
-    let commentobj = new Comment();
-    commentobj.text = req.body.text;
-    commentobj.userId = req.decoded;
-    commentobj.blogId = req.body.blogId;
-
-    await commentobj
-      .save()
-      .then(() => {
-        res.json({
-          status: 200,
-          success: true,
-          message: "Comment   inserted",
-          data: req.body,
-        });
-      })
-      .catch((err) => {
-        res.json({
-          status: 500,
-          success: false,
-          message: "Error Occurred",
-          error: String(err),
-        });
+    if (validation) {
+      return res.json({
+        status: 409,
+        success: false,
+        message: validation.trim(),
       });
+    }
+
+    const commentObj = new Comment({
+      text,
+      userId: req.decoded, // ✅ user comes from token
+      blogId,
+    });
+
+    const savedComment = await commentObj.save();
+
+    // ✅ populate user details before sending back
+    const populatedComment = await savedComment.populate("userId", "name Image");
+
+    res.json({
+      status: 200,
+      success: true,
+      message: "Comment inserted",
+      data: populatedComment,
+    });
+  } catch (err) {
+    console.error("Error creating blog comment:", err);
+    res.json({
+      status: 500,
+      success: false,
+      message: "Error Occurred",
+      error: String(err),
+    });
   }
 }
 
 // Get all comments for a specific blog post
-// async function getAllComments(req, res) {
-//   try {
+const getAllComments = (req, res) => {
+  const { blogId } = req.body;
 
-//     var validation = "";
-//     if (!blogId) {
-//       validation += "Blog ID is required ";
-//     }
-//     if (!!validation) {
-//       res.json({
-//         status: 409,
-//         success: false,
-//         message: validation,
-//       });
-//     } else {
-//       const comments = await Comment.find({ blogId: Blog.blogId })
-//       .populate("userId")
-//       .populate("blogId")
-//       res.json({
-//         status: 200,
-//         success: true,
-//         message: "Fetched all comments",
-//         comments,
-//       });
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       status: 500,
-//       success: false,
-//       message: "An error occurred while fetching comments",
-//       error: error.message,
-//     });
-//   }
-// }
-getAllComments = (req, res) => {
-  Comment.find({ blogId: req.body.blogId })
-    .select({})
-    .populate("blogId")
-    .populate("userId")
-    .then((blogByUser) => {
+  if (!blogId) {
+    return res.json({
+      status: 409,
+      success: false,
+      message: "Blog ID is required",
+    });
+  }
+
+  Comment.find({ blogId })
+    .populate("userId", "name Image") // ✅ only user info
+    .populate("blogId", "_id title") // ✅ optional blog info
+    .then((comments) => {
       res.json({
         status: 200,
         success: true,
-        message: "your all comment by blog id ",
-        data: blogByUser,
+        message: "All comments fetched successfully",
+        data: comments,
       });
     })
     .catch((err) => {
+      console.error("Error fetching comments:", err);
       res.json({
         status: 400,
         success: false,
-        message: "err in getting all comment by blog id ",
-        error: err,
+        message: "Error in getting all comments by blog id",
+        error: String(err),
       });
     });
 };

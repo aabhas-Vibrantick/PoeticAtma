@@ -2,62 +2,59 @@ const ProseComment = require("../../models/Prose/ProseCommentModel");
 
 // Create a new comment on a prose post
 async function createproseComment(req, res) {
-  // const { text, authorId, proseId } = req.body;
-
-  var validation = "";
-  if (req.body.text == "") {
+  let validation = "";
+  if (!req.body.text) {
     validation += "Comment text is required ";
   }
-  if (req.body.authorId == "") {
-    validation += "Author ID is required ";
-  }
-  if (req.body.proseId == "") {
-    validation += "prose ID is required ";
+  if (!req.body.proseId) {
+    validation += "Prose ID is required ";
   }
 
-  if (!!validation) {
-    res.json({
+  if (validation) {
+    return res.json({
       status: 409,
       success: false,
-      message: validation,
+      message: validation.trim(),
     });
-  } else {
-    let commentobj = new ProseComment();
-    commentobj.text = req.body.text;
-    commentobj.userId = req.decoded;
-    commentobj.proseId = req.body.proseId;
+  }
 
-    await commentobj
-      .save()
-      .then(() => {
-        res.json({
-          status: 200,
-          success: true,
-          message: "Comment   inserted",
-          data: req.body,
-        });
-      })
-      .catch((err) => {
-        res.json({
-          status: 500,
-          success: false,
-          message: "Error Occurred",
-          error: String(err),
-        });
-      });
+  try {
+    const commentobj = new ProseComment({
+      text: req.body.text,
+      userId: req.decoded, // ✅ user comes from token
+      proseId: req.body.proseId,
+    });
+
+    // save + populate user info
+    const savedComment = await commentobj.save();
+    const populatedComment = await savedComment.populate("userId", "name Image");
+
+    res.json({
+      status: 200,
+      success: true,
+      message: "Comment inserted",
+      data: populatedComment, // ✅ return populated object
+    });
+  } catch (err) {
+    res.json({
+      status: 500,
+      success: false,
+      message: "Error Occurred",
+      error: String(err),
+    });
   }
 }
 
-getAllproseComments = (req, res) => {
+// Get all comments for a prose
+const getAllproseComments = (req, res) => {
   ProseComment.find({ proseId: req.body.proseId })
-    .select({})
+    .populate("userId", "name Image") // ✅ only necessary fields
     .populate("proseId")
-    .populate("userId")
     .then((proseByUser) => {
       res.json({
         status: 200,
         success: true,
-        message: "your all comment by prose id ",
+        message: "Your all comments by prose id",
         data: proseByUser,
       });
     })
@@ -65,8 +62,8 @@ getAllproseComments = (req, res) => {
       res.json({
         status: 400,
         success: false,
-        message: "err in getting all comment by prose id ",
-        error: err,
+        message: "Error in getting comments by prose id",
+        error: String(err),
       });
     });
 };

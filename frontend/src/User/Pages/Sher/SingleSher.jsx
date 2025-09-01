@@ -90,7 +90,8 @@ export default function SingleSher() {
             const base = commentRes.data.data || [];
             const withReplies = await Promise.all(
               base.map(async (c) => {
-                const rr = await apiServices.getAllsherReplies({ _id: c._id });
+                const rr = await apiServices.getAllsherReplies({ commentId: c._id });
+
                 return rr.data.success ? { ...c, replies: rr.data.data } : { ...c, replies: [] };
               })
             );
@@ -131,82 +132,96 @@ export default function SingleSher() {
     sherId: _id,
   };
 
-  const handleLikeUnlike = () => {
-    if (liked) {
-      apiServices
-        .SherUnLike(sherId)
-        .then((response) => {
-          setLiked(false);
-        })
-        .catch((error) => {
-          // console.error("Error unliking post:", error);
-        });
-    } else {
-      apiServices
-        .SherLike(sherId)
-        .then((response) => {
-          setLiked(true);
-        })
-        .catch((error) => {
-          // console.error("Error liking post:", error);
-        });
-    }
-  };
+ // Handle Like / Unlike
+const handleLikeUnlike = () => {
+  if (!sher?._id) return;
+  const data = { sherId: sher._id };
 
-  const createComment = (e) => {
-    e.preventDefault();
-    let data = {
-      text: newComment,
-      sherId: _id,
-    };
-    apiServices
-      .createsherComment(data)
-      .then((x) => {
-        if (x.data.success == true) {
-          toast.success("Message sent");
-        } else {
-          toast.error("Error try again ");
-        }
+  if (liked) {
+    apiServices.SherUnLike(data)
+      .then(() => {
+        setLiked(false);
+        setLikeCount((prev) => (prev > 0 ? prev - 1 : 0));
       })
-      .catch("Message in msg sending");
-  };
+      .catch(() => toast.error("Error unliking post"));
+  } else {
+    apiServices.SherLike(data)
+      .then(() => {
+        setLiked(true);
+        setLikeCount((prev) => prev + 1);
+      })
+      .catch(() => toast.error("Error liking post"));
+  }
+};
 
-  const createReply = async (_id) => {
-    try {
-      const response = await apiServices.createSherReply({
-        _id,
-        text: newReply,
-      });
+// Create Comment
+const createComment = (e) => {
+  e.preventDefault();
+  if (!newComment.trim()) {
+    toast.error("Please enter a comment");
+    return;
+  }
+  const data = { text: newComment, sherId: sher._id };
 
-      if (response.data.success) {
-        toast.success("Message sent");
-        const updatedComments = comments.map((comment) => {
-          if (comment._id === _id) {
-            return {
-              ...comment,
-              replies: [...comment.replies, response.data.data],
-            };
-          }
-          return comment;
-        });
-        setCommentId(_id);
-        setComments(updatedComments);
-        setNewReply("");
+  apiServices.createsherComment(data)
+    .then((x) => {
+      if (x.data.success) {
+        toast.success("Comment posted");
+
+        // ✅ instantly add to UI
+        setComments((prev) => [x.data.data, ...prev]);
+        setNewComment("");
+      } else {
+        toast.error(x.data.message || "Error posting comment");
       }
-    } catch (error) {
-      // console.error("Error creating reply:", error);
-    }
-  };
+    })
+    .catch(() => toast.error("Error posting comment"));
+};
 
-  const toggleReply = (commentId) => {
-    setShowReply((prevShowReplies) => ({
-      ...prevShowReplies,
-      [commentId]: !prevShowReplies[commentId],
-    }));
-    if (!showReply[commentId]) {
+// Create Reply
+const createReply = async (commentId) => {
+  if (!newReply.trim()) {
+    toast.error("Reply cannot be empty");
+    return;
+  }
+  try {
+    const response = await apiServices.createSherReply({
+      commentId, // ✅ backend expects commentId
+      text: newReply,
+    });
+
+    if (response.data.success) {
+      toast.success("Reply posted");
+      const newReplyObj = response.data.data;
+
+      // ✅ update UI instantly
+      const updatedComments = comments.map((comment) =>
+        comment._id === commentId
+          ? { ...comment, replies: [...(comment.replies || []), newReplyObj] }
+          : comment
+      );
+
+      setComments(updatedComments);
       setNewReply("");
+      setShowReply((prev) => ({ ...prev, [commentId]: false }));
+    } else {
+      toast.error(response.data.message || "Error posting reply");
     }
-  };
+  } catch {
+    toast.error("Error posting reply");
+  }
+};
+
+// Toggle reply box
+const toggleReply = (commentId) => {
+  setShowReply((prev) => ({
+    ...prev,
+    [commentId]: !prev[commentId],
+  }));
+  if (showReply[commentId]) {
+    setNewReply("");
+  }
+};
 
   function isValidDate(dateString) {
     const dateObject = new Date(dateString);

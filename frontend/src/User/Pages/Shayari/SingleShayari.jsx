@@ -98,11 +98,12 @@ const incrementViewCount = async (id) => {
         if (isMounted && commentRes.data.success) {
           const base = commentRes.data.data || [];
           const withReplies = await Promise.all(
-            base.map(async (c) => {
-              const rr = await apiServices.getAllshayariReplies({ _id: c._id });
-              return rr.data.success ? { ...c, replies: rr.data.data } : c;
-            })
-          );
+  base.map(async (c) => {
+    const rr = await apiServices.getAllshayariReplies({ commentId: c._id }); // ✅ send correct key
+    return rr.data.success ? { ...c, replies: rr.data.data } : { ...c, replies: [] };
+  })
+);
+
           if (isMounted) setComments(withReplies);
         }
       } catch {}
@@ -136,97 +137,139 @@ const incrementViewCount = async (id) => {
   fetchData();
 
   return () => { isMounted = false; };
-}, [slug, liked]);  // re-fetch when slug changes, or likes update
+}, [slug]);  // re-fetch only when slug changes
 
 
-  const shayariId = {
-    shayariId: _id,
-  };
+ const shayariId = _id;
+
 
   const handleLikeUnlike = (e) => {
-    e.preventDefault();
-    if (liked) {
-      apiServices
-        .ShayariUnLike(shayariId)
-        .then((response) => {
-          // // console.log("UnLike response>>>>",response)
-          setLiked(false);
-        })
-        .catch((error) => {
-          // console.error("Error unliking post:", error);
-        });
-    } else {
-      apiServices
-        .ShayariLike(shayariId)
-        .then((response) => {
-          // // console.log("Like response>>>>",response)
-          setLiked(true);
-        })
-        .catch((error) => {
-          // console.error("Error liking post:", error);
-        });
-    }
-  };
+  e.preventDefault();
 
-  const createComment = (e) => {
-    e.preventDefault();
-    let data = {
-      text: newComment,
-      shayariId: _id,
-    };
+  if (!shayari?._id) return;
+
+  const data = { shayariId: shayari._id }; // ✅ correct shape
+
+  if (liked) {
     apiServices
-      .createshayariComment(data)
-      .then((x) => {
-        if (x.data.success == true) {
-          toast.success("Message sent");
-        } else {
-          toast.error("Error try again ");
-        }
+      .ShayariUnLike(data)
+      .then(() => {
+        setLiked(false);
+        setLikeCount((prev) => (prev > 0 ? prev - 1 : 0));
       })
-      .catch("Message in msg sending");
-  };
-
-  const createReply = async (_id) => {
-    // // console.log(_id);
-    try {
-      // Send a request to your API to create a reply
-      const response = await apiServices.createShayariReply({
-        _id,
-        text: newReply,
+      .catch(() => {
+        toast.error("Error unliking post");
       });
+  } else {
+    apiServices
+      .ShayariLike(data)
+      .then(() => {
+        setLiked(true);
+        setLikeCount((prev) => prev + 1);
+      })
+      .catch(() => {
+        toast.error("Error liking post");
+      });
+  }
+};
 
-      if (response.data.success) {
-        toast.success("Message sent");
-        const updatedComments = comments.map((comment) => {
-          if (comment._id === _id) {
-            return {
-              ...comment,
-              replies: [...comment.replies, response.data.data],
-            };
-          }
-          return comment;
-        });
-        setCommentId(_id);
-        setComments(updatedComments);
-        setNewReply("");
-      } else {
-        // console.error(response.data.message);
-      }
-    } catch (error) {
-      // console.error("Error creating reply:", error);
-    }
+
+
+const createComment = (e) => {
+  e.preventDefault();
+  if (!newComment.trim()) {
+    toast.error("Please enter a comment");
+    return;
+  }
+
+  if (!shayari?._id) {
+    toast.error("Shayari ID not found");
+    return;
+  }
+
+  const data = {
+    text: newComment,
+    shayariId: shayari._id,   // use DB id
   };
+
+  apiServices
+    .createshayariComment(data)
+    .then((x) => {
+      if (x.data.success === true) {
+        toast.success("Comment posted");
+
+        // append new comment to UI immediately
+        const newCommentObj = {
+          _id: x.data.data?._id || Date.now(),
+          text: newComment,
+          userId: x.data.data?.userId || { name: "You" },
+          created_at: new Date().toISOString(),
+          replies: [],
+        };
+
+        setComments((prev) => [newCommentObj, ...prev]);
+        setNewComment("");
+      } else {
+        toast.error(x.data.message || "Error posting comment");
+      }
+    })
+    .catch(() => {
+      toast.error("Error posting comment");
+    });
+};
+
+
+
+const createReply = async (commentId) => {
+  try {
+    const response = await apiServices.createShayariReply({
+      commentId,
+      text: newReply,
+    });
+
+    if (response.data.success) {
+      toast.success("Message sent");
+
+      const newReplyObj = response.data.data; // ✅ populated reply
+
+      const updatedComments = comments.map((comment) =>
+        comment._id === commentId
+          ? {
+              ...comment,
+              replies: [...(comment.replies || []), newReplyObj], // ✅ safe fallback
+            }
+          : comment
+      );
+
+      setCommentId(commentId);
+      setComments(updatedComments);
+      setNewReply("");
+      setShowReply((prev) => ({ ...prev, [commentId]: false })); // ✅ auto-close reply box
+    } else {
+      toast.error(response.data.message || "Error posting reply");
+    }
+  } catch (error) {
+    toast.error("Error creating reply");
+  }
+};
+
+
+
 
   const toggleReply = (commentId) => {
-    setShowReply((prevShowReplies) => ({
-      ...prevShowReplies,
-      [commentId]: !prevShowReplies[commentId],
-    }));
-    if (!showReply[commentId]) {
-      // Clear the newReply state when hiding replies
+  setShowReply((prevShowReplies) => {
+    const isCurrentlyOpen = prevShowReplies[commentId] || false;
+    const newState = { ...prevShowReplies, [commentId]: !isCurrentlyOpen };
+
+    // If we are closing the reply box, clear input
+    if (isCurrentlyOpen) {
       setNewReply("");
     }
-  };
+
+    return newState;
+  });
+};
+
 
   function isValidDate(dateString) {
     const dateObject = new Date(dateString);
@@ -315,58 +358,50 @@ const incrementViewCount = async (id) => {
                       {/* Article Footer: Likes, Views */}
                       <div className="d-flex flex-wrap align-items-center justify-content-start border-top pt-3">
                         <div className="like-button me-4">
-                          {authenticate ? (
-                            <label className="d-flex align-items-center mb-0">
-                              <input
-                                type="checkbox"
-                                className="d-none"
-                                onClick={handleLikeUnlike}
-                              />
-                              <svg
-                                className="me-2 text-primary"
-                                width="24"
-                                height="24"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 512 512"
-                                style={{ cursor: "pointer" }}
-                              >
-                                <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2H464c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48H294.5c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3V320 272 247.1c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192H96c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32z" />
-                              </svg>
-                              <span
-                                className={`fw-bold ${
-                                  liked ? "text-primary" : ""
-                                }`}
-                              >
-                                {likeCount !== null ? likeCount : "Loading..."}
-                              </span>
-                            </label>
-                          ) : (
-                            <label className="d-flex align-items-center mb-0">
-                              <input
-                                type="checkbox"
-                                className="d-none"
-                                onClick={handleReadMoreClick}
-                              />
-                              <svg
-                                className="me-2 text-primary"
-                                width="24"
-                                height="24"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 512 512"
-                                style={{ cursor: "pointer" }}
-                              >
-                                <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2H464c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48H294.5c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3V320 272 247.1c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192H96c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32z" />
-                              </svg>
-                              <span
-                                className={`fw-bold ${
-                                  liked ? "text-primary" : ""
-                                }`}
-                              >
-                                {likeCount !== null ? likeCount : "Loading..."}
-                              </span>
-                            </label>
-                          )}
-                        </div>
+  {authenticate ? (
+    <label className="d-flex align-items-center mb-0" style={{ cursor: "pointer" }}>
+      <input
+        type="checkbox"
+        className="d-none"
+        checked={liked}                 // ✅ bind to state
+        onChange={handleLikeUnlike}     // ✅ use onChange instead of onClick
+      />
+      <svg
+        className={`me-2 ${liked ? "text-primary" : "text-muted"}`}  // ✅ color changes
+        width="24"
+        height="24"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 512 512"
+      >
+        <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2H464c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48H294.5c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3V320 272 247.1c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192H96c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32z" />
+      </svg>
+      <span className={`fw-bold ${liked ? "text-primary" : ""}`}>
+        {likeCount !== null ? likeCount : "0"}
+      </span>
+    </label>
+  ) : (
+    <label className="d-flex align-items-center mb-0" style={{ cursor: "pointer" }}>
+      <input
+        type="checkbox"
+        className="d-none"
+        onChange={handleReadMoreClick}   // ✅ redirect to login if not authenticated
+      />
+      <svg
+        className="me-2 text-muted"
+        width="24"
+        height="24"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 512 512"
+      >
+        <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2H464c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48H294.5c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3V320 272 247.1c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192H96c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32z" />
+      </svg>
+      <span className="fw-bold">
+        {likeCount !== null ? likeCount : "0"}
+      </span>
+    </label>
+  )}
+</div>
+
                         <div className="d-flex align-items-center">
                           <i className="fa-solid fa-eye me-2"></i>
                           {viewCount} Views
@@ -657,7 +692,7 @@ const incrementViewCount = async (id) => {
                                 className="shayaricontent2"
                                 to={`/single-shayari/${data?._id}`}
                               >
-                                {data?.shayari}
+                                  {data?.shayari}
                               </Link>
                             </h5>
                           </div>

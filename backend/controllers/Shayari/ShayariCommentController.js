@@ -2,62 +2,59 @@ const ShayariComment = require("../../models/Shayari/ShayariCommentModel");
 
 // Create a new comment on a shayari post
 async function createshayariComment(req, res) {
-  // const { text, authorId, shayariId } = req.body;
-
-  var validation = ""
-  if (req.body.text=="" ) {
-    validation += "Comment text is required "
+  let validation = "";
+  if (!req.body.text) {
+    validation += "Comment text is required ";
   }
-  if (req.body.authorId =="" ) {
-    validation += "Author ID is required "
-  }
-  if (req.body.shayariId =="" ) {
-    validation += "shayari ID is required "
+  if (!req.body.shayariId) {
+    validation += "Shayari ID is required ";
   }
 
-  if (!!validation) {
-    res.json({
+  if (validation) {
+    return res.json({
       status: 409,
       success: false,
-      message: validation,
+      message: validation.trim(),
     });
-  } else {
-    let commentobj = new ShayariComment()
-    commentobj.text = req.body.text
-    commentobj.userId = req.decoded
-    commentobj.shayariId = req.body.shayariId
+  }
 
-    await commentobj.save()
-      .then(() => {
-        res.json({
-          status: 200,
-          success: true,
-          message: "Comment   inserted",
-          data: req.body,
-        });
-      })
-      .catch((err) => {
-        res.json({
-          status: 500,
-          success: false,
-          message: "Error Occurred",
-          error: String(err),
-        });
-      });
+  try {
+    const commentobj = new ShayariComment({
+      text: req.body.text,
+      userId: req.decoded, // from token
+      shayariId: req.body.shayariId,
+    });
+
+    // save + populate user info
+    const savedComment = await commentobj.save();
+    const populatedComment = await savedComment.populate("userId", "name Image");
+
+    res.json({
+      status: 200,
+      success: true,
+      message: "Comment inserted",
+      data: populatedComment,
+    });
+  } catch (err) {
+    res.json({
+      status: 500,
+      success: false,
+      message: "Error Occurred",
+      error: String(err),
+    });
   }
 }
 
-
-getAllshayariComments = (req, res) => {
+// Get all comments for a shayari
+const getAllshayariComments = (req, res) => {
   ShayariComment.find({ shayariId: req.body.shayariId })
-    .select({})
     .populate("shayariId")
-    .populate("userId")
+    .populate("userId", "name Image")
     .then((shayariByUser) => {
       res.json({
         status: 200,
         success: true,
-        message: "your all comment by shayari id ",
+        message: "Your all comments by shayari id",
         data: shayariByUser,
       });
     })
@@ -65,8 +62,8 @@ getAllshayariComments = (req, res) => {
       res.json({
         status: 400,
         success: false,
-        message: "err in getting all comment by shayari id ",
-        error: err,
+        message: "Error in getting all comments by shayari id",
+        error: String(err),
       });
     });
 };

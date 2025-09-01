@@ -19,8 +19,10 @@ const NAME_RE = /^[\p{L} .'-]{2,60}$/u;
 // Subject: allow letters, digits, spaces, common punctuation
 const SUBJECT_RE = /^[\p{L}\p{N}\s.,!?'"()\-:;_/&]{3,120}$/u;
 
-// 10–15 digits, optional +, spaces, hyphens, parentheses
-const PHONE_RE = /^\+?[0-9 ()\-]{10,20}$/;
+// Indian Phone Numbers Only
+// Matches: 9876543210, +919876543210, +91 9876543210, 91-9876543210
+const PHONE_RE = /^(?:\+91[\s-]?|91[\s-]?)?[6-9]\d{9}$/;
+
 
 // RFC5322-lite email
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -98,9 +100,9 @@ export default function Contact() {
       return;
     }
     if (!PHONE_RE.test(cleaned.contact)) {
-      toast.error("Please enter a valid phone number (10–15 digits, + optional).");
-      return;
-    }
+  toast.error("Please enter a valid Indian phone number (10 digits, optional +91).");
+  return;
+}
     if (cleaned.message.length < 10) {
       toast.error("Message is too short (min 10 characters).");
       return;
@@ -246,17 +248,20 @@ export default function Contact() {
                 </div>
 
                 <div className="form-group mt-3">
-                  <input
-                    type="tel"
-                    className="form-control"
-                    placeholder="Phone Number"
-                    value={contact}
-                    onChange={(e) => setContact(cap(e.target.value, LIMITS.contact))}
-                    required
-                    inputMode="tel"
-                    autoComplete="tel"
-                  />
-                </div>
+  <input
+    type="tel"
+    className="form-control"
+    placeholder="Phone Number (e.g. 9876543210 or +91 9876543210)"
+    value={contact}
+    onChange={(e) => setContact(cap(e.target.value, LIMITS.contact))}
+    required
+    inputMode="tel"
+    autoComplete="tel"
+    pattern="^(?:\+91[\s-]?|91[\s-]?)?[6-9]\d{9}$"
+    title="Enter a valid Indian mobile number (10 digits, optional +91)"
+  />
+</div>
+
 
                 <div className="form-group mt-3">
                   <textarea

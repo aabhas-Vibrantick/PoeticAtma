@@ -1,132 +1,219 @@
-.testimonial-section {
-  padding: 60px 20px;
-  background: linear-gradient(to right, #000000, #0d0d1d);
-  color: white;
+/* ====== Base Styles ====== */
+.testimonial-section-poetry {
+  padding: 80px 0;
+  background-color: #121212;
   text-align: center;
+  overflow: hidden;
+  font-family: 'Montserrat', sans-serif;
 }
 
-.testimonial-heading {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 40px;
-  color: white;
-  font-family: "Cinzel", serif;
-}
-
-.testimonial-slide-modern {
-  padding: 10px;
-}
-
-.testimonial-card-modern {
-  background: #1e1f25;
-  border-radius: 16px;
-  /* padding:  20px; */
-  display: flex;  
-  gap: 20px;
-  /* flex-direction: column; */
-  align-items: center;
-  min-height: 350px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  transition: transform 0.3s ease;
-}
-
-.testimonial-card-modern:hover {
-  transform: translateY(-6px);
-}
-
-.profile-pic-container img {
-  max-width: 250px;
-  min-height: 350px;
-  border-bottom-left-radius: 16px;
-  border-top-left-radius: 16px;
-  /* border-radius: 50%; */
-  object-fit: cover;
-  /* margin-bottom: 12px; */
-}
-
-
-.user-name {
-  font-size: 1.1rem;
+.testimonial-heading-poetry {
+  font-family: 'Lora', serif;
+  font-size: 2.8rem;
   font-weight: 600;
+  color: #EAE6E0;
+  margin-bottom: 60px;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 15px;
+}
+
+.testimonial-heading-poetry::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 2px;
+  background-color: #C8A46E;
+  border-radius: 2px;
+}
+
+/* ====== Slick Slider Customizations ====== */
+.testimonial-section-poetry .slick-slider {
+  margin: 0 -15px;
+}
+
+.testimonial-section-poetry .slick-prev,
+.testimonial-section-poetry .slick-next {
+  width: 45px;
+  height: 45px;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.testimonial-section-poetry .slick-prev:before,
+.testimonial-section-poetry .slick-next:before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 22px;
+  color: #C8A46E;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.testimonial-section-poetry .slick-prev:hover:before,
+.testimonial-section-poetry .slick-next:hover:before {
+  opacity: 1;
+}
+
+.testimonial-section-poetry .slick-prev { left: -15px; }
+.testimonial-section-poetry .slick-next { right: -15px; }
+
+/* ====== Card Styling ====== */
+.testimonial-slide-poetry {
+  padding: 0 20px;
+}
+
+.testimonial-card-poetry {
+  background: transparent;
+  border: 1px solid rgba(200, 164, 110, 0.2);
+  border-radius: 10px;
+  padding: 50px 35px 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+  position: relative;
+}
+
+.testimonial-card-poetry:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: rgba(200, 164, 110, 0.4);
+}
+
+.profile-pic-container-poetry {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #fdcb00;
+  margin-bottom: 25px;
+  background-color: #121212;
+}
+
+.profile-pic-container-poetry img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.testimonial-content-poetry {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.user-name-poetry {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #EAE6E0;
   margin-bottom: 15px;
-  color: #fff;
+  letter-spacing: 0.5px;
 }
 
-.testimonial-text-modern {
-  font-size: 1rem;
-  color: #ddd;
-  line-height: 1.5;
-  max-width: 90%;
-  margin: 0 auto;
+.testimonial-text-poetry {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  color: #fdcb00;
+  line-height: 1.7;
+  margin-bottom: 25px;
+  flex-grow: 1;
 }
 
-/* Responsive */
+.testimonial-btn-poetry .btn {
+  background: transparent;
+  border: 1px solid #C8A46E;
+  color: #C8A46E;
+  padding: 10px 25px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.testimonial-btn-poetry .btn:hover {
+  background-color: #C8A46E;
+  color: #121212;
+}
+
+/* ====== Responsive ====== */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .testimonial-heading-poetry {
+    font-size: 2.4rem;
+  }
+  .testimonial-text-poetry {
+    font-size: 1.05rem;
+  }
+}
+
+/* Mobile Large (up to 768px) */
 @media (max-width: 768px) {
-  .testimonial-heading {
+  .testimonial-heading-poetry {
     font-size: 2rem;
+    margin-bottom: 40px;
   }
-
-  .testimonial-card-modern {
-    padding: 20px 15px;
+  .testimonial-card-poetry {
+    padding: 40px 25px 30px;
   }
-
-  .user-name {
+  .user-name-poetry {
+    font-size: 1.2rem;
+  }
+  .testimonial-text-poetry {
     font-size: 1rem;
+    line-height: 1.6;
   }
-
-  .testimonial-text-modern {
-    font-size: 0.95rem;
+  .testimonial-section-poetry .slick-prev,
+  .testimonial-section-poetry .slick-next {
+    display: none !important; /* Hide arrows on mobile */
   }
 }
 
+/* Mobile Small (up to 480px) */
 @media (max-width: 480px) {
-  .testimonial-heading {
+  .testimonial-heading-poetry {
     font-size: 1.6rem;
   }
-
-  .testimonial-card-modern {
-    padding: 16px 10px;
+  .testimonial-card-poetry {
+    padding: 30px 20px 25px;
   }
-
-  .profile-pic-container img {
-   max-width: 180px;
+  .profile-pic-container-poetry {
+    width: 80px;
+    height: 80px;
   }
-
-  .testimonial-text-modern {
-    font-size: 0.9rem;
+  .user-name-poetry {
+    font-size: 1rem;
   }
-}
-.testimonial-content p{
-  word-wrap: break-word;
-  word-break: break-word;
-  white-space: break-word;
-}
-
-.testimonial-content{
-  margin:10px auto;
-}
-
-.testimonial-btn{
-  background-color: yellowgreen;
-}
-
-@media (max-width:400px){
-  .profile-pic-container img {
-   max-width: 138px;
+  .testimonial-text-poetry {
+    font-size: 0.95rem;
+  }
+  .testimonial-btn-poetry .btn {
+    padding: 8px 18px;
+    font-size: 0.8rem;
   }
 }
 
-@media (max-width:350px){
-  .profile-pic-container img {
-   max-width: 110px;
+/* Ultra Small Screens (up to 360px) */
+@media (max-width: 360px) {
+  .testimonial-heading-poetry {
+    font-size: 1.4rem;
+  }
+  .testimonial-card-poetry {
+    padding: 20px 15px;
+  }
+  .testimonial-text-poetry {
+    font-size: 0.85rem;
   }
 }
-
-@media (min-width: 768px) and(max-width: 1024px){
-  .profile-pic-container img {
-   min-width: 110px;
-  }
-}
-
-/* !important removed */

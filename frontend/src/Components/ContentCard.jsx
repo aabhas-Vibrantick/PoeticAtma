@@ -4,11 +4,11 @@ import "./ContentCard.css";
 
 const ContentCard = ({ type, item, baseUrl }) => {
   const routeMap = {
-    sher: `/single-sher/${item._id}`,
-    shayari: `/single-shayari/${item._id}`,
-    prose: `/single-prose/${item._id}`,
-    blog:`/single-blog/${item._id}`,
-  };
+  sher: `/single-sher/${item.slug}`,   //use slug
+  shayari: `/single-shayari/${item.slug}`, 
+  prose: `/single-prose/${item.slug}`, 
+  blog: `/single-blog/${item.slug}`,
+};
 
   const textMap = {
     sher: item?.sher,

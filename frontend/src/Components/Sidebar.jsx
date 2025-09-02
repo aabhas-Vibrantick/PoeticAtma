@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import apiServices, { BASE_URL_IMG } from "../ApiServices/ApiServices";
+import { BASE_URL_IMG } from "../ApiServices/ApiServices";
 
 const Sidebar = ({ topSher, topShayari, topProse }) => {
   const navigate = useNavigate();
@@ -16,7 +16,8 @@ const Sidebar = ({ topSher, topShayari, topProse }) => {
           <li
             key={item._id}
             className="list-group-item d-flex align-items-center border-0 px-0 py-2 sidebar-item"
-            onClick={() => navigate(`/single-${type}/${item._id}`)}
+            // ✅ use slug instead of _id
+            onClick={() => navigate(`/single-${type}/${item.slug}`)}
           >
             <img
               src={BASE_URL_IMG + item.Image}

@@ -29,7 +29,7 @@ export default function Occasionsher() {
       setLoading(false);
     }, 3000);
 
-    const categoryId = "6862673305a4e9e7a2943112";
+    const categoryId = "68661a6cf95150d09899477d";
     apiServices
       .getSherByCategory({ Category_id: categoryId })
       .then((response) => {

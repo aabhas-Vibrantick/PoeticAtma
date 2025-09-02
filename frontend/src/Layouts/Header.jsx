@@ -67,12 +67,14 @@ export default function Header() {
             <span className="top-company-name fw-bold">
               Have any Question? Email Us
               <i className="fas fa-envelope px-3"></i>
+              
               <a
                 href="mailto:info@poeticatma.com"
                 className="text-decoration-none text-reset"
               >
                 info@poeticatma.com
               </a>
+              <span className="mx-2">|</span>
               <i className="fas fa-phone px-3"></i>9888323607
               <span className="mx-2">|</span>
               Chandigarh, India

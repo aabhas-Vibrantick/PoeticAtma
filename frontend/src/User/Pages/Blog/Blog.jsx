@@ -130,6 +130,71 @@ export default function Blog() {
 
   return (
     <>
+    <style>{`/* Wrapper */
+.search-box {
+  width: 100%;
+  margin: 15px 0;
+  display: flex;
+  justify-content: center;
+}
+
+/* Form */
+.search-form {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 350px;
+  background: #fff;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Input */
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px 18px;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* Button */
+.search-btn {
+  background: #ffcc00; /* muted gold */
+  border: none;
+  padding: 16px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.search-btn i {
+  color: #fff;
+  font-size: 1rem;
+}
+
+.search-btn:hover {
+  background: #a9853f;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .search-form {
+    max-width: 100%;
+  }
+  .search-input {
+    font-size: 0.95rem;
+    padding: 10px 14px;
+  }
+  .search-btn {
+    padding: 10px 14px;
+  }
+}
+`}</style>
       <ScaleLoader loading={loading} cssOverride={override} size={70} />
       <div className={`bloggray-bg  ${loading ? "disable-full-screen" : ""}`}>
         {/* <!--blog banner start--> */}
@@ -320,14 +385,23 @@ export default function Blog() {
               <div className="col-lg-4 m-15px-tb blog-aside">
                 {/* <!-- Author --> */}
                 <div className="widget widget-author">
-                  <div className="search-1  ">
-                    <form onSubmit={handleSearch}>
-                      <input type="search" placeholder="Search" value={searchQuery}
-                        onChange={handleSearchQueryChange} required="" />
-                      <input type="submit" value="." />
-                    </form>
-                  </div>
-                </div>
+  <div className="search-box">
+    <form onSubmit={handleSearch} className="search-form">
+      <input
+        type="search"
+        className="search-input"
+        placeholder="Search poets, shayari..."
+        value={searchQuery}
+        onChange={handleSearchQueryChange}
+        required
+      />
+      <button type="submit" className="search-btn">
+        <i className="fa-solid fa-search"></i>
+      </button>
+    </form>
+  </div>
+</div>
+
                 {/* <!-- End Author --> */}
                 {/* <!-- Trending Post --> */}
                 {/* <div className="widget widget-post">

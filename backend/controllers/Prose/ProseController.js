@@ -306,7 +306,7 @@ deleteProse = (req, res) => {
 getFeaturedProse = (req, res) => {
   Prose.find({ isApproved: true }) // Fetch only approved prose
     .sort({ likes: -1 }) // Sort by likes in descending order
-    .limit(10) // Limit to top 10
+    .limit(12) // Limit to top 10
     .populate("Category_id")
     .populate("userId")
     .exec()

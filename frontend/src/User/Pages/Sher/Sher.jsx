@@ -409,7 +409,7 @@ export default function Sher() {
             </div>
           </div>
 
-          <div className="sher-1">
+          {/* <div className="sher-1">
             <div className="row sherwraper">
               <div className="col-lg-10">
                 <h4>SHER FOR OCCASION</h4>
@@ -463,7 +463,7 @@ export default function Sher() {
                 ))}
               </Swiper>
             </div>
-          </div>
+          </div> */}
 
           <div className="sher-1">
             <div className="row sherwraper">

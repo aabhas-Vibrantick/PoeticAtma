@@ -285,7 +285,7 @@ deleteblog = (req, res) => {
 // ----------------featured blog--------------
 getFeaturedBlogs = async (req, res) => {
   try {
-    const limit = 3;
+    const limit = 12;
     // Fetch blogs that are marked as featured
     const featuredBlogs = await Blog.find({ isFeatured: true }).limit(limit);
 

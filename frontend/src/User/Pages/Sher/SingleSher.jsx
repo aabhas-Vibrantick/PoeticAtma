@@ -132,8 +132,13 @@ export default function SingleSher() {
     sherId: _id,
   };
 
- // Handle Like / Unlike
+// Handle Like / Unlike
 const handleLikeUnlike = () => {
+  if (!authenticate) {
+    window.location.href = "/login";   // 🔒 redirect if not logged in
+    return;
+  }
+
   if (!sher?._id) return;
   const data = { sherId: sher._id };
 
@@ -157,6 +162,11 @@ const handleLikeUnlike = () => {
 // Create Comment
 const createComment = (e) => {
   e.preventDefault();
+  if (!authenticate) {
+    window.location.href = "/login";   // 🔒 redirect if not logged in
+    return;
+  }
+
   if (!newComment.trim()) {
     toast.error("Please enter a comment");
     return;
@@ -167,9 +177,7 @@ const createComment = (e) => {
     .then((x) => {
       if (x.data.success) {
         toast.success("Comment posted");
-
-        // ✅ instantly add to UI
-        setComments((prev) => [x.data.data, ...prev]);
+        setComments((prev) => [x.data.data, ...prev]); // ✅ add instantly
         setNewComment("");
       } else {
         toast.error(x.data.message || "Error posting comment");
@@ -180,13 +188,19 @@ const createComment = (e) => {
 
 // Create Reply
 const createReply = async (commentId) => {
+  if (!authenticate) {
+    window.location.href = "/login";   // 🔒 redirect if not logged in
+    return;
+  }
+
   if (!newReply.trim()) {
     toast.error("Reply cannot be empty");
     return;
   }
+
   try {
     const response = await apiServices.createSherReply({
-      commentId, // ✅ backend expects commentId
+      commentId,
       text: newReply,
     });
 
@@ -194,7 +208,6 @@ const createReply = async (commentId) => {
       toast.success("Reply posted");
       const newReplyObj = response.data.data;
 
-      // ✅ update UI instantly
       const updatedComments = comments.map((comment) =>
         comment._id === commentId
           ? { ...comment, replies: [...(comment.replies || []), newReplyObj] }
@@ -211,6 +224,7 @@ const createReply = async (commentId) => {
     toast.error("Error posting reply");
   }
 };
+
 
 // Toggle reply box
 const toggleReply = (commentId) => {

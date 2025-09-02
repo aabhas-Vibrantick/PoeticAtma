@@ -525,26 +525,60 @@ export default function UserHome() {
           </div>
         </div>
         {/* ================== END MAIN CONTENT + SIDEBAR WRAP ================== */}
-        <section className="quote-highlight-section">
-          <div className="quote-box shadow-sm rounded text-center p-4">
-            <h2 className="quote-title mb-1">आज का उद्धरण</h2>
-            <p className="quote-subtitle mb-4">कवि कह गया है</p>
+        <section className="poetry-week-section py-5">
+  <div className="container">
+    <div 
+      className="poetry-box shadow-lg rounded-4 text-center p-5 mx-auto"
+      style={{
+        maxWidth: "800px",
+        background: "linear-gradient(135deg, #faf8f5, #fefefe)",
+        border: "1px solid #eaeaea"
+      }}
+    >
+      {/* Title */}
+      <h2 
+        className="poetry-title mb-3 fw-bold" 
+        style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem" }}
+      >
+        ✨ Top Poetry Of The Week ✨
+      </h2>
+      <p 
+        className="poetry-subtitle mb-5 text-muted fst-italic"
+        style={{ fontFamily: "'Merriweather', serif" }}
+      >
+        कवि कह गया है
+      </p>
 
-            <blockquote className="quote-content mx-auto">
-              <p className="mb-4">
-                {quoteData?.quote || "उद्धरण लोड हो रहा है..."}
-              </p>
-              <footer className="quote-author text-primary fw-semibold">
-                {quoteData?.author || "लेखक"}
-              </footer>
-            </blockquote>
+      {/* Quote */}
+      <blockquote className="poetry-content mx-auto">
+        <p 
+          className="mb-4 fs-3 fst-italic lh-lg text-dark"
+          style={{ fontFamily: "'Merriweather', serif" }}
+        >
+          {quoteData?.quote || "उद्धरण लोड हो रहा है..."}
+        </p>
+        <footer 
+          className="poetry-author fw-semibold text-primary"
+          style={{ fontFamily: "'Playfair Display', serif" }}
+        >
+          — {quoteData?.author || "लेखक"}
+        </footer>
+      </blockquote>
 
-            <div className="quote-icons mt-3 d-flex justify-content-center gap-3">
-              <i className="bi bi-heart-fill text-danger"></i>
-              <i className="bi bi-share-fill text-secondary"></i>
-            </div>
-          </div>
-        </section>
+      {/* Minimal Line Divider */}
+      {/* <div className="my-4" style={{ width: "60px", height: "2px", background: "#555", margin: "0 auto" }}></div> */}
+
+      {/* Like & Share */}
+      <div className="poetry-icons mt-3 d-flex justify-content-center gap-4">
+        <i className="bi bi-heart-fill text-danger fs-4" style={{ cursor: "pointer" }}></i>
+        <i className="bi bi-share-fill text-secondary fs-4" style={{ cursor: "pointer" }}></i>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
         <section className="waviy-body">
           <div className="waviy">
             <h1>
@@ -605,7 +639,7 @@ export default function UserHome() {
           </div>
         </div>
 
-        <div className="testimonialApp shadow-lg text-center">
+        <div className="testimonialApp  text-center">
           {/* <h1 className="fs-1 fw-bold text-testi">
             What People Talking About Poetic Atma?
           </h1> */}

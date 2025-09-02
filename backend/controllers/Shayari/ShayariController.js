@@ -393,7 +393,7 @@ getRandomShayari = (req, res) => {
 getFeaturedShayari = (req, res) => {
   Shayari.find({ isApproved: true })
     .sort({ likes: -1 }) // Sort by likes in descending order
-    .limit(10) // Get the top 20 popular shayari
+    .limit(12) // Get the top 20 popular shayari
     .populate("Category_id")
     .populate("userId")
     .exec()

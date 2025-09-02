@@ -354,7 +354,7 @@ export default function Shayari(){
                 </Swiper>
               </div>
             </div>
-
+{/* 
             <div className="sher-1">
               <div className="row sherwraper">
                 <div className="col-lg-10">
@@ -410,7 +410,7 @@ export default function Shayari(){
                   ))}
                 </Swiper>
               </div>
-            </div>
+            </div> */}
 
             <div className="sher-1">
               <div className="row sherwraper">

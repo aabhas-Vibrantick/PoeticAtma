@@ -351,12 +351,33 @@ deleteSher = (req, res) => {
   }
 };
 
+// getFeaturedSher = async (req, res) => {
+//   Sher.find({ isApproved: true })
+//     .sort({ likes: -1 }) // Sort by likes in descending order
+//     .limit(12) // Get the top 3 popular shayari
+//     .populate("Category_id")
+//     .populate("userId")
+//     .exec()
+//     .then((topSher) => {
+//       res.status(200).json({ topSher });
+//     })
+//     .catch((err) => {
+//       res.json({
+//         status: 500,
+//         success: false,
+//         message: "Error",
+//         error: String(err),
+//       });
+//     });
+// };
+
 getFeaturedSher = async (req, res) => {
   Sher.find({ isApproved: true })
     .sort({ likes: -1 }) // Sort by likes in descending order
-    .limit(10) // Get the top 3 popular shayari
+    .limit(12) // Get the top 12 popular shers
     .populate("Category_id")
     .populate("userId")
+    .select("_id slug sher likes Image title createdAt") // added slug
     .exec()
     .then((topSher) => {
       res.status(200).json({ topSher });
@@ -370,6 +391,7 @@ getFeaturedSher = async (req, res) => {
       });
     });
 };
+
 
 // -----popular shayari---------
 getPopularSher = (req, res) => {

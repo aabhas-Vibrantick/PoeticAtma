@@ -219,61 +219,75 @@ approvesher = (req, res) => {
 // --------update sher-----------
 // ----------------------------------------------------------
 updatesher = (req, res) => {
-  var validation = "";
-  if (req.body._id == "") {
+  let validation = "";
+  if (!req.body._id) {
     validation += "ID is required ";
   }
-  if (req.body.userId == "") {
+  if (!req.body.userId) {
     validation += "User ID is required ";
   }
 
-  if (!!validation) {
-    res.json({
+  if (validation) {
+    return res.json({
       status: 409,
       success: false,
       message: validation,
     });
-  } else {
-    // Check whether data exists or not wrt particular id
-    Sher.findOne({ _id: req.body._id })
-      .then((sherdata) => {
-        if (sherdata == null) {
-          res.json({
-            status: 409,
-            success: false,
-            message: "Data not found",
-          });
-        } else {
-          // Update sher
-          sherdata.title = req.body.title;
-          sherdata.Category_id = req.body.Category_id;
-          sherdata.sher = req.body.sher;
-          sherdata.language = req.body.language;
-          const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
-          sherdata.tags = tagsArray;
-          sherdata.userId = req.body.userId; // Updated to use userId from request body
-          if (req.file) {
-            sherdata.Image = "sher_photo/" + req.file.filename;
-          }
-          sherdata.save();
-
-          res.json({
-            status: 200,
-            success: true,
-            message: "Record updated",
-          });
-        }
-      })
-      .catch((err) => {
-        res.json({
-          status: 500,
-          success: false,
-          message: "Error",
-          error: String(err),
-        });
-      });
   }
+
+  // Find sher by id
+  Sher.findOne({ _id: req.body._id })
+    .then(async (sherdata) => {
+      if (!sherdata) {
+        return res.json({
+          status: 409,
+          success: false,
+          message: "Data not found",
+        });
+      }
+
+      // Update fields
+      sherdata.title = req.body.title;
+      sherdata.Category_id = req.body.Category_id;
+      sherdata.sher = req.body.sher;
+      sherdata.language = req.body.language;
+
+      // Tags
+      sherdata.tags = req.body.tag
+        ? req.body.tag.split(",").map((t) => t.trim())
+        : [];
+
+      sherdata.userId = req.body.userId;
+
+      //  Allow admin to override slug if provided
+      if (req.body.slug && req.body.slug.trim() !== "") {
+        sherdata.slug = req.body.slug.trim();
+      }
+      // else → schema pre("validate") will regenerate if title changed
+
+      // Image
+      if (req.file) {
+        sherdata.Image = "sher_photo/" + req.file.filename;
+      }
+
+      await sherdata.save();
+
+      res.json({
+        status: 200,
+        success: true,
+        message: "Record updated",
+      });
+    })
+    .catch((err) => {
+      res.json({
+        status: 500,
+        success: false,
+        message: "Error",
+        error: String(err),
+      });
+    });
 };
+
 
 getallsherbyUserId = (req, res) => {
   Sher.find({ userId: req.body.userId })

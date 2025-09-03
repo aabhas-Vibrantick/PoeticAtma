@@ -199,9 +199,9 @@ updateprose = (req, res) => {
     validation += "prose  is required ";
   }
 
-  if (req.body.Image == "") {
-    validation += "upload image";
-  }
+  // if (req.body.Image == "") {
+  //   validation += "upload image";
+  // }
   if (!!validation) {
     res.json({
       status: 409,
@@ -224,12 +224,20 @@ updateprose = (req, res) => {
           prosedata.Category_id = req.body.Category_id;
           prosedata.prose = req.body.prose;
           prosedata.language = req.body.language;
+
           const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
           prosedata.tags = tagsArray;
+
+          // ✅ Allow admin to update slug if provided
+          if (req.body.slug && req.body.slug.trim() !== "") {
+            prosedata.slug = req.body.slug.trim();
+          }
+
           if (req.file) {
             prosedata.Image = "prose_photo/" + req.file.filename;
           }
           prosedata.userId = req.body.userId;
+
           prosedata.save();
 
           res.json({
@@ -249,6 +257,7 @@ updateprose = (req, res) => {
       });
   }
 };
+
 // ----------------------------------------------------------------
 deleteProse = (req, res) => {
   var validation = "";

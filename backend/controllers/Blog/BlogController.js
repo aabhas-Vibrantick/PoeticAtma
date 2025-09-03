@@ -200,12 +200,19 @@ updateblog = (req, res) => {
           blogdata.language = req.body.language;
           blogdata.isFeatured = req.body.isFeatured;
           blogdata.userId = req.body.userId;
+
           const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
           blogdata.tags = tagsArray;
+
+          // ✅ Allow admin to update slug if provided
+          if (req.body.slug && req.body.slug.trim() !== "") {
+            blogdata.slug = req.body.slug.trim();
+          }
 
           if (req.file) {
             blogdata.Image = "blog_photo/" + req.file.filename;
           }
+
           blogdata.save();
 
           res.json({
@@ -225,6 +232,7 @@ updateblog = (req, res) => {
       });
   }
 };
+
 
 // ----------------------------------------------------------
 

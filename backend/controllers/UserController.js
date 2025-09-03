@@ -406,6 +406,11 @@ updateuser = (req, res) => {
           ucustomerobj.email = req.body.email;
           ucustomerobj.bedgeverify = req.body.bedgeverify;
 
+          // ✅ Allow admin to update slug
+          if (req.body.slug && req.body.slug.trim() !== "") {
+            ucustomerobj.slug = req.body.slug.trim();
+          }
+
           if (req.file) {
             ucustomerobj.Image = "customer_photo/" + req.file.filename;
           }
@@ -424,6 +429,11 @@ updateuser = (req, res) => {
               customerObj.instagram = req.body.instagram;
               customerObj.userId = ustu._id;
               customerObj.bedgeverify = ustu.bedgeverify;
+
+              // ✅ Sync slug with customer object too
+              if (req.body.slug && req.body.slug.trim() !== "") {
+                customerObj.slug = req.body.slug.trim();
+              }
 
               if (req.file) {
                 customerObj.Image = "customer_photo/" + req.file.filename;
@@ -450,6 +460,7 @@ updateuser = (req, res) => {
       });
   }
 };
+
 
 changepassword = (req, res) => {
   validator = "";

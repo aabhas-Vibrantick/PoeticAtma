@@ -245,9 +245,9 @@ updateshayari = (req, res) => {
     validation += "shayari  is required ";
   }
 
-  if (req.body.Image == "") {
-    validation += "upload image";
-  }
+  // if (req.body.Image == "") {
+  //   validation += "upload image";
+  // }
   if (!!validation) {
     res.json({
       status: 409,
@@ -272,6 +272,12 @@ updateshayari = (req, res) => {
           const tagsArray = req.body.tag.split(",").map((tag) => tag.trim());
           shayaridata.tags = tagsArray;
           shayaridata.userId = req.body.userId;
+
+          // ✅ Allow admin to update slug if provided
+          if (req.body.slug && req.body.slug.trim() !== "") {
+            shayaridata.slug = req.body.slug.trim();
+          }
+
           if (req.file) {
             shayaridata.Image = "shayari_photo/" + req.file.filename;
           }
@@ -294,6 +300,7 @@ updateshayari = (req, res) => {
       });
   }
 };
+
 // ----------------------------------------------------------------
 deleteShayari = (req, res) => {
   var validation = "";

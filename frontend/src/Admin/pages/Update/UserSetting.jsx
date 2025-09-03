@@ -23,6 +23,8 @@ export default function UserSetting() {
     const [facebook, setFacebook] = useState();
     const [linkdin, setLinkdin] = useState();
     const [twiter, setTwiter] = useState();
+    const [slug, setSlug] = useState("");
+
     const changeimage = (e) =>{
       // // console.log(e.target.files[0])
       setImage(e.target.files[0])
@@ -38,6 +40,7 @@ export default function UserSetting() {
         setcustomerData(data.data.data)
         setName(data.data.data.name)
         setPenName(data.data.data.penname);
+        setSlug(data.data.data.slug);
         setEmail(data.data.data.email)
         setAddress(data.data.data.address)
         setContact(data.data.data.contact)
@@ -64,6 +67,7 @@ export default function UserSetting() {
     let data= new FormData()
     data.append("name",name)
     data.append("penname", penname);
+    data.append("slug", slug);
     data.append("email",email)
     data.append("address",address)
     data.append("contact",contact)
@@ -320,6 +324,24 @@ export default function UserSetting() {
                             />
                           </div>
                         </div>
+                        <div className="row mb-3">
+  <label
+    htmlFor="slug"
+    className="col-md-4 col-lg-3 col-form-label"
+  >
+    Slug
+  </label>
+  <div className="col-md-8 col-lg-9">
+    <input
+      type="text"
+      className="form-control"
+      id="slug"
+      value={slug}
+      onChange={(e) => setSlug(e.target.value)}
+    />
+  </div>
+</div>
+
                         <div className="row mb-3">
                           <label
                             for="bio"

@@ -40,7 +40,8 @@ export default function Login() {
 
   // Fetch captcha status from backend
   useEffect(() => {
-    apiServices.fetchCaptchaSettings()
+    apiServices
+      .fetchCaptchaSettings()
       .then((res) => {
         if (Array.isArray(res) && res.length > 0) {
           const captchaData = res[0];
@@ -88,7 +89,8 @@ export default function Login() {
       recaptchaValue: captchaStatus ? recaptchaValue : null,
     };
 
-    apiServices.login(data)
+    apiServices
+      .login(data)
       .then((x) => {
         setTimeout(() => setLoading(false), 1500);
 
@@ -218,18 +220,19 @@ export default function Login() {
                         </div>
                       ) : (
                         <button
-  type="submit"
-  className="btn btn-block py-2 btn-facebook btn-signin"
-  disabled={captchaStatus && !recaptchaValue}
->
-  <span className="fa-solid fa-right-to-bracket fa-beat mr-2"></span>
-  Sign In
-</button>
+                          type="submit"
+                          className="btn btn-block py-2 btn-facebook btn-signin"
+                          disabled={captchaStatus && !recaptchaValue}
+                        >
+                          <span className="fa-solid fa-right-to-bracket fa-beat mr-2"></span>
+                          Sign In
+                        </button>
                       )}
 
                       {/* Sign Up */}
                       <div className="signup mt-3 text-center">
-                        Don't have account? <Link to="/register">Sign Up Now</Link>
+                        Don't have account?{" "}
+                        <Link to="/register">Sign Up Now</Link>
                       </div>
                     </form>
                   </div>

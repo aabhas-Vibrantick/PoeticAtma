@@ -23,6 +23,8 @@ function UpSher() {
   const [allSherData, setAllSherData] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [allUsers, setAllUsers] = useState([]);
+  const [slug, setSlug] = useState("");
+
 
   const changeImage = (e) => {
     setImage(e.target.files[0]);
@@ -44,6 +46,7 @@ function UpSher() {
         setLanguage(sherData.language || "");
         setCategoryId(sherData.Category_id?._id || "");
         setSelectedUserId(sherData.userId?._id || "");
+        setSlug(sherData.slug || "");
       } else {
         toast.error(response.data.message);
       }
@@ -77,6 +80,7 @@ function UpSher() {
   const handleSherData = (e) => {  
     e.preventDefault();
     let formData = new FormData();
+    formData.append("slug", slug);
     formData.append("title", title);
     formData.append("sher", sher);
     formData.append("Category_id", categoryId);
@@ -148,6 +152,19 @@ function UpSher() {
             <div className="col article">
               <h2 className="text-dark">Update Sher</h2>
               <form className="mt-5" onSubmit={handleSherData}>
+              {/* Slug input */}
+<div className="form-outline mb-4">
+  <label htmlFor="slugInput" className="form-label text-dark">Slug </label>
+  <input
+    type="text"
+    id="slugInput"
+    className="form-control"
+    placeholder="slug"
+    value={slug}
+    onChange={(e) => setSlug(e.target.value)}
+  />
+</div>
+
                 {/* Title input */}
                 <div className="form-outline mb-4">
                   <label htmlFor="form6Example3" className="form-label text-dark">Title</label>

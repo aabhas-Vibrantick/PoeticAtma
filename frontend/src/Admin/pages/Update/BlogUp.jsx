@@ -23,7 +23,7 @@ function UpBlog() {
   const [isFeatured, setIsFeatured] = useState("false");
   const [selectedUserId, setSelectedUserId] = useState("");
   const [allUsers, setAllUsers] = useState([]);
-
+  const [slug, setSlug] = useState("");
   const changeimage = (e) => {
     setImage(e.target.files[0]);
   };
@@ -80,6 +80,7 @@ function UpBlog() {
           setTag(blogData.tags);
           setIsFeatured(blogData.isFeatured);
           setSelectedUserId(blogData.userId?._id || "");
+          setSlug(blogData.slug || "");
         } else {
           toast.error(res.data.message);
         }
@@ -106,6 +107,7 @@ function UpBlog() {
   const handleblogData = (x) => {
     x.preventDefault();
     let formData = new FormData();
+    formData.append("slug", slug);
     formData.append("title", title);
     formData.append("blog", blog);
     formData.append("description", description);
@@ -142,6 +144,18 @@ function UpBlog() {
             <div className="col article">
               <h2 className="text-dark">Update Blog</h2>
               <form className="mt-5">
+                {/* Slug input */}
+<div className="form-outline mb-4">
+  <label htmlFor="slugInput" className="form-label text-dark">Slug </label>
+  <input
+    type="text"
+    id="slugInput"
+    className="form-control"
+    placeholder="slug"
+    value={slug}
+    onChange={(e) => setSlug(e.target.value)}
+  />
+</div>
                 {/* Title */}
                 <div className="form-outline mb-4">
                   <label className="form-label text-dark">Title</label>

@@ -22,6 +22,7 @@ function UpProse() {
   const [allProseData, setAllProseData] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [allUsers, setAllUsers] = useState([]);
+const [slug, setSlug] = useState("");
 
   const changeImage = (e) => {
     setImage(e.target.files[0]);
@@ -42,6 +43,7 @@ function UpProse() {
           setLanguage(proseData.language || "");
           setCategoryId(proseData.Category_id?._id || "");
           setSelectedUserId(proseData.userId?._id || "");
+          setSlug(proseData.slug || "");
         } else {
           toast.error(response.data.message);
         }
@@ -82,6 +84,7 @@ function UpProse() {
   const handleProseData = (e) => {
     e.preventDefault();
     let formData = new FormData();
+    formData.append("slug", slug);
     formData.append("title", title);
     formData.append("prose", prose);
     formData.append("Category_id", categoryId);
@@ -153,6 +156,18 @@ function UpProse() {
             <div className="col article">
               <h2 className="text-dark">Update Prose</h2>
               <form className="mt-5" onSubmit={handleProseData}>
+                {/* Slug input */}
+<div className="form-outline mb-4">
+  <label htmlFor="slugInput" className="form-label text-dark">Slug </label>
+  <input
+    type="text"
+    id="slugInput"
+    className="form-control"
+    placeholder="slug"
+    value={slug}
+    onChange={(e) => setSlug(e.target.value)}
+  />
+</div>
                 {/* Title */}
                 <div className="form-outline mb-4">
                   <label className="form-label text-dark">Title</label>

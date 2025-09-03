@@ -23,6 +23,7 @@ function UpShayari() {
   const [allShayariData, setAllShayariData] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [allUsers, setAllUsers] = useState([]);
+const [slug, setSlug] = useState("");
 
   const changeImage = (e) => {
     setImage(e.target.files[0]);
@@ -44,6 +45,7 @@ function UpShayari() {
         setTag(shayariData.tags || "");
         setCategoryId(shayariData.Category_id?._id || "");
         setSelectedUserId(shayariData.userId?._id || "");
+        setSlug(shayariData.slug || "");
       } else {
         toast.error(response.data.message);
       }
@@ -77,6 +79,7 @@ function UpShayari() {
   const handleShayariData = (e) => {
     e.preventDefault();
     let formData = new FormData();
+    formData.append("slug", slug);
     formData.append("title", title);
     formData.append("shayari", shayari);
     formData.append("Category_id", categoryId);
@@ -148,6 +151,18 @@ function UpShayari() {
             <div className="col article">
               <h2 className="text-dark">Update Shayari</h2>
               <form className="mt-5" onSubmit={handleShayariData}>
+                {/* Slug input */}
+<div className="form-outline mb-4">
+  <label htmlFor="slugInput" className="form-label text-dark">Slug </label>
+  <input
+    type="text"
+    id="slugInput"
+    className="form-control"
+    placeholder="slug"
+    value={slug}
+    onChange={(e) => setSlug(e.target.value)}
+  />
+</div>
                 {/* Title input */}
                 <div className="form-outline mb-4">
                   <label htmlFor="form6Example3" className="form-label text-dark">Title</label>

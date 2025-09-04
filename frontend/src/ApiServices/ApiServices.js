@@ -929,6 +929,60 @@ class apiServices {
     return axios.get(BASE_URL + "get-latest-quote", { headers: header });
   }
 
+
+  getLatestShayariOfTheDay() {
+  const header = {
+    Accept: "application/json",
+    Authorization: sessionStorage.getItem("token"),
+  };
+  // add the missing `get-`
+  return axios.get(BASE_URL + "get-latest-shayari-of-the-day", { headers: header });
+}
+
+deleteShayariOfTheDay(id) {
+  const header = {
+    Accept: "application/json",
+    Authorization: sessionStorage.getItem("token"),
+  };
+  return axios.delete(`${BASE_URL}delete-shayari-of-the-day/${id}`, { headers: header });
+}
+
+
+  addShayariOfTheDay(data) {
+  const header = {
+    Accept: "application/json",
+    Authorization: sessionStorage.getItem("token"),
+  };
+  return axios.post(BASE_URL + "add-shayari-of-the-day", data, { headers: header });
+}
+
+getAllShayariOfTheDay() {
+  const header = {
+    Accept: "application/json",
+    Authorization: sessionStorage.getItem("token"),
+  };
+  return axios.get(BASE_URL + "get-all-shayari-of-the-day", { headers: header });
+}
+
+
+getShayariOfTheDayById(id) {
+  const header = {
+    Accept: "application/json",
+    Authorization: sessionStorage.getItem("token"),
+  };
+  return axios.get(`${BASE_URL}get-shayari-of-the-day/${id}`, { headers: header });
+}
+
+updateShayariOfTheDay(data) {
+  const header = {
+    Accept: "application/json",
+    Authorization: sessionStorage.getItem("token"),
+  };
+  return axios.post(BASE_URL + "update-shayari-of-the-day", data, { headers: header });
+}
+
+
+
   getallshayari(data) {
     const header = {
       Accept: "application/json",

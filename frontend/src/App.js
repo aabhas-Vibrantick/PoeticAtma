@@ -102,7 +102,9 @@ import PrivacyPolicy from "./Pages/PrivacyPolicy";
 import FAQs from "./Pages/FAQs";
 import TermsAndConditions from './Pages/TermsAndConditions';
 import AddQuote from "./Admin/pages/Add/AddQuote";
+import AddShayariOfTheDay from "./Admin/pages/Add/AddShayariOfTheDay";
 import ViewQuote from "./Admin/pages/Update/ViewQuote";
+import ViewShayariOfTheDay from "./Admin/pages/Update/ViewShayariOfTheDay";
 import CaptchaSettingsPage from './Admin/pages/CaptchaSettingsPage';
 
 function App() {
@@ -176,11 +178,13 @@ function App() {
             <Route path="/admin/all-message" element={<Messages />} />
             <Route path="/admin/add-user" element={<AddUser />} />
             <Route path="/admin/add-quote" element={<AddQuote/>}/>
+            <Route path="/admin/add-shayari-of-the-day" element={<AddShayariOfTheDay/>}/>
             <Route path="/admin/add-book" element={<Addbook />} />
             <Route path="/admin/book-list" element={<Booklist />} />
             <Route path="/admin/order-list" element={<Orderlist />} />
             <Route path="/admin/update-book/:_id" element={<Updatebook />} />
             <Route path="/admin/view-quote/" element={<ViewQuote/>}/>
+            <Route path="/admin/view-shayari-of-the-day" element={<ViewShayariOfTheDay/>}/>
 
             <Route path="/admin/add-testimonial" element={<Addtestimonial />} />
             <Route

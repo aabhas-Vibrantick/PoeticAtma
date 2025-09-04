@@ -73,21 +73,21 @@ function AddShayari() {
   };
 
   const config = {
-  askBeforePasteFromWord: false,
-  askBeforePasteHTML: false,
-  defaultActionOnPaste: "insert_clear_html",
-  preserveWhiteSpace: true,
-  cleanHTML: {
-    removeTags: ["script", "style", "img", "video", "audio"],
-    removeAttrs: ["style", "class", "width", "height"],
-  },
-  style: {
-    color: "#000000",
-    backgroundColor: "#ffffff",
-  },
-};
+    askBeforePasteFromWord: false,
+    askBeforePasteHTML: false,
+    defaultActionOnPaste: "insert_clear_html",
+    preserveWhiteSpace: true,
+    cleanHTML: {
+      removeTags: ["script", "style", "img", "video", "audio"],
+      removeAttrs: ["style", "class", "width", "height"],
+    },
+    style: {
+      color: "#000000",
+      backgroundColor: "#ffffff",
+    },
+  };
 
-const customStyles = {
+  const customStyles = {
     control: (provided) => ({
       ...provided,
       fontSize: "14px",
@@ -123,7 +123,7 @@ const customStyles = {
 
   return (
     <>
-    <style>{`.jodit-wysiwyg {
+      <style>{`.jodit-wysiwyg {
     white-space: pre-wrap !important; /* preserve all spaces and line breaks */
   }`}</style>
       <main className="main-container adminbody">
@@ -212,8 +212,6 @@ const customStyles = {
                   </select>
                 </div> */}
 
-          
-
                 {/* shayari input */}
                 <div className="form-outline mb-4">
                   <label
@@ -231,17 +229,18 @@ const customStyles = {
                     onChange={(e) => setShayari(e.target.value)}
                   ></textarea> */}
                   <JoditEditor
-  ref={editor}
-  value={shayari}
-  config={config}
-  onChange={(newContent) => setShayari(newContent)}
-  onPaste={(event) => {
-    event.preventDefault();
-    const text = (event.clipboardData || window.clipboardData).getData("text/plain");
-    document.execCommand("insertText", false, text);
-  }}
-/>
-
+                    ref={editor}
+                    value={shayari}
+                    config={config}
+                    onChange={(newContent) => setShayari(newContent)}
+                    onPaste={(event) => {
+                      event.preventDefault();
+                      const text = (
+                        event.clipboardData || window.clipboardData
+                      ).getData("text/plain");
+                      document.execCommand("insertText", false, text);
+                    }}
+                  />
                 </div>
 
                 <div className="form-outline mb-4">

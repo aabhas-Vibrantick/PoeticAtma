@@ -20,6 +20,15 @@ const blogschema = new mongoose.Schema({
   slug: { type: String, required: true, unique: true, index: true },
 });
 
+
+blogschema.pre("save", function (next) {
+  if (this.blog && typeof this.blog === "string") {
+    this.blog = this.blog.replace(/<\/?p>/g, "\n");
+    this.blog = this.blog.replace(/<br\s*\/?>/gi, "\n");
+  }
+  next();
+});
+
 // Helper: Unicode-safe slug generator
 function toSlug(str) {
   return String(str)

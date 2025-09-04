@@ -24,7 +24,7 @@ export default function Singleblog() {
   const [viewCount, setViewCount] = useState(0);
   const [alllatest, setAlllatest] = useState([]);
   const authenticate = sessionStorage.getItem("authenticate");
-
+const isAuthed = !!sessionStorage.getItem("authenticate");
   const override = {
     display: "block",
     margin: "0 auto",
@@ -92,11 +92,11 @@ export default function Singleblog() {
           setComments(withReplies);
         }
 
-        // 4) View count
-        const vc = await apiServices.bloggetPageViewCount({ postId: blogId });
-        if (isMounted && vc.data.success) {
-          setViewCount(vc.data.count || 0);
-        }
+        // // 4) View count
+        // const vc = await apiServices.bloggetPageViewCount({ postId: blogId });
+        // if (isMounted && vc.data.success) {
+        //   setViewCount(vc.data.count || 0);
+        // }
 
         // 5) Like count
         const likeRes = await apiServices.getLikeCountForBlog({ blogId });
@@ -119,6 +119,10 @@ export default function Singleblog() {
 
   // ✅ LIKE / UNLIKE
   const handleLikeUnlike = async () => {
+    if (!isAuthed) {
+   navigate("/login");
+   return;
+  }
     if (!allBlog?._id) return;
 
     const data = { blogId: allBlog._id };
@@ -279,7 +283,7 @@ export default function Singleblog() {
                                 className="d-none"
                                 checked={liked}
                                 onChange={handleLikeUnlike}
-                                disabled={!authenticate}
+                                // disabled={!authenticate}
                               />
                               <svg
                                 className={`me-2 ${

@@ -7,7 +7,6 @@ async function addblog(req, res) {
   if (!req.body.description) validation += "Description is required. ";
   if (!req.body.Category_id) validation += "Category ID is required. ";
   if (!req.body.blog) validation += "Blog content is required. ";
-  
 
   if (!!validation) {
     return res.json({
@@ -52,7 +51,6 @@ async function addblog(req, res) {
         : "Blog published successfully.",
       data: req.body,
     });
-
   } catch (error) {
     return res.json({
       status: 500,
@@ -150,21 +148,32 @@ getsingleblogBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
     if (!slug) {
-      return res.status(400).json({ success: false, message: "slug is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "slug is required" });
     }
 
     const bdata = await Blog.findOne({ slug })
-      .populate({ path: "Category_id", select: "Category_name status createdAt" })
+      .populate({
+        path: "Category_id",
+        select: "Category_name status createdAt",
+      })
       .populate({ path: "userId", select: "name Image _id slug" }) // avoid sensitive fields
       .lean();
 
     if (!bdata) {
-      return res.status(404).json({ success: false, message: "Blog not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Blog not found" });
     }
 
-    return res.status(200).json({ success: true, message: "data loaded", data: bdata });
+    return res
+      .status(200)
+      .json({ success: true, message: "data loaded", data: bdata });
   } catch (err) {
-    return res.status(500).json({ success: false, message: "Error Occur", error: String(err) });
+    return res
+      .status(500)
+      .json({ success: false, message: "Error Occur", error: String(err) });
   }
 };
 
@@ -233,7 +242,6 @@ updateblog = (req, res) => {
   }
 };
 
-
 // ----------------------------------------------------------
 
 // ----------------------------------------------------------------
@@ -294,14 +302,27 @@ deleteblog = (req, res) => {
 getFeaturedBlogs = async (req, res) => {
   try {
     const limit = 12;
-    // Fetch blogs that are marked as featured
-    const featuredBlogs = await Blog.find({ isFeatured: true }).limit(limit);
 
-    res.status(200).json({ featuredBlogs });
+    // Fetch blogs that are marked as featured
+    const featuredBlogs = await Blog.find({ isFeatured: true })
+      .select(
+        "title slug description blog language Category_id Image userId tags isFeatured createdAt"
+      ) // ✅ explicitly include slug
+      .limit(limit);
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Featured blogs loaded",
+      featuredBlogs,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error fetching featured blogs", error: error.message });
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "Error fetching featured blogs",
+      error: error.message,
+    });
   }
 };
 

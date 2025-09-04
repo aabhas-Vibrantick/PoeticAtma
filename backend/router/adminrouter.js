@@ -1,4 +1,5 @@
 const router = require("express").Router();
+
 const multer = require("multer");
 
 const usercontroller = require("../controllers/UserController");
@@ -36,6 +37,7 @@ const bookcontroller = require("../controllers/BookController");
 const testcontroller = require("../controllers/TestimonialController");
 const dashboardcontroller = require("../controllers/Dashboard");
 const QuoteController = require("../controllers/Quotecontroller");
+const ShayariofthedayController = require("../controllers/ShayariofthedayController");
 const { getCaptchaSettings, updateCaptchaSettings } = require("../controllers/SettingsController");
 const userstorage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -293,6 +295,10 @@ router.post("/getBlogsByCategory", blogController.getBlogsByCategory);
 router.post("/getallblogbyUserId", blogController.getallblogbyUserId);
 router.post("/latestBlog", blogController.latestBlog);
 router.get("/get-latest-quote",QuoteController.getLatestQuote);
+router.get(
+  "/get-all-shayari-of-the-day",
+  ShayariofthedayController.getAllShayariOfTheDay
+);
 
 // ===sher without login========
 router.post("/usersherDash", sherController.usersherDash);
@@ -444,6 +450,12 @@ router.delete("/delete-quote/:id", QuoteController.deleteQuote);
 router.get("/get-quote/:id", QuoteController.getQuoteById);
 router.post("/update-quote", QuoteController.updateQuote);
 
+
+router.post("/add-shayari-of-the-day", ShayariofthedayController.addShayariOfTheDay);
+router.get("/view-shayari-of-the-day", ShayariofthedayController.getAllShayariOfTheDay);
+router.get("/get-shayari-of-the-day/:id", ShayariofthedayController.getShayariOfTheDayById);
+router.post("/update-shayari-of-the-day", ShayariofthedayController.updateShayariOfTheDay);
+router.delete("/delete-shayari-of-the-day/:id", ShayariofthedayController.deleteShayariOfTheDay);
 
 // ---------prose Category---------
 router.post("/add_prose_category", prosecategorycontroller.add_prose_category);

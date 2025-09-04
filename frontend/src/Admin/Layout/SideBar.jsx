@@ -38,6 +38,22 @@ const routes = [
     ],
   },
   {
+    name:"Shayari of the day",
+    icon: <FaQuoteRight/>,
+    subRoutes:[
+      {
+        path:"/admin/add-shayari-of-the-day",
+        name:"Add Shayari",
+        icon: <FaQuoteRight/>
+      },
+      {
+        path: "/admin/view-shayari-of-the-day",
+        name: "Manage Shayari",
+        icon: <FaQuoteRight />,
+      },
+    ]
+  },
+  {
     name:"Quote",
     icon: <FaQuoteRight/>,
     subRoutes:[

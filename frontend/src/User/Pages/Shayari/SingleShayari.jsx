@@ -21,7 +21,7 @@ export default function SingleShayari() {
   const [viewCount, setViewCount] = useState(0);
   const [likeCount, setLikeCount] = useState(null);
   const [user, setUserId] = useState(null);
-  const { slug } = useParams();          // from /single-shayari/:slug
+  const { slug } = useParams(); // from /single-shayari/:slug
   const navigate = useNavigate();
   const parse = require("html-react-parser");
   const authenticate = sessionStorage.getItem("authenticate");
@@ -42,234 +42,235 @@ export default function SingleShayari() {
     zIndex: "1",
   };
 
-const incrementViewCount = async (id) => {
-  if (!id) return; // prevent undefined
-  try {
-    const response = await apiServices.shayariincrementPageView({ postId: id });
-    if (response.data.success) {
-      setViewCount((prevCount) => prevCount + 1);
+  const incrementViewCount = async (id) => {
+    if (!id) return; // prevent undefined
+    try {
+      const response = await apiServices.shayariincrementPageView({
+        postId: id,
+      });
+      if (response.data.success) {
+        setViewCount((prevCount) => prevCount + 1);
+      }
+    } catch (error) {
+      // console.error("Error incrementing view count:", error);
     }
-  } catch (error) {
-    // console.error("Error incrementing view count:", error);
-  }
-};
+  };
 
   useEffect(() => {
-  let isMounted = true;          // avoid state update after unmount
-  setLoading(true);
+    let isMounted = true; // avoid state update after unmount
+    setLoading(true);
 
-  const fetchData = async () => {
-    try {
-      // 1) Fetch by slug
-      const res = await apiServices.getsingleshayariBySlug(slug);
-      const ok = res?.data?.success && res?.data?.data;
-
-      if (!ok) {
-        // optional: handle 404
-        // toast.error("Shayari not found");
-        navigate("/404", { replace: true });
-        return;
-      }
-
-      const item = res.data.data;
-      const shayariId = item._id;
-
-      if (!isMounted) return;
-
-      setAllShayari(item);
-      setUserId(item.userId?._id);
-
-      // 2) Latest Shayari (unchanged)
-      apiServices
-        .latestShayari()
-        .then(({ data }) => {
-          if (!isMounted) return;
-          if (data.success) {
-            setAlllatest(data.data.filter(s => s.status === true));
-          } else {
-            // toast.error(data.message);
-          }
-        })
-        .catch(() => {});
-
-      // 3) Comments + replies
+    const fetchData = async () => {
       try {
-        const commentRes = await apiServices.getAllshayariComments({ shayariId });
-        if (isMounted && commentRes.data.success) {
-          const base = commentRes.data.data || [];
-          const withReplies = await Promise.all(
-  base.map(async (c) => {
-    const rr = await apiServices.getAllshayariReplies({ commentId: c._id }); // ✅ send correct key
-    return rr.data.success ? { ...c, replies: rr.data.data } : { ...c, replies: [] };
-  })
-);
+        // 1) Fetch by slug
+        const res = await apiServices.getsingleshayariBySlug(slug);
+        const ok = res?.data?.success && res?.data?.data;
 
-          if (isMounted) setComments(withReplies);
+        if (!ok) {
+          // optional: handle 404
+          // toast.error("Shayari not found");
+          navigate("/404", { replace: true });
+          return;
         }
-      } catch {}
 
-      // 4) View count
-      try {
-        const vc = await apiServices.shayarigetPageViewCount({ postId: shayariId });
-        if (isMounted && vc.data) setViewCount(vc.data.count);
-      } catch {}
+        const item = res.data.data;
+        const shayariId = item._id;
 
-      // 5) Like count
-      apiServices
-        .getLikeCountForShayari({ shayariId })
-        .then((r) => {
-          if (!isMounted) return;
-          const count = r?.data?.data?.likeCount ?? 0;
-          setLikeCount(count);
-        })
-        .catch(() => {});
+        if (!isMounted) return;
 
-      // 6) (Optional) increment page views after successful load
-      if (typeof incrementViewCount === "function") {
-        incrementViewCount(shayariId); // pass id if your function accepts it
+        setAllShayari(item);
+        setUserId(item.userId?._id);
+
+        // 2) Latest Shayari (unchanged)
+        apiServices
+          .latestShayari()
+          .then(({ data }) => {
+            if (!isMounted) return;
+            if (data.success) {
+              setAlllatest(data.data.filter((s) => s.status === true));
+            } else {
+              // toast.error(data.message);
+            }
+          })
+          .catch(() => {});
+
+        // 3) Comments + replies
+        try {
+          const commentRes = await apiServices.getAllshayariComments({
+            shayariId,
+          });
+          if (isMounted && commentRes.data.success) {
+            const base = commentRes.data.data || [];
+            const withReplies = await Promise.all(
+              base.map(async (c) => {
+                const rr = await apiServices.getAllshayariReplies({
+                  commentId: c._id,
+                }); // ✅ send correct key
+                return rr.data.success
+                  ? { ...c, replies: rr.data.data }
+                  : { ...c, replies: [] };
+              })
+            );
+
+            if (isMounted) setComments(withReplies);
+          }
+        } catch {}
+
+        // 4) View count
+        try {
+          const vc = await apiServices.shayarigetPageViewCount({
+            postId: shayariId,
+          });
+          if (isMounted && vc.data) setViewCount(vc.data.count);
+        } catch {}
+
+        // 5) Like count
+        apiServices
+          .getLikeCountForShayari({ shayariId })
+          .then((r) => {
+            if (!isMounted) return;
+            const count = r?.data?.data?.likeCount ?? 0;
+            setLikeCount(count);
+          })
+          .catch(() => {});
+
+        // 6) (Optional) increment page views after successful load
+        if (typeof incrementViewCount === "function") {
+          incrementViewCount(shayariId); // pass id if your function accepts it
+        }
+      } finally {
+        if (isMounted) setLoading(false);
       }
+    };
 
-    } finally {
-      if (isMounted) setLoading(false);
-    }
-  };
+    fetchData();
 
-  fetchData();
+    return () => {
+      isMounted = false;
+    };
+  }, [slug]); // re-fetch only when slug changes
 
-  return () => { isMounted = false; };
-}, [slug]);  // re-fetch only when slug changes
-
-
- const shayariId = _id;
-
+  const shayariId = _id;
 
   const handleLikeUnlike = (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!shayari?._id) return;
+    if (!shayari?._id) return;
 
-  const data = { shayariId: shayari._id }; // ✅ correct shape
+    const data = { shayariId: shayari._id }; // ✅ correct shape
 
-  if (liked) {
-    apiServices
-      .ShayariUnLike(data)
-      .then(() => {
-        setLiked(false);
-        setLikeCount((prev) => (prev > 0 ? prev - 1 : 0));
-      })
-      .catch(() => {
-        toast.error("Error unliking post");
-      });
-  } else {
-    apiServices
-      .ShayariLike(data)
-      .then(() => {
-        setLiked(true);
-        setLikeCount((prev) => prev + 1);
-      })
-      .catch(() => {
-        toast.error("Error liking post");
-      });
-  }
-};
-
-
-
-const createComment = (e) => {
-  e.preventDefault();
-  if (!newComment.trim()) {
-    toast.error("Please enter a comment");
-    return;
-  }
-
-  if (!shayari?._id) {
-    toast.error("Shayari ID not found");
-    return;
-  }
-
-  const data = {
-    text: newComment,
-    shayariId: shayari._id,   // use DB id
+    if (liked) {
+      apiServices
+        .ShayariUnLike(data)
+        .then(() => {
+          setLiked(false);
+          setLikeCount((prev) => (prev > 0 ? prev - 1 : 0));
+        })
+        .catch(() => {
+          toast.error("Error unliking post");
+        });
+    } else {
+      apiServices
+        .ShayariLike(data)
+        .then(() => {
+          setLiked(true);
+          setLikeCount((prev) => prev + 1);
+        })
+        .catch(() => {
+          toast.error("Error liking post");
+        });
+    }
   };
 
-  apiServices
-    .createshayariComment(data)
-    .then((x) => {
-      if (x.data.success === true) {
-        toast.success("Comment posted");
-
-        // append new comment to UI immediately
-        const newCommentObj = {
-          _id: x.data.data?._id || Date.now(),
-          text: newComment,
-          userId: x.data.data?.userId || { name: "You" },
-          created_at: new Date().toISOString(),
-          replies: [],
-        };
-
-        setComments((prev) => [newCommentObj, ...prev]);
-        setNewComment("");
-      } else {
-        toast.error(x.data.message || "Error posting comment");
-      }
-    })
-    .catch(() => {
-      toast.error("Error posting comment");
-    });
-};
-
-
-
-const createReply = async (commentId) => {
-  try {
-    const response = await apiServices.createShayariReply({
-      commentId,
-      text: newReply,
-    });
-
-    if (response.data.success) {
-      toast.success("Message sent");
-
-      const newReplyObj = response.data.data; // ✅ populated reply
-
-      const updatedComments = comments.map((comment) =>
-        comment._id === commentId
-          ? {
-              ...comment,
-              replies: [...(comment.replies || []), newReplyObj], // ✅ safe fallback
-            }
-          : comment
-      );
-
-      setCommentId(commentId);
-      setComments(updatedComments);
-      setNewReply("");
-      setShowReply((prev) => ({ ...prev, [commentId]: false })); // ✅ auto-close reply box
-    } else {
-      toast.error(response.data.message || "Error posting reply");
+  const createComment = (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) {
+      toast.error("Please enter a comment");
+      return;
     }
-  } catch (error) {
-    toast.error("Error creating reply");
-  }
-};
 
+    if (!shayari?._id) {
+      toast.error("Shayari ID not found");
+      return;
+    }
 
+    const data = {
+      text: newComment,
+      shayariId: shayari._id, // use DB id
+    };
 
+    apiServices
+      .createshayariComment(data)
+      .then((x) => {
+        if (x.data.success === true) {
+          toast.success("Comment posted");
+
+          // append new comment to UI immediately
+          const newCommentObj = {
+            _id: x.data.data?._id || Date.now(),
+            text: newComment,
+            userId: x.data.data?.userId || { name: "You" },
+            created_at: new Date().toISOString(),
+            replies: [],
+          };
+
+          setComments((prev) => [newCommentObj, ...prev]);
+          setNewComment("");
+        } else {
+          toast.error(x.data.message || "Error posting comment");
+        }
+      })
+      .catch(() => {
+        toast.error("Error posting comment");
+      });
+  };
+
+  const createReply = async (commentId) => {
+    try {
+      const response = await apiServices.createShayariReply({
+        commentId,
+        text: newReply,
+      });
+
+      if (response.data.success) {
+        toast.success("Message sent");
+
+        const newReplyObj = response.data.data; // ✅ populated reply
+
+        const updatedComments = comments.map((comment) =>
+          comment._id === commentId
+            ? {
+                ...comment,
+                replies: [...(comment.replies || []), newReplyObj], // ✅ safe fallback
+              }
+            : comment
+        );
+
+        setCommentId(commentId);
+        setComments(updatedComments);
+        setNewReply("");
+        setShowReply((prev) => ({ ...prev, [commentId]: false })); // ✅ auto-close reply box
+      } else {
+        toast.error(response.data.message || "Error posting reply");
+      }
+    } catch (error) {
+      toast.error("Error creating reply");
+    }
+  };
 
   const toggleReply = (commentId) => {
-  setShowReply((prevShowReplies) => {
-    const isCurrentlyOpen = prevShowReplies[commentId] || false;
-    const newState = { ...prevShowReplies, [commentId]: !isCurrentlyOpen };
+    setShowReply((prevShowReplies) => {
+      const isCurrentlyOpen = prevShowReplies[commentId] || false;
+      const newState = { ...prevShowReplies, [commentId]: !isCurrentlyOpen };
 
-    // If we are closing the reply box, clear input
-    if (isCurrentlyOpen) {
-      setNewReply("");
-    }
+      // If we are closing the reply box, clear input
+      if (isCurrentlyOpen) {
+        setNewReply("");
+      }
 
-    return newState;
-  });
-};
-
+      return newState;
+    });
+  };
 
   function isValidDate(dateString) {
     const dateObject = new Date(dateString);
@@ -358,49 +359,61 @@ const createReply = async (commentId) => {
                       {/* Article Footer: Likes, Views */}
                       <div className="d-flex flex-wrap align-items-center justify-content-start border-top pt-3">
                         <div className="like-button me-4">
-  {authenticate ? (
-    <label className="d-flex align-items-center mb-0" style={{ cursor: "pointer" }}>
-      <input
-        type="checkbox"
-        className="d-none"
-        checked={liked}                 // ✅ bind to state
-        onChange={handleLikeUnlike}     // ✅ use onChange instead of onClick
-      />
-      <svg
-        className={`me-2 ${liked ? "text-primary" : "text-muted"}`}  // ✅ color changes
-        width="24"
-        height="24"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 512 512"
-      >
-        <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2H464c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48H294.5c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3V320 272 247.1c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192H96c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32z" />
-      </svg>
-      <span className={`fw-bold ${liked ? "text-primary" : ""}`}>
-        {likeCount !== null ? likeCount : "0"}
-      </span>
-    </label>
-  ) : (
-    <label className="d-flex align-items-center mb-0" style={{ cursor: "pointer" }}>
-      <input
-        type="checkbox"
-        className="d-none"
-        onChange={handleReadMoreClick}   // ✅ redirect to login if not authenticated
-      />
-      <svg
-        className="me-2 text-muted"
-        width="24"
-        height="24"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 512 512"
-      >
-        <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2H464c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48H294.5c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3V320 272 247.1c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192H96c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32z" />
-      </svg>
-      <span className="fw-bold">
-        {likeCount !== null ? likeCount : "0"}
-      </span>
-    </label>
-  )}
-</div>
+                          {authenticate ? (
+                            <label
+                              className="d-flex align-items-center mb-0"
+                              style={{ cursor: "pointer" }}
+                            >
+                              <input
+                                type="checkbox"
+                                className="d-none"
+                                checked={liked} // ✅ bind to state
+                                onChange={handleLikeUnlike} // ✅ use onChange instead of onClick
+                              />
+                              <svg
+                                className={`me-2 ${
+                                  liked ? "text-primary" : "text-muted"
+                                }`} // ✅ color changes
+                                width="24"
+                                height="24"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 512 512"
+                              >
+                                <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2H464c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48H294.5c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3V320 272 247.1c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192H96c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32z" />
+                              </svg>
+                              <span
+                                className={`fw-bold ${
+                                  liked ? "text-primary" : ""
+                                }`}
+                              >
+                                {likeCount !== null ? likeCount : "0"}
+                              </span>
+                            </label>
+                          ) : (
+                            <label
+                              className="d-flex align-items-center mb-0"
+                              style={{ cursor: "pointer" }}
+                            >
+                              <input
+                                type="checkbox"
+                                className="d-none"
+                                onChange={handleReadMoreClick} // ✅ redirect to login if not authenticated
+                              />
+                              <svg
+                                className="me-2 text-muted"
+                                width="24"
+                                height="24"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 512 512"
+                              >
+                                <path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2H464c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48H294.5c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3V320 272 247.1c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192H96c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32z" />
+                              </svg>
+                              <span className="fw-bold">
+                                {likeCount !== null ? likeCount : "0"}
+                              </span>
+                            </label>
+                          )}
+                        </div>
 
                         <div className="d-flex align-items-center">
                           <i className="fa-solid fa-eye me-2"></i>
@@ -575,36 +588,40 @@ const createReply = async (commentId) => {
               <div className="col-lg-4 m-15px-tb blog-aside">
                 {/* <!-- Author --> */}
                 <div className="widget widget-author">
-  <div className="widget-title">
-    <h3>Author</h3>
-  </div>
-  <div className="widget-body">
-    <div className="media align-items-center">
-      <div className="avatar">
-        <img
-          src={
-            BASE_URL_IMG + (shayari?.userId?.Image || "/assets/images/avtar.png")
-          }
-          title={shayari?.userId?.name || "Author"}
-          alt={shayari?.userId?.name || "Author"}
-          onError={(e) => {
-            e.target.src = "/assets/images/avtar.png";
-          }}
-        />
-      </div>
-      <div className="media-body">
-        <h6 className="text-capitalize">
-          <Link
-              className="name"
-              to={`/poets-profile/${encodeURIComponent(shayari?.userId?.slug)}`}
-            >
-              {shayari?.userId?.name || "Admin"}
-            </Link>
-        </h6>
-      </div>
-    </div>
-  </div>
-</div>
+                  <div className="widget-title">
+                    <h3>Author</h3>
+                  </div>
+                  <div className="widget-body">
+                    <div className="media align-items-center">
+                      <div className="avatar">
+                        <img
+                          src={
+                            BASE_URL_IMG +
+                            (shayari?.userId?.Image ||
+                              "/assets/images/avtar.png")
+                          }
+                          title={shayari?.userId?.name || "Author"}
+                          alt={shayari?.userId?.name || "Author"}
+                          onError={(e) => {
+                            e.target.src = "/assets/images/avtar.png";
+                          }}
+                        />
+                      </div>
+                      <div className="media-body">
+                        <h6 className="text-capitalize">
+                          <Link
+                            className="name"
+                            to={`/poets-profile/${encodeURIComponent(
+                              shayari?.userId?.slug
+                            )}`}
+                          >
+                            {shayari?.userId?.name || "Admin"}
+                          </Link>
+                        </h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 {/* <!-- End Author --> */}
                 {/* <!-- category Post --> */}
@@ -692,7 +709,7 @@ const createReply = async (commentId) => {
                                 className="shayaricontent2"
                                 to={`/single-shayari/${data?._id}`}
                               >
-                                  {data?.shayari}
+                                {data?.shayari}
                               </Link>
                             </h5>
                           </div>

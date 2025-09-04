@@ -31,6 +31,8 @@ export default function UserHome() {
   const [topProse, setTopProse] = useState([]);
   const authenticate = sessionStorage.getItem("authenticate");
   const [quoteData, setQuoteData] = useState(null);
+  const [latestShayari, setLatestShayari] = useState(null);
+  const [shayariList, setShayariList] = useState([]);
 
   const handleReadMoreClick = () => {
     if (!authenticate) {
@@ -57,6 +59,30 @@ export default function UserHome() {
         setFeaturedBlogs(blogResponse.data.featuredBlogs);
       } catch (error) {
         // console.error('Error fetching featured blogs:', error);
+      }
+    };
+
+    const fetchLatestShayariOfTheDay = async () => {
+      try {
+        const res = await apiServices.getLatestShayariOfTheDay();
+        if (res.data?.success) {
+          setLatestShayari(res.data.data); // { _id, shayari, author, ... }
+        }
+      } catch (err) {
+        console.error("Error fetching latest shayari:", err);
+      }
+    };
+
+    const fetchShayariList = async () => {
+      try {
+        const res = await apiServices.getAllShayariOfTheDay(); // GET /admin/view-shayari-of-the-day
+        if (res.data?.success) {
+          // show only active ones (or remove .filter if you want full history)
+          const list = res.data.data.filter((s) => s.active);
+          setShayariList(list.length ? list : res.data.data.slice(0, 10));
+        }
+      } catch (e) {
+        console.error("Failed to load shayari list", e);
       }
     };
 
@@ -112,7 +138,8 @@ export default function UserHome() {
         // // console.log(err);
         toast.error("Something went wrong");
       });
-
+    fetchLatestShayariOfTheDay();
+    fetchShayariList();
     fetchFeaturedBlogs();
     fetchTopSher();
     fetchTopShayari();
@@ -149,20 +176,20 @@ export default function UserHome() {
   //     .then((data) => setQuoteData(data));
   // }, []);
 
-  const shayariData = [
-    {
-      text: "फ़ोन तो दूर वहाँ ख़त भी नहीं पहुँचेंगे अब के ये लोग तुम्हें ऐसी जगह भेजेंगे",
-      author: "Anonymous",
-    },
-    {
-      text: "Dil ke armānoñ kī manzil ek khwāb ban gayī <br /> har ek ummīd kī rāhein khāmosh ho gayī",
-      author: "Mirza Ghalib",
-    },
-    {
-      text: "Zindagī ek safar hai suhānā <br /> yahāñ har pal hai ek nayā fasānā",
-      author: "Unknown",
-    },
-  ];
+  // const shayariData = [
+  //   {
+  //     text: "फ़ोन तो दूर वहाँ ख़त भी नहीं पहुँचेंगे अब के ये लोग तुम्हें ऐसी जगह भेजेंगे",
+  //     author: "Anonymous",
+  //   },
+  //   {
+  //     text: "Dil ke armānoñ kī manzil ek khwāb ban gayī <br /> har ek ummīd kī rāhein khāmosh ho gayī",
+  //     author: "Mirza Ghalib",
+  //   },
+  //   {
+  //     text: "Zindagī ek safar hai suhānā <br /> yahāñ har pal hai ek nayā fasānā",
+  //     author: "Unknown",
+  //   },
+  // ];
 
   return (
     <>
@@ -340,15 +367,17 @@ export default function UserHome() {
                 .map((data, index) => (
                   <div className="homeprofile-card" key={index}>
                     <div className="homeprofile-card-details">
-                      <Link to={`/poets-profile/${data.userId._id}`}>
+                      <Link to={`/poets-profile/${data.slug}`}>
                         <img
                           src={BASE_URL_IMG + (data.Image || "avtar.png")}
                           className="img-fluid"
                           alt="img..."
+                          style={{ height: "100%" }} // 👈 force height 100%
                           onError={(e) => {
                             e.target.src = "/assets/images/avtar.png";
                           }}
                         />
+
                         <p className="homeprofile-text-body">
                           {data.userId.name}
                         </p>
@@ -357,7 +386,7 @@ export default function UserHome() {
 
                     <Link
                       className="homeprofile-card-button"
-                      to={`/poets-profile/${data.userId._id}`}
+                      to={`/poets-profile/${data.slug}`}
                     >
                       Read Poetry
                     </Link>
@@ -366,43 +395,55 @@ export default function UserHome() {
             </Marquee>
           </div>
         </section>
+
         <section className="shayari-day-section py-5">
           <div className="container text-center">
             <div className="shayari-swiper-container">
               <h2 className="shayari-title mb-5">🌼 Shayari Of The Day 🌼</h2>
+
               <Swiper
-                modules={[Navigation]}
+                modules={[Navigation, Autoplay]} // 👈 include Autoplay
                 spaceBetween={30}
                 slidesPerView={1}
+                autoplay={{
+                  delay: 4000, // 4 seconds per slide (adjust as you like)
+                  disableOnInteraction: false, // keeps autoplay even after user interaction
+                }}
                 navigation={{
                   nextEl: ".swiper-button-next-custom",
                   prevEl: ".swiper-button-prev-custom",
                 }}
               >
-                {shayariData.map((shayari, index) => (
-                  <SwiperSlide key={index}>
+                {shayariList.map((item, index) => (
+                  <SwiperSlide key={item._id || index}>
                     <div className="shayari-box shadow p-xl-5 p-lg-5 p-md-5 p-sm-2 rounded">
                       <blockquote className="shayari-text mx-auto">
                         <p
                           className="mb-4"
-                          dangerouslySetInnerHTML={{ __html: shayari.text }}
+                          dangerouslySetInnerHTML={{ __html: item.shayari }}
                         />
                         <footer className="shayari-author mt-3 text-end fst-italic">
-                          — {shayari.author}
+                          — {item.author || "Anonymous"}
                         </footer>
                       </blockquote>
                     </div>
                   </SwiperSlide>
                 ))}
               </Swiper>
+
               {/* Custom Navigation Arrows */}
               <div className="swiper-navigation-custom">
                 <div className="swiper-button-prev-custom">‹</div>
                 <div className="swiper-button-next-custom">›</div>
               </div>
+
+              {shayariList.length === 0 && (
+                <p className="mt-3 text-muted">No Shayari of the Day yet.</p>
+              )}
             </div>
           </div>
         </section>
+
         {/* ================== START MAIN CONTENT + SIDEBAR WRAP ================== */}
         <div className="container-fluid">
           <div className="row">
@@ -526,58 +567,65 @@ export default function UserHome() {
         </div>
         {/* ================== END MAIN CONTENT + SIDEBAR WRAP ================== */}
         <section className="poetry-week-section py-5">
-  <div className="container">
-    <div 
-      className="poetry-box shadow-lg rounded-4 text-center p-5 mx-auto"
-      style={{
-        maxWidth: "800px",
-        background: "linear-gradient(135deg, #faf8f5, #fefefe)",
-        border: "1px solid #eaeaea"
-      }}
-    >
-      {/* Title */}
-      <h2 
-        className="poetry-title mb-3 fw-bold" 
-        style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem" }}
-      >
-        ✨ Top Poetry Of The Week ✨
-      </h2>
-      <p 
-        className="poetry-subtitle mb-5 text-muted fst-italic"
-        style={{ fontFamily: "'Merriweather', serif" }}
-      >
-        कवि कह गया है
-      </p>
+          <div className="container">
+            <div
+              className="poetry-box shadow-lg rounded-4 text-center p-5 mx-auto"
+              style={{
+                maxWidth: "800px",
+                background: "linear-gradient(135deg, #faf8f5, #fefefe)",
+                border: "1px solid #eaeaea",
+              }}
+            >
+              {/* Title */}
+              <h2
+                className="poetry-title mb-3 fw-bold"
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "2rem",
+                }}
+              >
+                ✨ Top Poetry Of The Week ✨
+              </h2>
+              <p
+                className="poetry-subtitle mb-5 text-muted fst-italic"
+                style={{ fontFamily: "'Merriweather', serif" }}
+              >
+                कवि कह गया है
+              </p>
 
-      {/* Quote */}
-      <blockquote className="poetry-content mx-auto">
-        <p 
-          className="mb-4 fs-3 fst-italic lh-lg text-dark"
-          style={{ fontFamily: "'Merriweather', serif" }}
-        >
-          {quoteData?.quote || "उद्धरण लोड हो रहा है..."}
-        </p>
-        <footer 
-          className="poetry-author fw-semibold text-primary"
-          style={{ fontFamily: "'Playfair Display', serif" }}
-        >
-          — {quoteData?.author || "लेखक"}
-        </footer>
-      </blockquote>
+              {/* Quote */}
+              <blockquote className="poetry-content mx-auto">
+                <p
+                  className="mb-4 fs-3 fst-italic lh-lg text-dark"
+                  style={{ fontFamily: "'Merriweather', serif" }}
+                >
+                  {quoteData?.quote || "उद्धरण लोड हो रहा है..."}
+                </p>
+                <footer
+                  className="poetry-author fw-semibold text-primary"
+                  style={{ fontFamily: "'Playfair Display', serif" }}
+                >
+                  — {quoteData?.author || "लेखक"}
+                </footer>
+              </blockquote>
 
-      {/* Minimal Line Divider */}
-      {/* <div className="my-4" style={{ width: "60px", height: "2px", background: "#555", margin: "0 auto" }}></div> */}
+              {/* Minimal Line Divider */}
+              {/* <div className="my-4" style={{ width: "60px", height: "2px", background: "#555", margin: "0 auto" }}></div> */}
 
-      {/* Like & Share */}
-      <div className="poetry-icons mt-3 d-flex justify-content-center gap-4">
-        <i className="bi bi-heart-fill text-danger fs-4" style={{ cursor: "pointer" }}></i>
-        <i className="bi bi-share-fill text-secondary fs-4" style={{ cursor: "pointer" }}></i>
-      </div>
-    </div>
-  </div>
-</section>
-
-
+              {/* Like & Share */}
+              <div className="poetry-icons mt-3 d-flex justify-content-center gap-4">
+                <i
+                  className="bi bi-heart-fill text-danger fs-4"
+                  style={{ cursor: "pointer" }}
+                ></i>
+                <i
+                  className="bi bi-share-fill text-secondary fs-4"
+                  style={{ cursor: "pointer" }}
+                ></i>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section className="waviy-body">
           <div className="waviy">
@@ -621,15 +669,18 @@ export default function UserHome() {
             <section>
               <div className="row mx-auto">
                 {Array.isArray(featuredBlogs) &&
-                  featuredBlogs.map((blog) => (
-                    <ContentCard
-                      key={blog._id}
-                      type="blog"
-                      item={blog}
-                      baseUrl={BASE_URL_IMG}
-                    />
-                  ))}
+                  featuredBlogs.map((blog) =>
+                    blog.slug ? (
+                      <ContentCard
+                        key={blog._id}
+                        type="blog"
+                        item={blog}
+                        baseUrl={BASE_URL_IMG}
+                      />
+                    ) : null
+                  )}
               </div>
+
               <div className="col-12 d-flex justify-content-center mt-3">
                 <Link to="/blogs" className="btn custom-yellow-btn">
                   View More

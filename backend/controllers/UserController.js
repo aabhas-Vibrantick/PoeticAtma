@@ -377,7 +377,6 @@ register = async (req, res) => {
   }
 };
 
-
 updateuser = (req, res) => {
   var validator = "";
 
@@ -460,7 +459,6 @@ updateuser = (req, res) => {
       });
   }
 };
-
 
 changepassword = (req, res) => {
   validator = "";
@@ -612,8 +610,6 @@ changepassword = (req, res) => {
 //     });
 // };
 
-
-
 login = async (req, res) => {
   let validator = "";
 
@@ -700,7 +696,6 @@ login = async (req, res) => {
       data: userdata,
       token: token,
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -710,7 +705,6 @@ login = async (req, res) => {
     });
   }
 };
-
 
 getalluser = (req, res) => {
   User.find(req.body)
@@ -863,7 +857,6 @@ deletecustomer = async (req, res) => {
   }
 };
 
-
 getallcustomer = (req, res) => {
   Customer.find(req.body)
     .populate("userId")
@@ -885,23 +878,56 @@ getallcustomer = (req, res) => {
     });
 };
 
+// getTop10Customers = (req, res) => {
+//   Customer.find()
+//     .populate({
+//       path: "userId",
+//       match: { status: true, userType: 2, bedgeverify: true },
+//     })
+//     .sort({ Like: -1 })
+//     // .limit(10)
+//     .then((topCustomers) => {
+//       // ✅ Filter only those with matched userId (i.e., verified users)
+//       const verifiedUsers = topCustomers.filter((cust) => cust.userId !== null);
+
+//       res.json({
+//         status: 200,
+//         success: true,
+//         message: "Top 10 verified customers loaded",
+//         data: verifiedUsers,
+//       });
+//     })
+//     .catch((err) => {
+//       res.json({
+//         status: 500,
+//         success: false,
+//         message: "Error Occurred",
+//         error: String(err),
+//       });
+//     });
+// };
+
 getTop10Customers = (req, res) => {
   Customer.find()
+    // Include slug (and common fields) from Customer itself if present
+    .select("name penname slug Image Like userId")
     .populate({
       path: "userId",
       match: { status: true, userType: 2, bedgeverify: true },
+      // ✅ make sure slug from User is included
+      select: "slug status userType bedgeverify name penname Image",
     })
     .sort({ Like: -1 })
     // .limit(10)
     .then((topCustomers) => {
-      // ✅ Filter only those with matched userId (i.e., verified users)
+      // keep only verified users
       const verifiedUsers = topCustomers.filter((cust) => cust.userId !== null);
 
       res.json({
         status: 200,
         success: true,
         message: "Top 10 verified customers loaded",
-        data: verifiedUsers,
+        data: verifiedUsers, // includes Customer.slug (if exists) and userId.slug
       });
     })
     .catch((err) => {
@@ -936,7 +962,7 @@ getsinglecustomer = (req, res) => {
 };
 
 getsinglecustomerBySlug = (req, res) => {
-  const { slug } = req.params;   // get slug from URL
+  const { slug } = req.params; // get slug from URL
 
   Customer.findOne({ slug })
     .populate("userId")
@@ -965,8 +991,6 @@ getsinglecustomerBySlug = (req, res) => {
       });
     });
 };
-
-
 
 const changeStatus = async (req, res) => {
   try {
@@ -1030,13 +1054,16 @@ forgotPassword = async (req, res) => {
     // Find user
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "User with this email does not exist" });
+      return res
+        .status(404)
+        .json({ message: "User with this email does not exist" });
     }
 
     // Check recent password reset
     if (user.passwordResetTime && new Date() <= user.passwordResetTime) {
       return res.status(200).json({
-        message: "Your password has been recently changed. Please try after 3 days",
+        message:
+          "Your password has been recently changed. Please try after 3 days",
         passwordResetTimeReached: true,
       });
     }
@@ -1087,19 +1114,23 @@ forgotPassword = async (req, res) => {
       status: true,
       otpSent: true,
     });
-
   } catch (error) {
     console.error("Error in forgotPassword:", error);
 
     // Send proper message if email not found
     if (error.response && error.response.status === 404) {
-      return res.status(404).json({ message: "User with this email does not exist" });
+      return res
+        .status(404)
+        .json({ message: "User with this email does not exist" });
     }
 
-    res.status(500).json({ message: "An unexpected error occurred. Please try again later." });
+    res
+      .status(500)
+      .json({
+        message: "An unexpected error occurred. Please try again later.",
+      });
   }
 };
-
 
 resetPassword = async (req, res) => {
   console.log("Received resetPassword data:", req.body);

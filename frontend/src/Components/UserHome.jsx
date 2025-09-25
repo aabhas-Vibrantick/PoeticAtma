@@ -289,7 +289,9 @@ export default function UserHome() {
 
 
 
-
+.custom-padding{
+   padding: 0px 15px;
+}
 
 
 `}
@@ -346,6 +348,16 @@ export default function UserHome() {
             </SwiperSlide>
           </Swiper>
         </div>
+        {/* FULL-WIDTH HORIZONTAL SECTION WITH IMAGE */}
+<div className="w-100 bg-white shadow-sm border ">
+  <img
+    src="/adds.jpg"
+    alt="Advertisement"
+    className="img-fluid w-100 "
+    style={{  objectFit: "cover" }}
+  />
+</div>
+
         <section className="waviy-body">
           <div className="waviy py-3 my-3">
             <h1>
@@ -372,7 +384,7 @@ export default function UserHome() {
                           src={BASE_URL_IMG + (data.Image || "avtar.png")}
                           className="img-fluid"
                           alt="img..."
-                          style={{ height: "100%" }} // 👈 force height 100%
+                          style={{ height: "100%" }} 
                           onError={(e) => {
                             e.target.src = "/assets/images/avtar.png";
                           }}
@@ -395,55 +407,66 @@ export default function UserHome() {
             </Marquee>
           </div>
         </section>
+        
+        <div className="row align-items-center shayari-row custom-padding">
+  {/* LEFT AD */}
+  <div className="col-lg-2 col-xxl-2 d-none d-lg-flex justify-content-center">
+    <img
+      src="/Add.jpg"
+      className="img-fluid rounded-3 border shadow-sm ad-side-img"
+      alt="Advertisement"
+    />
+  </div>
 
-        <section className="shayari-day-section py-5">
-          <div className="container text-center">
-            <div className="shayari-swiper-container">
-              <h2 className="shayari-title mb-5">🌼 Shayari Of The Day 🌼</h2>
+  {/* CENTER SHAYARI */}
+  <div className="col-12 col-lg-8">
+    <section className="shayari-day-section py-4">
+      <div className="shayari-swiper-container text-center">
+        <h2 className="shayari-title mb-4">🌼 Shayari Of The Day 🌼</h2>
 
-              <Swiper
-                modules={[Navigation, Autoplay]} // 👈 include Autoplay
-                spaceBetween={30}
-                slidesPerView={1}
-                autoplay={{
-                  delay: 4000, // 4 seconds per slide (adjust as you like)
-                  disableOnInteraction: false, // keeps autoplay even after user interaction
-                }}
-                navigation={{
-                  nextEl: ".swiper-button-next-custom",
-                  prevEl: ".swiper-button-prev-custom",
-                }}
-              >
-                {shayariList.map((item, index) => (
-                  <SwiperSlide key={item._id || index}>
-                    <div className="shayari-box shadow p-xl-5 p-lg-5 p-md-5 p-sm-2 rounded">
-                      <blockquote className="shayari-text mx-auto">
-                        <p
-                          className="mb-4"
-                          dangerouslySetInnerHTML={{ __html: item.shayari }}
-                        />
-                        <footer className="shayari-author mt-3 text-end fst-italic">
-                          — {item.author || "Anonymous"}
-                        </footer>
-                      </blockquote>
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-
-              {/* Custom Navigation Arrows */}
-              <div className="swiper-navigation-custom">
-                <div className="swiper-button-prev-custom">‹</div>
-                <div className="swiper-button-next-custom">›</div>
+        <Swiper
+          modules={[Navigation, Autoplay]}
+          spaceBetween={30}
+          slidesPerView={1}
+          autoplay={{ delay: 4000, disableOnInteraction: false }}
+          navigation={{
+            nextEl: ".swiper-button-next-custom",
+            prevEl: ".swiper-button-prev-custom",
+          }}
+        >
+          {shayariList.map((item, index) => (
+            <SwiperSlide key={item._id || index}>
+              <div className="shayari-box shadow p-4 rounded">
+                <blockquote className="shayari-text mx-auto">
+                  <p
+                    className="mb-4"
+                    dangerouslySetInnerHTML={{ __html: item.shayari }}
+                  />
+                  <footer className="shayari-author mt-3 text-end fst-italic">
+                    — {item.author || "Anonymous"}
+                  </footer>
+                </blockquote>
               </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+    </section>
+  </div>
 
-              {shayariList.length === 0 && (
-                <p className="mt-3 text-muted">No Shayari of the Day yet.</p>
-              )}
-            </div>
-          </div>
-        </section>
+  {/* RIGHT AD */}
+  <div className="col-lg-2 col-xxl-2 d-none d-lg-flex justify-content-center">
+    <img
+      src="/Add.jpg"
+      className="img-fluid rounded-3 border shadow-sm ad-side-img"
+      alt="Advertisement"
+    />
+  </div>
+</div>
 
+
+
+        
         {/* ================== START MAIN CONTENT + SIDEBAR WRAP ================== */}
         <div className="container-fluid">
           <div className="row">
@@ -702,7 +725,7 @@ export default function UserHome() {
         <div className="exampleApp custom-carousel">
           <Insta />
         </div>
-        <WhatsAppWidget />
+        {/* <WhatsAppWidget /> */}
       </div>
       <ToastContainer />
     </>

@@ -8,7 +8,7 @@
 
 .shayari-swiper-container {
   position: relative;
-  padding-bottom: 50px;
+  /* padding-bottom: 50px; */
   max-width: 750px;
   margin: 0 auto;
 }

@@ -917,7 +917,7 @@ getTop10Customers = (req, res) => {
       // ✅ make sure slug from User is included
       select: "slug status userType bedgeverify name penname Image",
     })
-    .sort({ Like: -1 })
+    .sort({ Like: -1 }) //views+or
     // .limit(10)
     .then((topCustomers) => {
       // keep only verified users

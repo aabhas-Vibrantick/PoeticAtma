@@ -6,25 +6,18 @@ const PrivacyPolicy = () => {
     }, [])
 
     const data = [
-        { index: 1, description: "Data Usage: The information collected is used solely to provide and improve our services, including personalized content recommendations, communication with users, and website optimization." },
-        { index: 2, description: "Data Security: We employ industry-standard security measures to protect the confidentiality and integrity of user data, including encryption, firewalls, and secure data storage protocols." },
-        { index: 3, description: "Third-party Disclosure: We do not sell, trade, or otherwise transfer personal information to third parties without explicit consent, except as required by law or to facilitate essential functions of our website (e.g., payment processing)." },
-        { index: 4, description: "Cookie Policy: Our website may use cookies and similar tracking technologies to enhance user experience, analyze website traffic, and personalize content. " },
-        { index: 5, description: "Data Retention: We retain personal information for as long as necessary to fulfil the purposes outlined in this privacy policy or as required by law." },
-        { index: 6, description: "Policy Updates: This privacy policy may be updated periodically to reflect changes in our practices or regulatory requirements. Users will be notified of any significant updates, and continued use of the website constitutes acceptance of the revised policy." },
+        { index: 1, description: "<strong>Data Usage:</strong> The information collected is used solely to provide and improve our services, including personalized content recommendations, communication with users, and website optimization." },
+        { index: 2, description: "<strong>Data Security:</strong> We employ industry-standard security measures to protect the confidentiality and integrity of user data, including encryption, firewalls, and secure data storage protocols." },
+        { index: 3, description: "<strong>Third-party Disclosure:</strong> We do not sell, trade, or otherwise transfer personal information to third parties without explicit consent, except as required by law or to facilitate essential functions of our website (e.g., payment processing)." },
+        { index: 4, description: "<strong>Cookie Policy:</strong> Our website may use cookies and similar tracking technologies to enhance user experience, analyze website traffic, and personalize content." },
+        { index: 5, description: "<strong>Data Retention:</strong> We retain personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy or as required by Indian law." },
+        { index: 6, description: "<strong>Policy Updates:</strong> This privacy policy may be updated periodically to reflect changes in our practices or regulatory requirements. Users will be notified of any significant updates, and continued use of the website constitutes acceptance of the revised policy." },
     ]
 
     function displayData() {
-        return (
-            data.map((data) => {
-                return (
-                    <>
-                        {data.index}. {data.description}
-                        <br /><br />
-                    </>
-                )
-            })
-        )
+        return data.map((item) => (
+            <p key={item.index} dangerouslySetInnerHTML={{ __html: `${item.index}. ${item.description}` }} />
+        ))
     }
 
     return (
@@ -35,9 +28,6 @@ const PrivacyPolicy = () => {
                         <h2 className="fs-1 mt-5 pt-lg-5 pt-sm-3 text-white">
                             Privacy Policy
                         </h2>
-                        {/* <p className="fs-5 ">
-                            At Poetic Atma, we understand the importance of privacy and are committed to protecting the personal information of our users. We only collect information that is necessary for providing and improving our services, and we never share your data with third parties without your consent.
-                        </p> */}
                     </div>
                 </div>
             </section>
@@ -49,7 +39,7 @@ const PrivacyPolicy = () => {
                             <div className="col-md-12 form-group">
                                 <div className="mx-4 mt-4 mb-4 d-flex justify-content-around align-items-center">
                                     <div className="container">
-                                        <div className="col-12 mx-4 px-4" style={{ fontSize: 20, }}>
+                                        <div className="col-12 mx-4 px-4" style={{ fontSize: 20 }}>
                                             {displayData()}
                                         </div>
                                     </div>

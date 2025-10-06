@@ -293,7 +293,9 @@ export default function SingleShayari() {
         <div className="blog-blogsingle bloggray-bg">
           <div className="container">
             {/* <!-- Blog Ads --> */}
-            <section id="blogads"></section>
+            <section id="blogads">
+  <img src="/poeticatma_single_banner.jpg" alt="Blog Advertisement Banner" />
+</section>
             {/* ---------------------left sidebar start---------------------------*/}
             <div className="row align-items-start">
               <div className="col-lg-8 m-15px-tb">

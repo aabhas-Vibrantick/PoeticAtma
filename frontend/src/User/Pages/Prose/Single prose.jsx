@@ -250,7 +250,9 @@ export default function Singleprose() {
       <div className={loading ? "disable-full-screen" : ""}>
         <div className="blog-blogsingle bloggray-bg">
           <div className="container">
-            <section id="blogads"></section>
+            <section id="blogads">
+  <img src="/poeticatma_single_banner.jpg" alt="Blog Advertisement Banner" />
+</section>
             <div className="row align-items-start">
               <div className="col-lg-8 m-15px-tb">
                 <div className="container mb-5">

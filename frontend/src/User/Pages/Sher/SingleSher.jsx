@@ -251,12 +251,54 @@ const toggleReply = (commentId) => {
 .sher-content {
   white-space: pre-wrap;
   word-wrap: break-word;
+
+/* Force container to allow image sizing */
+#blogads {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  display: block;          /* avoid flex issues from other rules */
+  padding: 0;
+  margin: 0 auto;
+  background: transparent;
+  min-height: 0 !important; /* override any fixed min-height */
+  height: auto !important;  /* override any fixed height */
+}
+
+/* Make the <img> fully responsive and override conflicting rules */
+#blogads img {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: cover;       /* fills the width while preserving aspect ratio */
+  object-position: center;
+  border-radius: 6px;      /* optional */
+  margin: 0;
+  padding: 0;
+}
+
+/* Defensive rules to remove any fixed-height child wrappers */
+#blogads > * {
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+/* Tiny screens edge-case */
+@media (max-width: 420px) {
+  #blogads img { object-fit: cover; }
+}
+
+  
 }`}</style>
       <ScaleLoader loading={loading} cssOverride={override} size={70} />
       <div className={loading ? "disable-full-screen" : ""}>
         <div className="blog-blogsingle bloggray-bg">
           <div className="container">
-            <section id="blogads"></section>
+            <section id="blogads">
+  <img src="/poeticatma_single_banner.jpg" alt="Blog Advertisement Banner" />
+</section>
+
             <div className="row align-items-start">
               <div className="col-lg-8 m-15px-tb">
                 <div className="container mb-5">
